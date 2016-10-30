@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "djalmajr"
+  ],
+  "rules": {
+    "no-process-env": 0,
+    "one-var-declaration-per-line": 0
+  }
+}

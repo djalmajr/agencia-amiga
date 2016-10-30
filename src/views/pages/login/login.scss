@@ -1,0 +1,39 @@
+.wrapper {
+    font-size: 1rem;
+    margin: auto;
+    width: 26em;
+}
+
+.logo {
+    height: 158px;
+    margin: 0 auto 3em;
+    width: 150px;
+}
+
+.form {
+    font-size: 1.2em;
+    width: 100%;
+}
+
+.input {
+    border: 1px solid #aaa;
+    border-radius: 0.3em;
+    font-size: inherit;
+    margin-bottom: 1em;
+    padding: 0.8em;
+}
+
+.link {
+    color: #1D2939;
+    margin-left: auto;
+    margin-top: 1em;
+}
+
+.link-warning {
+    background-color: #fcf8e3;
+    color: #8a6d3b;
+    border: 1px solid #faebcc;
+    border-radius: 4px;
+    padding: 1.0rem 1.5rem;
+    margin: 20px 0;
+}
