@@ -1,21 +1,30 @@
 import React from "react";
-// import {fromJS} from "immutable";
-import {connect} from "react-redux";
-// import {Match, Redirect} from "react-router";
-
+import {Grid} from "semantic-ui-react";
+import TopBar from "./topbar";
+import Content from "./content";
+import LeftPanel from "./left-panel";
+import RightPanel from "./right-panel";
 import styles from "./main.scss";
 
-class Main extends React.Component {
-    render() {
-        return (
-            <div className={styles.wrapper}>
-                <div>TopBar</div>
-                <div className={styles.container}>
-                    Container
-                </div>
-            </div>
-        );
-    }
-}
+const Main = () => (
+    <div className={styles.main}>
+        <Grid padded>
+            <Grid.Row style={{padding: 0}}>
+                <TopBar />
+            </Grid.Row>
+            <Grid.Row>
+                <Grid.Column width={4} className={styles.column}>
+                    <LeftPanel />
+                </Grid.Column>
+                <Grid.Column width={9} className={styles.column}>
+                    <Content />
+                </Grid.Column>
+                <Grid.Column width={3} className={styles.column}>
+                    <RightPanel />
+                </Grid.Column>
+            </Grid.Row>
+        </Grid>
+    </div>
+);
 
-export default connect()(Main);
+export default Main;

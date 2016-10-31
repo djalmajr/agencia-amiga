@@ -1,36 +1,28 @@
-/* global process */
-
 import React from "react";
 import ReactDOM from "react-dom";
-import {Provider} from "react-redux";
-import {HashRouter, Match} from "react-router";
-import Main from "./views/layout/main";
+import {AppContainer} from "react-hot-loader";
 import configureStore from "./store/configure-store";
+import Application from "./application";
 
+const rootEl = document.querySelector("#wrapper");
 const store = configureStore();
 
-const Application = () => {
-    let DevTools = null;
+ReactDOM.render(
+    <AppContainer>
+        <Application store={store} />
+    </AppContainer>,
+    rootEl
+);
 
-    if (process.env.NODE_ENV !== "production") {
-        const {showDevTools} = require("./devtools");
+if (module.hot) {
+    module.hot.accept("./application", () => {
+        const NextApp = require("./application").default;
 
-        if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
-            showDevTools(store);
-            // DevTools = require("./devtools").DevTools;
-        }
-    }
-
-    return (
-        <Provider store={store}>
-            <HashRouter>
-                <div>
-                    <Match pattern="/" component={Main} />
-                    {DevTools && <DevTools store={store} />}
-                </div>
-            </HashRouter>
-        </Provider>
-    );
-};
-
-ReactDOM.render(<Application />, document.querySelector("#wrapper"));
+        ReactDOM.render(
+            <AppContainer>
+                <NextApp store={store} />
+            </AppContainer>,
+            rootEl
+        );
+    });
+}

@@ -1,3 +1,5 @@
+/* global __dirname */
+
 var autoprefixer = require("autoprefixer"),
     webpack = require("webpack"),
     path = require("path");
@@ -7,7 +9,9 @@ module.exports = {
 
     entry: {
         app: [
-            "webpack-hot-middleware/client",
+            "react-hot-loader/patch",
+            "webpack-dev-server/client?http://localhost:9090",
+            "webpack/hot/only-dev-server",
             "./src/router.jsx",
         ],
     },
@@ -17,7 +21,7 @@ module.exports = {
         library: ["AgenciaAmiga"],
         libraryTarget: "umd",
         path: path.join(__dirname, "public/js"),
-        publicPath: "/js/",
+        publicPath: "http://localhost:9090/js/",
     },
 
     module: {
@@ -26,7 +30,11 @@ module.exports = {
         ],
 
         loaders: [
-            {test: /\.jsx?$/, loaders: ["babel"], include: /src/},
+            {
+                test: /\.jsx?$/,
+                include: /src/,
+                loader: "babel",
+            },
             {
                 include: /src/,
                 test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)(\?\S*)?$/,
@@ -61,8 +69,4 @@ module.exports = {
             fetch: "imports?this=>global!exports?global.fetch!whatwg-fetch",
         }),
     ],
-
-    devServer: {
-        contentBase: "./public/js/",
-    },
 };

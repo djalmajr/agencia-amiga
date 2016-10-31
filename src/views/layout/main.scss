@@ -1,14 +1,15 @@
-.wrapper {
-    background: #ebeef1;
+.main {
+    background: #f0f0f0;
     position: absolute;
     overflow: hidden;
+    font-size: 1rem;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
 }
 
-.container {
-    overflow: auto;
-    padding: 0 1em 1em;
+.column {
+    padding-left: 0.5em !important;
+    padding-right: 0.5em !important;
 }
