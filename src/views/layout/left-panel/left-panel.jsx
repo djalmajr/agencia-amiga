@@ -41,44 +41,46 @@ class LeftPanel extends React.Component {
         ];
 
         return (
-            <Segment>
-                <FlexColumn className={styles.menu}>
-                    {options.map((option) =>
-                        <FlexRow
-                            align="center"
-                            key={option.value}
-                            className={cn(styles.menuItem, {[styles.selected]: option.value === selectedFilter})}
-                            onClick={() => this.handleFilterClick(option.value)}
-                        >
-                            <Icon name={option.icon} />
-                            <span style={{marginLeft: "0.5em"}}>{option.text}</span>
+            <FlexColumn className={styles.leftPanel}>
+                <Segment>
+                    <FlexColumn className={styles.menu}>
+                        {options.map((option) =>
+                            <FlexRow
+                                align="center"
+                                key={option.value}
+                                className={cn(styles.menuItem, {[styles.selected]: option.value === selectedFilter})}
+                                onClick={() => this.handleFilterClick(option.value)}
+                            >
+                                <Icon name={option.icon} />
+                                <span style={{marginLeft: "0.5em"}}>{option.text}</span>
+                            </FlexRow>
+                        )}
+                    </FlexColumn>
+                    <Divider />
+                    <FlexColumn>
+                        <Header as="h5">Filtrar por:</Header>
+                        <Form className={styles.searchForm} onSubmit={this.handleSearch}>
+                            <Dropdown
+                                fluid
+                                search
+                                multiple
+                                selection
+                                options={habilidades}
+                                placeholder="Habilidades..."
+                            />
+                            <Input fluid placeholder="Localização..." style={{marginTop: "1em"}} />
+                        </Form>
+                        <FlexRow justify="space-between" style={{marginTop: "1em"}}>
+                            <Button type="submit" size="small" color="primary" disabled={isSearching}>
+                                Buscar
+                            </Button>
+                            <Button size="small" disabled={isSearching}>
+                                Limpar
+                            </Button>
                         </FlexRow>
-                    )}
-                </FlexColumn>
-                <Divider />
-                <FlexColumn>
-                    <Header as="h5">Filtrar por:</Header>
-                    <Form className={styles.searchForm} onSubmit={this.handleSearch}>
-                        <Dropdown
-                            fluid
-                            search
-                            multiple
-                            selection
-                            options={habilidades}
-                            placeholder="Habilidades..."
-                        />
-                        <Input fluid placeholder="Localização..." style={{marginTop: "1em"}} />
-                    </Form>
-                    <FlexRow justify="space-between" style={{marginTop: "1em"}}>
-                        <Button type="submit" size="small" color="primary" disabled={isSearching}>
-                            Buscar
-                        </Button>
-                        <Button size="small" disabled={isSearching}>
-                            Limpar
-                        </Button>
-                    </FlexRow>
-                </FlexColumn>
-            </Segment>
+                    </FlexColumn>
+                </Segment>
+            </FlexColumn>
         );
     }
 }

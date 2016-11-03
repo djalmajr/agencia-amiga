@@ -9,17 +9,9 @@
     bottom: 0;
 }
 
-.column {
-    padding-left: 0.5em !important;
-    padding-right: 0.5em !important;
-
-    &:first-of-type {
-        padding-left: 1em !important;
-    }
-
-    &:last-of-type {
-        padding-right: 1em !important;
-    }
+.content {
+    overflow: auto;
+    padding: 0.8em;
 }
 
 // Overrides
