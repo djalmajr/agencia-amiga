@@ -21,3 +21,8 @@
 :global(.ui.dropdown .menu > .item:hover) {
     background: lighten(#2987CD, 45%) !important;
 }
+
+:global(.ui.card > .extra),
+:global(.ui.cards > .card > .extra) {
+    border-top: 1px solid rgba(0,0,0, 0.1) !important;
+}
