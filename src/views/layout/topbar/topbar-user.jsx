@@ -14,7 +14,7 @@ class TopBarUser extends React.Component {
         );
 
         return (
-            <FlexRow align="center" className={styles.topBarUser}>
+            <FlexRow align="center" justify="flex-end" className={styles.topBarUser}>
                 <Icon name="alarm outline" style={{marginRight: "1em"}} />
                 <Icon name="mail outline" style={{marginRight: "1em"}} />
                 <Dropdown icon={null} trigger={trigger} pointing="top right">

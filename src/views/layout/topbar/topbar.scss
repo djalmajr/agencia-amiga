@@ -1,12 +1,21 @@
 .topBar {
     background-color: #2987CD;
     color: white;
-    display: flex;
-    flex: 1;
+    font-size: 1rem;
     padding: 0.5em 0.3em;
     padding-left: 1em;
+    width: 100%;
 }
 
 .logo {
-    margin-right: 1em;
+    font-size: 1.3em;
+    margin-right: 0.8em;
+    margin-left: 0.3em;
+    margin-top: 0.1em;
+}
+
+.column {
+    align-items: center !important;
+    display: flex !important;
+    padding: 0.5em !important;
 }

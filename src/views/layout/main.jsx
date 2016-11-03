@@ -13,10 +13,10 @@ const Main = () => (
                 <TopBar />
             </Grid.Row>
             <Grid.Row>
-                <Grid.Column width={4} className={styles.column}>
+                <Grid.Column width={3} className={styles.column}>
                     <LeftPanel />
                 </Grid.Column>
-                <Grid.Column width={9} className={styles.column}>
+                <Grid.Column width={10} className={styles.column}>
                     <Content />
                 </Grid.Column>
                 <Grid.Column width={3} className={styles.column}>
