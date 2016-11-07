@@ -15,7 +15,7 @@ class TopBarSearch extends React.Component {
     handleSearch = (evt, fields) => {
         evt.preventDefault();
 
-        console.log(fields.searchInput);
+        console.log(fields.searchInput); // eslint-disable-line
     };
 
     render() {

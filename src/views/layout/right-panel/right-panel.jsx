@@ -1,18 +1,19 @@
 import React from "react";
 import {Segment} from "semantic-ui-react";
-// import styles from "./right-panel.scss";
+import FlexColumn from "views/components/flex-column";
+import styles from "./right-panel.scss";
 
 class RightPanel extends React.Component {
     render() {
         return (
-            <div>
+            <FlexColumn className={styles.rightPanel}>
                 <Segment>
                     Pellentesque habitant morbi tristique senectus.
                 </Segment>
                 <Segment>
                     Pellentesque habitant morbi tristique senectus.
                 </Segment>
-            </div>
+            </FlexColumn>
         );
     }
 }

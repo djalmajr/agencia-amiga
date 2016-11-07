@@ -21,7 +21,7 @@ class LeftPanel extends React.Component {
     };
 
     handleFilterClick = (value) => {
-        console.log(value);
+        console.log(value); // eslint-disable-line
     };
 
     render() {
@@ -71,7 +71,7 @@ class LeftPanel extends React.Component {
                             <Input fluid placeholder="Localização..." style={{marginTop: "1em"}} />
                         </Form>
                         <FlexRow justify="space-between" style={{marginTop: "1em"}}>
-                            <Button type="submit" size="small" color="primary" disabled={isSearching}>
+                            <Button type="submit" size="small" color="blue" disabled={isSearching}>
                                 Buscar
                             </Button>
                             <Button size="small" disabled={isSearching}>
