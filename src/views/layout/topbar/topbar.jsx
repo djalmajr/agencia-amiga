@@ -6,6 +6,8 @@ import styles from "./topbar.scss";
 
 class TopBar extends React.Component {
     render() {
+        console.log(this.props);
+
         return (
             <FlexRow className={styles.topBar}>
                 <FlexRow className={styles.column} style={{fontSize: "1.2em"}}>

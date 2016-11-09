@@ -1,7 +1,7 @@
 import React from "react";
 import {Match} from "react-router";
 import FlexColumn from "views/components/flex-column";
-import {Servico, Servicos} from "views/pages/servicos";
+import {Servico, Servicos} from "./servicos";
 import styles from "./content.scss";
 
 const Content = () => (

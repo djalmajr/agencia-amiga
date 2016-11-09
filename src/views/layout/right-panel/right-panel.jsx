@@ -1,19 +1,16 @@
 import React from "react";
-import {Segment} from "semantic-ui-react";
-import FlexColumn from "views/components/flex-column";
-import styles from "./right-panel.scss";
+import {Match} from "react-router";
+import ServicosRelacionados from "./servicos-relacionados";
 
 class RightPanel extends React.Component {
     render() {
+        const EmptyPanel = () => <div />;
+
         return (
-            <FlexColumn className={styles.rightPanel}>
-                <Segment>
-                    Pellentesque habitant morbi tristique senectus.
-                </Segment>
-                <Segment>
-                    Pellentesque habitant morbi tristique senectus.
-                </Segment>
-            </FlexColumn>
+            <div>
+                <Match pattern="/buscar" component={EmptyPanel} />
+                <Match pattern="/servicos/:id" component={ServicosRelacionados} />
+            </div>
         );
     }
 }
