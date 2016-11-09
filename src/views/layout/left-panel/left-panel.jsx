@@ -71,7 +71,7 @@ class LeftPanel extends React.Component {
                             <Input fluid placeholder="Localização..." style={{marginTop: "1em"}} />
                         </Form>
                         <FlexRow justify="space-between" style={{marginTop: "1em"}}>
-                            <Button type="submit" size="small" color="blue" disabled={isSearching}>
+                            <Button primary type="submit" size="small" disabled={isSearching}>
                                 Buscar
                             </Button>
                             <Button size="small" disabled={isSearching}>
