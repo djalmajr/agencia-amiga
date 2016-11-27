@@ -1,3 +1,3 @@
-import LeftPanel from "./left-panel";
+import LeftPanel from './left-panel';
 
 export default LeftPanel;

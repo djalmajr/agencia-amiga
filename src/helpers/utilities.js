@@ -1,17 +1,19 @@
-import cn from "classnames";
+import cn from 'classnames';
 
-export const classnames = (styles, ...args) => {
-    const result = [];
+const cnames = (styles, ...args) => {
+  const result = [];
 
-    args.forEach((arg) => {
-        const classes = cn(arg);
+  args.forEach((arg) => {
+    const classes = cn(arg);
 
-        classes.split(" ").forEach((cname) => {
-            if (styles[cname]) {
-                result.push(styles[cname]);
-            }
-        });
+    classes.split(' ').forEach((cname) => {
+      if (styles[cname]) {
+        result.push(styles[cname]);
+      }
     });
+  });
 
-    return result.join(" ");
+  return result.join(' ');
 };
+
+export default { cnames };

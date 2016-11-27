@@ -1,28 +1,27 @@
 .main {
-    background: #f0f0f0;
-    position: absolute;
-    overflow: hidden;
-    font-size: 1rem;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  background: #f0f0f0;
+  position: absolute;
+  overflow: hidden;
+  font-size: 1rem;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .content {
-    overflow: auto;
-    padding: 0.8em;
+  overflow: auto;
+  padding: .8em;
 }
 
 // Overrides
-
-:global(.ui.dropdown.selected),
 :global(.ui.dropdown .menu .selected.item),
-:global(.ui.dropdown .menu > .item:hover) {
-    background: lighten(#2987CD, 45%) !important;
+:global(.ui.dropdown .menu > .item:hover),
+:global(.ui.dropdown.selected) {
+  background: lighten(#2987CD, 45%) !important;
 }
 
 :global(.ui.card > .extra),
 :global(.ui.cards > .card > .extra) {
-    border-top: 1px solid rgba(0,0,0, 0.1) !important;
+  border-top: 1px solid rgba(0,0,0, 0.1) !important;
 }

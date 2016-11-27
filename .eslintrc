@@ -1,10 +1,41 @@
 {
-  "extends": [
-    "djalmajr"
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "plugins": [
+    "react",
+    "jsx-a11y",
+    "import"
   ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
   "rules": {
-    "lines-around-comment": 0,
-    "no-process-env": 0,
-    "one-var-declaration-per-line": 0
+    "no-param-reassign": "off",
+    "no-underscore-dangle": "off",
+    "react/no-danger": "off",
+    "react/forbid-prop-types": "off",
+    "import/no-unresolved": [
+      1,
+      {
+        "ignore": [
+          "^[~]"
+        ]
+      }
+    ],
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "babel-root-import": {}
+    }
   }
 }
