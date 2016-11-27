@@ -1,3 +1,3 @@
-import FlexRow from "./flex-row";
+import FlexRow from './flex-row';
 
 export default FlexRow;

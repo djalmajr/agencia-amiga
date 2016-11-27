@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import shallowCompare from 'react-addons-shallow-compare';
-import { classnames } from '~/helpers/utilities';
+import cnames from '~/helpers/cnames';
 import styles from './flex-column.scss';
 import DefaultProps from '../default-props';
 
@@ -49,7 +49,7 @@ class FlexColumn extends React.Component {
 
     return cn(
       { [this.props.className]: this.props.className },
-      classnames(styles, 'flex-column', classes),
+      cnames(styles, 'flex-column', classes),
     );
   }
 

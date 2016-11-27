@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import shallowCompare from 'react-addons-shallow-compare';
-import { classnames } from '~/helpers/utilities';
+import cnames from '~/helpers/cnames';
 import styles from './flex-row.scss';
 import DefaultProps from '../default-props';
 
@@ -50,7 +50,7 @@ class FlexRow extends React.Component {
 
     return cn(
       { [this.props.className]: this.props.className },
-      classnames(styles, 'flex-row', classes),
+      cnames(styles, 'flex-row', classes),
     );
   }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import elementType from '~/react-prop-types/lib/elementType';
+import elementType from 'react-prop-types/lib/elementType';
 
 // Necessário para o uso do react-docgen
 const DefaultProps = () => (
