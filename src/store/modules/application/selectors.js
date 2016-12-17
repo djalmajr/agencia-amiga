@@ -1,6 +1,7 @@
 // import faker from 'faker';
+import latinize from 'latinize';
 // import { createSelector } from 'reselect';
-import { merge, forEach, some, values } from 'lodash';
+import { merge, filter, forEach, some, values } from 'lodash';
 // import { getEntities } from '../entities/selectors';
 
 export const getNotification = state => merge({}, state.application.notification);
@@ -23,20 +24,23 @@ export const getSearchFilter = state =>
   state.application.searchFilter;
 
 export const getSearchQuery = state =>
-  state.application.mainMenuQuery;
+  state.application.searchQuery;
 
 export const getSearchStatus = (state) => {
-  const filter = getSearchFilter(state);
+  const searchFilter = getSearchFilter(state);
 
-  if (filter === 'all') {
+  if (searchFilter === 'all') {
     return some(values(state.entities.isFetching));
   }
 
-  return state.entities.isFetching[filter];
+  return state.entities.isFetching[searchFilter];
 };
 
 export const getSearchResults = (state) => {
-  const filter = getSearchFilter(state);
+  let result;
+
+  const searchFilter = getSearchFilter(state);
+  const query = getSearchQuery(state);
   const format = data => ({
     title: data.nome,
     meta: data.email,
@@ -46,7 +50,7 @@ export const getSearchResults = (state) => {
     created_at: data.created_at,
   });
 
-  if (filter === 'all') {
+  if (searchFilter === 'all') {
     const byId = {};
 
     forEach(state.entities.byId, (value, entity) => {
@@ -55,9 +59,13 @@ export const getSearchResults = (state) => {
       }));
     });
 
-    return values(byId);
+    result = values(byId);
+  } else {
+    result = values(state.entities.byId[searchFilter])
+    .map(val => ({ entity: searchFilter, ...format(val) }));
   }
 
-  return values(state.entities.byId[filter])
-    .map(val => ({ entity: filter, ...format(val) }));
+  return query ?
+    filter(result, item => latinize(item.title).toLowerCase().search(query) !== -1) :
+    result;
 };

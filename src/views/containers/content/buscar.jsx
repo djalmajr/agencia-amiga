@@ -4,7 +4,7 @@ import moment from 'moment';
 import { isEmpty, map, find, forEach } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Card, Rating, Icon, Image, Segment, Loader } from 'semantic-ui-react';
+import { Card, Icon, Image, Segment, Loader } from 'semantic-ui-react';
 import actionCreators from '~/store/actions';
 import selectors from '~/store/selectors';
 import FlexColumn from '~/views/components/flex-column';
@@ -77,6 +77,17 @@ class Buscar extends React.Component {
       );
     }
 
+    if (!isSearching && isEmpty(records)) {
+      return (
+        <FlexColumn full align="center" justify="center" className={styles.buscar}>
+          <Icon name="cloud" size="massive" style={{ color: 'rgba(0,0,0, 0.1)' }} />
+          <span style={{ color: 'rgba(0,0,0, 0.45)' }}>
+            Nenhum resultado encontrado :(
+          </span>
+        </FlexColumn>
+      );
+    }
+
     return (
       <FlexColumn full className={styles.buscar}>
         <FlexRow align="center" className={styles.sorting}>
@@ -108,8 +119,16 @@ class Buscar extends React.Component {
                 </Card.Content>
                 <Card.Content extra>
                   <FlexColumn align="flex-end">
-                    <Rating icon="heart" rating={3} maxRating={5} disabled />
-                    <span style={{ marginTop: '0.5em' }}>
+                    {/*
+                    <Rating
+                      disabled
+                      icon="heart"
+                      rating={3}
+                      maxRating={5}
+                      style={{ marginBottom: '0.5em' }}
+                    />
+                    */}
+                    <span>
                       {date.isValid() && date.fromNow()}
                     </span>
                   </FlexColumn>

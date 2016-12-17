@@ -1,5 +1,5 @@
 import React from 'react';
-import { find } from 'lodash';
+import { find, forEach } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Form, Icon, Input, Dropdown } from 'semantic-ui-react';
@@ -23,9 +23,21 @@ class TopBarSearch extends React.Component {
   };
 
   handleSearch = (evt, { query }) => {
+    const { actions, searchFilter, filterOptions } = this.props;
+
     evt.preventDefault();
 
-    this.props.actions.search(query);
+    actions.search(query);
+
+    if (searchFilter === 'all') {
+      forEach(filterOptions, ({ value }) => {
+        if (value !== 'all') {
+          actions.getEntities({ entity: value });
+        }
+      });
+    } else {
+      actions.getEntities({ entity: searchFilter });
+    }
   };
 
   render() {
@@ -41,7 +53,7 @@ class TopBarSearch extends React.Component {
           className={styles.searchInput}
         >
           <Icon loading={isSearching} name={selected.icon} />
-          <input name="query" value={searchQuery} placeholder={`Buscar ${selected.text}`} />
+          <input name="query" defaultValue={searchQuery} placeholder={`Buscar ${selected.text}`} />
           <Dropdown pointing="top left" icon="sliders" className={styles.filters}>
             <Dropdown.Menu>
               {filterOptions.map(option =>
