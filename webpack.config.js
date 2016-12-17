@@ -8,7 +8,7 @@ module.exports = {
   entry: {
     app: [
       'react-hot-loader/patch',
-      'webpack-hot-middleware/client',
+      'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr',
       './src/start.jsx',
     ],
   },

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { HashRouter, Match } from 'react-router';
+import { BrowserRouter, Match } from 'react-router';
 import Main from './views/layout/main';
 
 const Application = ({ store }) => (
   <Provider store={store}>
-    <HashRouter>
+    <BrowserRouter>
       <Match pattern="/" component={Main} />
-    </HashRouter>
+    </BrowserRouter>
   </Provider>
 );
 

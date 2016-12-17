@@ -1,10 +1,6 @@
 import { combineReducers } from 'redux';
-import artigos from './modules/artigos/reducers';
-import documentos from './modules/documentos/reducers';
-import etiquetas from './modules/etiquetas/reducers';
+import usuarios from './modules/usuarios/reducers';
 
 export default combineReducers({
-  artigos,
-  documentos,
-  etiquetas,
+  usuarios,
 });

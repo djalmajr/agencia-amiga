@@ -9,6 +9,7 @@ const app = express();
 const compiler = webpack(config);
 
 app.use(devMiddleware(compiler, {
+  noInfo: true,
   publicPath: '/js/',
   historyApiFallback: true,
 }));
