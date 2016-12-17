@@ -1,10 +1,9 @@
 import React from 'react';
-import faker from 'faker';
 import moment from 'moment';
-import { isEmpty, map, forEach } from 'lodash';
+import { isEmpty, map, find, forEach } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Card, Rating, Image, Segment, Loader } from 'semantic-ui-react';
+import { Card, Rating, Icon, Image, Segment, Loader } from 'semantic-ui-react';
 import actionCreators from '~/store/actions';
 import selectors from '~/store/selectors';
 import FlexColumn from '~/views/components/flex-column';
@@ -41,7 +40,7 @@ class Buscar extends React.Component {
   }
 
   render() {
-    const { records, isSearching } = this.props;
+    const { records, isSearching, filterOptions } = this.props;
 
     if (isSearching) {
       return (
@@ -62,13 +61,17 @@ class Buscar extends React.Component {
         <Card.Group itemsPerRow={4} className={styles.cards}>
           {map(records, (record, key) => {
             const date = moment(record.created_at);
+            const { icon } = find(filterOptions, { value: record.entity });
 
             return (
               <Card key={key}>
                 <Card.Content>
-                  <Image floated="left" size="mini" src={record.image || faker.image.imageUrl(100, 100, 'abstract')} />
+                  {record.image ?
+                    <Image floated="left" size="mini" src={record.image} /> :
+                    <Icon className={styles.cardIcon} name={icon} />
+                  }
                   <Card.Header>{record.title}</Card.Header>
-                  <Card.Meta>{record.meta || '350 visualizações'}</Card.Meta>
+                  <Card.Meta>{record.meta}</Card.Meta>
                   <Card.Description>
                     {record.description.length - 3 > 100 ?
                       `${record.description.slice(0, 100)}...` :

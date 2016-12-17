@@ -1,3 +1,4 @@
+// import faker from 'faker';
 // import { createSelector } from 'reselect';
 import { merge, forEach, some, values } from 'lodash';
 // import { getEntities } from '../entities/selectors';
@@ -14,7 +15,7 @@ export const getFilterOptions = () => [
   { text: 'Todos', value: 'all', icon: 'globe' },
   { text: 'Organizações', value: 'organizations', icon: 'university' },
   { text: 'Serviços', value: 'services', icon: 'wrench' },
-  { text: 'Pessoas', value: 'users', icon: 'users' },
+  { text: 'Pessoas', value: 'users', icon: 'user' },
   { text: 'Campanhas', value: 'campaigns', icon: 'bullhorn' },
 ];
 
@@ -39,16 +40,18 @@ export const getSearchResults = (state) => {
   const format = data => ({
     title: data.nome,
     meta: data.email,
-    description: data.resumo || '',
+    // image: data.image || faker.image.imageUrl(100, 100, 'abstract'),
+    image: data.image,
+    description: data.resumo || data.descricao || '',
     created_at: data.created_at,
   });
 
   if (filter === 'all') {
     const byId = {};
 
-    forEach(state.entities.byId, (value) => {
+    forEach(state.entities.byId, (value, entity) => {
       forEach(value, (val, key) => merge(byId, {
-        [key]: format(val),
+        [key]: { entity, ...format(val) },
       }));
     });
 
@@ -56,5 +59,5 @@ export const getSearchResults = (state) => {
   }
 
   return values(state.entities.byId[filter])
-    .map(val => format(val));
+    .map(val => ({ entity: filter, ...format(val) }));
 };
