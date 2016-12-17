@@ -7,13 +7,13 @@ import LeftPanel from './left-panel';
 import RightPanel from './right-panel';
 import styles from './main.scss';
 
-const Main = () => (
+const Main = props => (
   <FlexColumn className={styles.main}>
     <FlexRow>
       <TopBar />
     </FlexRow>
     <FlexRow full className={styles.content}>
-      <LeftPanel />
+      <LeftPanel {...props} />
       <Content />
       <RightPanel />
     </FlexRow>

@@ -1,4 +1,5 @@
 import React from 'react';
+import latinize from 'latinize';
 import moment from 'moment';
 import { isEmpty, map, find, forEach } from 'lodash';
 import { bindActionCreators } from 'redux';
@@ -17,26 +18,52 @@ class Buscar extends React.Component {
     actions: React.PropTypes.object,
     filterOptions: React.PropTypes.array,
     isSearching: React.PropTypes.bool,
-    searchFilter: React.PropTypes.string,
+    location: React.PropTypes.object,
     records: React.PropTypes.array,
+    searchFilter: React.PropTypes.string,
   };
+
+  componentWillMount() {
+    const { actions } = this.props;
+    const filter = this.getFilter();
+
+    if (filter) {
+      actions.changeSearchFilter(filter);
+    }
+  }
 
   componentDidMount() {
     const { actions, filterOptions, searchFilter, records, isSearching } = this.props;
+    const filter = this.getFilter() || searchFilter;
 
     if (isEmpty(records) && !isSearching && !timeoutID) {
-      if (searchFilter === 'all') {
+      if (filter === 'all') {
         forEach(filterOptions, ({ value }) => {
           if (value !== 'all') {
             actions.getEntities({ entity: value });
           }
         });
       } else {
-        actions.getEntities({ entity: searchFilter });
+        actions.getEntities({ entity: filter });
       }
 
       timeoutID = setTimeout(() => (timeoutID = null), 10000);
     }
+  }
+
+  getFilter() {
+    const { filtro } = this.props.location.query || {};
+
+    if (filtro) {
+      const { value } = find(
+        this.props.filterOptions,
+        opt => filtro === latinize(opt.text).toLowerCase(),
+      ) || {};
+
+      return value;
+    }
+
+    return null;
   }
 
   render() {

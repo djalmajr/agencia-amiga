@@ -1,9 +1,11 @@
 import cn from 'classnames';
 import React from 'react';
+import latinize from 'latinize';
+import { find } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Divider, Dropdown, Form, Header, Icon, Input, Segment } from 'semantic-ui-react';
-import actions from '~/store/actions';
+import actionCreatos from '~/store/actions';
 import selectors from '~/store/selectors';
 import FlexColumn from '~/views/components/flex-column';
 import FlexRow from '~/views/components/flex-row';
@@ -17,8 +19,22 @@ class LeftPanel extends React.Component {
     searchFilter: React.PropTypes.string,
   };
 
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired,
+  };
+
   handleFilterClick = (value) => {
-    this.props.actions.changeSearchFilter(value);
+    const { actions, filterOptions } = this.props;
+    const { text } = find(filterOptions, { value });
+    const slug = latinize(text).toLowerCase();
+
+    this.context.router.transitionTo({
+      pathname: '/buscar',
+      query: value === 'all' ? null : { filtro: slug },
+    });
+
+    actions.changeSearchFilter(value);
+    actions.getEntities({ entity: value });
   };
 
   render() {
@@ -84,7 +100,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(actions, dispatch),
+  actions: bindActionCreators(actionCreatos, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LeftPanel);

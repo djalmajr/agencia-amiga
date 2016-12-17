@@ -36,6 +36,7 @@
     "gulp-awspublish": "^3.3.0",
     "html-entities": "^1.2.0",
     "html-webpack-plugin": "^2.24.1",
+    "latinize": "^0.4.0",
     "lodash": "^4.17.2",
     "moment": "^2.16.0",
     "normalizr": "^2.2.1",

@@ -3,7 +3,7 @@ import { find } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Form, Icon, Input, Dropdown } from 'semantic-ui-react';
-import actions from '~/store/actions';
+import actionCreatos from '~/store/actions';
 import selectors from '~/store/selectors';
 import styles from './topbar-search.scss';
 
@@ -73,7 +73,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(actions, dispatch),
+  actions: bindActionCreators(actionCreatos, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBarSearch);
