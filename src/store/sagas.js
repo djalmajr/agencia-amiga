@@ -1,8 +1,8 @@
 import { fork } from 'redux-saga/effects';
-import fetchUsuarios from './modules/usuarios/sagas';
+import fetchEntities from './modules/entities/sagas';
 
 export default function* () {
   yield [
-    fork(fetchUsuarios),
+    fork(fetchEntities),
   ];
 }

@@ -1,0 +1,44 @@
+.searchForm {
+  display: flex;
+  flex: 1;
+  font-size: 1rem;
+  margin: 0 .5em;
+}
+
+.searchInput {
+  align-items: stretch;
+  color: rgba(0,0,0,0.3);
+  display: flex;
+  margin: auto;
+  z-index: 1;
+
+  & > i {
+    color: rgba(0,0,0, 0.4);
+    font-size: 0.9em;
+    margin: auto -2em auto auto;
+    z-index: 1;
+  }
+
+  & > input {
+    border: none !important;
+    background: white !important;
+    padding-left: 2.4em !important;
+    width: 20em !important;
+  }
+}
+
+.filters {
+  align-items: center;
+  background-color: white;
+  padding: .5em .8em;
+  display: flex;
+
+  & > i {
+    margin: 0 !important;
+  }
+}
+
+.filterButton {
+  background-color: darken(#2987CD, 14%) !important;
+  color: white !important;
+}

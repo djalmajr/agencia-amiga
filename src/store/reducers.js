@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
-import usuarios from './modules/usuarios/reducers';
+import application from './modules/application/reducers';
+import entities from './modules/entities/reducers';
 
 export default combineReducers({
-  usuarios,
+  application,
+  entities,
 });

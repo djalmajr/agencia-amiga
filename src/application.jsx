@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Match } from 'react-router';
-import Main from './views/layout/main';
+import Main from './views/containers/main';
 
 const Application = ({ store }) => (
   <Provider store={store}>

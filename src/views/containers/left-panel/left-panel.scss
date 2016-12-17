@@ -1,0 +1,27 @@
+.leftPanel {
+  margin-right: .8em;
+  width: 15em;
+}
+
+.menu {
+  margin: -0.5em -1em 1em;
+}
+
+.menuItem {
+  border-bottom: 1px solid transparent;
+  border-left: 5px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+  padding: .5em .7em;
+
+  &.selected {
+    background-color: #f0f0f0;
+    border-bottom-color: #ddd;
+    border-top-color: #ddd;
+    border-left-color: #2987CD;
+  }
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}

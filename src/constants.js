@@ -1,14 +1,11 @@
-// const URL = process.env.NODE_ENV === 'development' ?
-//     'http://teste.aws.audora.com.br:8080/defensoria.alagoas' :
-//     'https://defensoria.audora.com.br/alagoas';
+import firebase from 'firebase';
 
-const URL = 'http://ec2-54-91-111-216.compute-1.amazonaws.com:8080/transparencia';
-// const URL = 'https://defensoria.audora.com.br/alagoas';
-// const URL = 'http://teste.aws.audora.com.br:8080/defensoria.alagoas';
+firebase.initializeApp({
+  apiKey: 'AIzaSyAzTH_P735oVz2r5Ape5ZDj_o9RSzwl4k0',
+  authDomain: 'agencia-amiga.firebaseapp.com',
+  databaseURL: 'https://agencia-amiga.firebaseio.com',
+  storageBucket: 'agencia-amiga.appspot.com',
+  messagingSenderId: '323447297926',
+});
 
-export default {
-  Url: {
-    BASE: URL,
-    API: `${URL}/api`,
-  },
-};
+export const fb = firebase;
