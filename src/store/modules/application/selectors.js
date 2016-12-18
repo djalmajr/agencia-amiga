@@ -1,7 +1,7 @@
 // import faker from 'faker';
 import latinize from 'latinize';
 // import { createSelector } from 'reselect';
-import { merge, filter, forEach, some, values } from 'lodash';
+import { isEmpty, intersection, omit, merge, filter, forEach, some, values } from 'lodash';
 // import { getEntities } from '../entities/selectors';
 
 export const getNotification = state => merge({}, state.application.notification);
@@ -29,40 +29,46 @@ export const getSearchQuery = state =>
 export const getSearchStatus = (state) => {
   const searchFilter = getSearchFilter(state);
 
-  if (searchFilter === 'all') {
+  if (searchFilter.filter === 'all') {
     return some(values(state.entities.isFetching));
   }
 
-  return state.entities.isFetching[searchFilter];
+  return state.entities.isFetching[searchFilter.filter];
 };
 
 export const getSearchResults = (state) => {
-  let result;
+  let result, byId = {};
 
   const searchFilter = getSearchFilter(state);
   const query = getSearchQuery(state);
   const format = data => ({
-    title: data.nome,
+    title: data.name,
     meta: data.email,
     // image: data.image || faker.image.imageUrl(100, 100, 'abstract'),
     image: data.image,
-    description: data.resumo || data.descricao || '',
+    description: data.resume || data.description || '',
     created_at: data.created_at,
   });
 
-  if (searchFilter === 'all') {
-    const byId = {};
+  if (!isEmpty(searchFilter.filter)) {
+    if (searchFilter.filter === 'all') {
+      forEach(omit(state.entities.byId, ['skills']), (value, entity) => {
+        forEach(value, (val, key) => merge(byId, {
+          [key]: { ...val, entity, ...format(val) },
+        }));
+      });
 
-    forEach(state.entities.byId, (value, entity) => {
-      forEach(value, (val, key) => merge(byId, {
-        [key]: { entity, ...format(val) },
-      }));
-    });
+      result = values(byId);
+    } else {
+      byId = state.entities.byId[searchFilter.filter];
+      result = values(byId).map(val => ({ ...val, entity: searchFilter.filter, ...format(val) }));
+    }
+  }
 
-    result = values(byId);
-  } else {
-    result = values(state.entities.byId[searchFilter])
-    .map(val => ({ entity: searchFilter, ...format(val) }));
+  if (!isEmpty(searchFilter.skills)) {
+    result = filter(result, item =>
+      !!intersection(values(item.skills), searchFilter.skills).length,
+    );
   }
 
   return query ?

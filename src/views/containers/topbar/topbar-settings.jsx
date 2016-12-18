@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Form, Input, Modal } from 'semantic-ui-react';
-import FlexRow from '~/views/components/flex-row';
+import FlexElement from '~/views/components/flex-element';
 import SelectHabilidades from './topbar-settings-habilidades';
 import styles from './topbar-settings.scss';
 
@@ -71,10 +71,10 @@ class Settings extends React.Component {
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <FlexRow justify="flex-end">
+          <FlexElement justify="flex-end">
             <Button content="Fechar" style={{ marginRight: '0.8em' }} onClick={onClose} />
             <Button primary content="Salvar" icon="save" type="submit" />
-          </FlexRow>
+          </FlexElement>
         </Modal.Actions>
       </Modal>
     );

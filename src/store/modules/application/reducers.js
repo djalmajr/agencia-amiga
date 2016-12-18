@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { assign, merge } from 'lodash';
 import { combineReducers } from 'redux';
 import { handleActions } from 'redux-actions';
 
@@ -21,9 +21,9 @@ export default combineReducers({
    * Filtro que será aplicado na busca.
    */
   searchFilter: handleActions({
-    UNAUTHORIZE: () => 'all',
-    CHANGE_SEARCH_FILTER: (state, action) => action.payload,
-  }, 'all'),
+    UNAUTHORIZE: () => ({ filter: 'all' }),
+    CHANGE_SEARCH_FILTER: (state, action) => assign({}, state, action.payload),
+  }, ({ filter: 'all' })),
 
   /**
    * Termo a ser buscado.

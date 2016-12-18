@@ -1,5 +1,6 @@
 import React from 'react';
-import { find, forEach } from 'lodash';
+import latinize from 'latinize';
+import { find } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Form, Icon, Input, Dropdown } from 'semantic-ui-react';
@@ -12,54 +13,56 @@ class TopBarSearch extends React.Component {
     actions: React.PropTypes.object,
     filterOptions: React.PropTypes.array,
     isSearching: React.PropTypes.bool,
-    searchFilter: React.PropTypes.string,
+    searchFilter: React.PropTypes.object,
     searchQuery: React.PropTypes.string,
+  };
+
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired,
   };
 
   handleFilterClick = (evt, { value }) => {
     evt.preventDefault();
 
-    this.props.actions.changeSearchFilter(value);
+    this.props.actions.changeSearchFilter({ filter: value });
   };
 
   handleSearch = (evt, { query }) => {
     const { actions, searchFilter, filterOptions } = this.props;
+    const { text } = find(filterOptions, { value: searchFilter.filter });
+    const slug = latinize(text).toLowerCase();
 
     evt.preventDefault();
 
     actions.search(query);
 
-    if (searchFilter === 'all') {
-      forEach(filterOptions, ({ value }) => {
-        if (value !== 'all') {
-          actions.getEntities({ entity: value });
-        }
-      });
+    if (searchFilter.filter === 'all') {
+      actions.getAllEntities();
     } else {
-      actions.getEntities({ entity: searchFilter });
+      actions.getEntities({ entity: searchFilter.filter });
     }
+
+    this.context.router.transitionTo({
+      pathname: '/buscar',
+      query: searchFilter.filter === 'all' ? null : { filtro: slug },
+    });
   };
 
   render() {
     const { isSearching, searchQuery, searchFilter, filterOptions } = this.props;
-    const selected = find(filterOptions, { value: searchFilter });
+    const selected = find(filterOptions, { value: searchFilter.filter });
 
     return (
       <Form className={styles.searchForm} onSubmit={this.handleSearch}>
-        <Input
-          action
-          focus={false}
-          loading={isSearching}
-          className={styles.searchInput}
-        >
-          <Icon loading={isSearching} name={selected.icon} />
+        <Input action focus={false} className={styles.searchInput}>
+          <Icon name={selected.icon} />
           <input name="query" defaultValue={searchQuery} placeholder={`Buscar ${selected.text}`} />
           <Dropdown pointing="top left" icon="sliders" className={styles.filters}>
             <Dropdown.Menu>
               {filterOptions.map(option =>
                 <Dropdown.Item
                   key={option.value}
-                  selected={searchFilter === option.value}
+                  selected={searchFilter.filter === option.value}
                   icon={option.icon}
                   value={option.value}
                   text={option.text}

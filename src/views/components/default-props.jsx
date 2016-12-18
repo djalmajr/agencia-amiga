@@ -12,10 +12,6 @@ DefaultProps.propTypes = {
    */
   children: React.PropTypes.node,
 
-  // children: React.PropTypes.arrayOf(React.PropTypes.shape({
-  //     type: React.PropTypes.oneOf([Button])
-  // })),
-
   /**
    * Custom CSS.
    */
@@ -34,8 +30,8 @@ DefaultProps.propTypes = {
 };
 
 DefaultProps.defaultProps = {
-  component: 'div',
   className: '',
+  component: 'div',
   style: {},
 };
 

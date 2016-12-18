@@ -1,11 +1,27 @@
-.flex-column {
+.flex {
   display: flex;
-  flex-direction: column;
   position: relative;
+}
+
+.column {
+  flex-direction: column;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.wrap {
+  flex-wrap: wrap;
 }
 
 .full {
   flex: 1;
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .align-baseline {

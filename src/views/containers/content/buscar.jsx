@@ -1,14 +1,13 @@
 import React from 'react';
 import latinize from 'latinize';
 import moment from 'moment';
-import { isEmpty, map, find, forEach } from 'lodash';
+import { isEmpty, map, find } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Card, Icon, Image, Segment, Loader } from 'semantic-ui-react';
 import actionCreators from '~/store/actions';
 import selectors from '~/store/selectors';
-import FlexColumn from '~/views/components/flex-column';
-import FlexRow from '~/views/components/flex-row';
+import FlexElement from '~/views/components/flex-element';
 import styles from './buscar.scss';
 
 let timeoutID = null;
@@ -20,7 +19,7 @@ class Buscar extends React.Component {
     isSearching: React.PropTypes.bool,
     location: React.PropTypes.object,
     records: React.PropTypes.array,
-    searchFilter: React.PropTypes.string,
+    searchFilter: React.PropTypes.object,
   };
 
   componentWillMount() {
@@ -28,21 +27,17 @@ class Buscar extends React.Component {
     const filter = this.getFilter();
 
     if (filter) {
-      actions.changeSearchFilter(filter);
+      actions.changeSearchFilter({ filter });
     }
   }
 
   componentDidMount() {
-    const { actions, filterOptions, searchFilter, records, isSearching } = this.props;
-    const filter = this.getFilter() || searchFilter;
+    const { actions, searchFilter, records, isSearching } = this.props;
+    const filter = this.getFilter() || searchFilter.filter;
 
     if (isEmpty(records) && !isSearching && !timeoutID) {
       if (filter === 'all') {
-        forEach(filterOptions, ({ value }) => {
-          if (value !== 'all') {
-            actions.getEntities({ entity: value });
-          }
-        });
+        actions.getAllEntities();
       } else {
         actions.getEntities({ entity: filter });
       }
@@ -79,23 +74,25 @@ class Buscar extends React.Component {
 
     if (!isSearching && isEmpty(records)) {
       return (
-        <FlexColumn full align="center" justify="center" className={styles.buscar}>
+        <FlexElement column full align="center" justify="center" className={styles.buscar}>
           <Icon name="cloud" size="massive" style={{ color: 'rgba(0,0,0, 0.1)' }} />
           <span style={{ color: 'rgba(0,0,0, 0.45)' }}>
             Nenhum resultado encontrado :(
           </span>
-        </FlexColumn>
+        </FlexElement>
       );
     }
 
     return (
-      <FlexColumn full className={styles.buscar}>
-        <FlexRow align="center" className={styles.sorting}>
+      <FlexElement column full className={styles.buscar}>
+        {/*
+        <FlexElement align="center" className={styles.sorting}>
           <strong>Ordenar por:</strong>
           <a href="#/" className={styles.selected}>Mais Recente</a><span>|</span>
           <a href="#/">Mais Antigo</a><span>|</span>
           <a href="#/">Popularidade</a>
-        </FlexRow>
+        </FlexElement>
+        */}
         <Card.Group itemsPerRow={4} className={styles.cards}>
           {map(records, (record, key) => {
             const date = moment(record.created_at);
@@ -118,7 +115,7 @@ class Buscar extends React.Component {
                   </Card.Description>
                 </Card.Content>
                 <Card.Content extra>
-                  <FlexColumn align="flex-end">
+                  <FlexElement column align="flex-end">
                     {/*
                     <Rating
                       disabled
@@ -131,13 +128,13 @@ class Buscar extends React.Component {
                     <span>
                       {date.isValid() && date.fromNow()}
                     </span>
-                  </FlexColumn>
+                  </FlexElement>
                 </Card.Content>
               </Card>
             );
           })}
         </Card.Group>
-      </FlexColumn>
+      </FlexElement>
     );
   }
 }
