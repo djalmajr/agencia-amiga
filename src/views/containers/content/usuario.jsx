@@ -1,41 +1,64 @@
 import React from 'react';
-import faker from 'faker';
-import times from 'lodash/times';
+import { values } from 'lodash';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { Container, Header, Icon, Label, Segment } from 'semantic-ui-react';
+import selectors from '~/store/selectors';
+import actionCreators from '~/store/actions';
 import FlexElement from '~/views/components/flex-element';
 import styles from './usuario.scss';
 
-const Usuario = () => (
-  <Segment className={styles.usuario}>
-    <Container fluid>
-      <FlexElement column style={{ marginBottom: 30 }}>
-        <Header as="h5">
-          <Icon name="clipboard" />
-          <Header.Content>SERVIÇO</Header.Content>
-        </Header>
-        <p>{faker.lorem.sentence(20)}</p>
-      </FlexElement>
-      <FlexElement column style={{ marginBottom: 30 }}>
-        <Header as="h5">
-          <Icon name="lightbulb" />
-          <Header.Content>HABILIDADES REQUERIDAS</Header.Content>
-        </Header>
-        <Label.Group>
-          <Label>Encanador</Label>
-          <Label>Eletricista</Label>
-        </Label.Group>
-      </FlexElement>
-      <FlexElement column>
-        <Header as="h5">
-          <Icon name="clipboard" />
-          <Header.Content>DESCRIÇÃO</Header.Content>
-        </Header>
-        {times(3).map(idx =>
-          <p key={idx}>{faker.lorem.paragraph(6)}</p>,
-        )}
-      </FlexElement>
-    </Container>
-  </Segment>
-);
+class Usuario extends React.Component {
+  static propTypes = {
+    actions: React.PropTypes.object,
+    user: React.PropTypes.object,
+    skills: React.PropTypes.object,
+  };
 
-export default Usuario;
+  componentDidMount() {
+    this.props.actions.getEntities({ entity: 'users' });
+  }
+
+  render() {
+    const { user, skills } = this.props;
+
+    return (
+      <Segment className={styles.usuario}>
+        <Container fluid>
+          <FlexElement column style={{ marginBottom: 30 }}>
+            <Header as="h5">
+              <Icon name="clipboard" />
+              <Header.Content>SOBRE MIM</Header.Content>
+            </Header>
+            <p>{user.description}</p>
+          </FlexElement>
+          <FlexElement column style={{ marginBottom: 30 }}>
+            <Header as="h5">
+              <Icon name="lightbulb" />
+              <Header.Content>HABILIDADES</Header.Content>
+            </Header>
+            <Label.Group>
+              {values(user.skills).map(skillID =>
+                <Label key={skillID}>
+                  {skills[skillID]}
+                </Label>,
+              )}
+            </Label.Group>
+          </FlexElement>
+        </Container>
+      </Segment>
+    );
+  }
+}
+
+const mapStateToProps = (state, { params: { id } }) => ({
+  user: selectors.getEntities(state, 'users', id),
+  skills: selectors.getEntities(state, 'skills'),
+});
+
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(actionCreators, dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Usuario);
+

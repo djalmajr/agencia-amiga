@@ -22,6 +22,10 @@ class Buscar extends React.Component {
     searchFilter: React.PropTypes.object,
   };
 
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired,
+  };
+
   componentWillMount() {
     const { actions } = this.props;
     const filter = this.getFilter();
@@ -59,6 +63,15 @@ class Buscar extends React.Component {
     }
 
     return null;
+  }
+
+  navigateTo(entity, id) {
+    const { filterOptions } = this.props;
+    const { transitionTo } = this.context.router;
+    const { text } = find(filterOptions, { value: entity });
+    const slug = latinize(text).toLowerCase();
+
+    transitionTo(`/${slug}/${id}`);
   }
 
   render() {
@@ -99,11 +112,15 @@ class Buscar extends React.Component {
             const { icon } = find(filterOptions, { value: record.entity });
 
             return (
-              <Card key={key}>
+              <Card
+                key={key}
+                className={styles.card}
+                onClick={() => this.navigateTo(record.entity, record.id)}
+              >
                 <Card.Content>
                   {record.image ?
                     <Image floated="left" size="mini" src={record.image} /> :
-                    <Icon className={styles.cardIcon} name={icon} />
+                    <Icon className={styles.cardIcon} name={icon} color="black" />
                   }
                   <Card.Header>{record.title}</Card.Header>
                   <Card.Meta>{record.meta}</Card.Meta>

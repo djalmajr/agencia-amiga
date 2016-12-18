@@ -53,15 +53,17 @@ export const getSearchResults = (state) => {
   if (!isEmpty(searchFilter.filter)) {
     if (searchFilter.filter === 'all') {
       forEach(omit(state.entities.byId, ['skills']), (value, entity) => {
-        forEach(value, (val, key) => merge(byId, {
-          [key]: { ...val, entity, ...format(val) },
+        forEach(value, (val, id) => merge(byId, {
+          [id]: { id, ...val, entity, ...format(val) },
         }));
       });
 
       result = values(byId);
     } else {
       byId = state.entities.byId[searchFilter.filter];
-      result = values(byId).map(val => ({ ...val, entity: searchFilter.filter, ...format(val) }));
+      result = values(byId).map((val, id) =>
+        ({ id, ...val, entity: searchFilter.filter, ...format(val) }),
+      );
     }
   }
 

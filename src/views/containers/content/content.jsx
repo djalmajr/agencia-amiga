@@ -9,8 +9,8 @@ import styles from './content.scss';
 const Content = () => (
   <FlexElement column full className={styles.content}>
     <Match pattern="/buscar" component={Buscar} />
+    <Match pattern="/pessoas/:id" component={Usuario} />
     <Match pattern="/servicos/:id" component={Servico} />
-    <Match pattern="/usuarios/:id" component={Usuario} />
   </FlexElement>
 );
 
