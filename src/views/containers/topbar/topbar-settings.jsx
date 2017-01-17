@@ -1,5 +1,10 @@
 import React from 'react';
+import { values } from 'lodash';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Button, Form, Input, Modal } from 'semantic-ui-react';
+import * as actionCreators from '~/store/actions';
+import * as selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
 import SelectHabilidades from './topbar-settings-habilidades';
 import styles from './topbar-settings.scss';
@@ -7,32 +12,29 @@ import styles from './topbar-settings.scss';
 
 class Settings extends React.Component {
   static propTypes = {
+    actions: React.PropTypes.object,
     isOpen: React.PropTypes.bool,
+    skills: React.PropTypes.object,
     onClose: React.PropTypes.func,
   };
 
   state = {
-    habilidades: [
-      { text: 'Eletricista', value: 'Eletricista' },
-      { text: 'Encanador', value: 'Encanador' },
-      { text: 'Mecânico', value: 'Mecânico' },
-      { text: 'Pedreiro', value: 'Pedreiro' },
-    ],
+    selectedSkills: [],
   };
 
   handleChange = (e, { value }) => {
-    this.setState({ selectedValues: value });
+    this.setState({ selectedSkills: value });
   };
 
   handleAddItem = (e, { value }) => {
-    this.setState({
-      habilidades: [{ text: value, value }, ...this.state.habilidades],
-    });
+    const { actions } = this.props;
+
+    actions.addSkill(value);
   };
 
   render() {
-    const { isOpen, onClose } = this.props;
-    const { selectedValues, habilidades } = this.state;
+    const { isOpen, skills, onClose } = this.props;
+    const { selectedSkills } = this.state;
 
     return (
       <Modal
@@ -50,8 +52,8 @@ class Settings extends React.Component {
             <Form.Field
               required
               label="Habilidades"
-              value={selectedValues}
-              options={habilidades}
+              value={selectedSkills}
+              options={values(skills).map(skill => ({ text: skill, value: skill }))}
               onAddItem={this.handleAddItem}
               onChange={this.handleChange}
               control={SelectHabilidades}
@@ -81,4 +83,12 @@ class Settings extends React.Component {
   }
 }
 
-export default Settings;
+const mapStateToProps = state => ({
+  skills: selectors.getEntities(state, 'skills'),
+});
+
+const mapDispatchToProps = dispatch => ({
+  actions: bindActionCreators(actionCreators, dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);

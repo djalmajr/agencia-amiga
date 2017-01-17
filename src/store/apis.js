@@ -1,6 +1,10 @@
 import { createHash } from 'crypto';
-import { Url } from '../../../constants';
-import { postForm } from '../../../helpers/ajax';
+import { Url } from '~/constants';
+import { postForm } from '~/helpers/ajax';
+import { once } from '~/helpers/fbase';
+
+export const getEntities = ({ id, entity }) =>
+  once(id ? `${entity}/${id}` : entity);
 
 export const login = (username, password) => {
   const data = {

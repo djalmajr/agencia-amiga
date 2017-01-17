@@ -5,8 +5,8 @@ import { find, map } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Divider, Dropdown, Form, Header, Icon, Segment } from 'semantic-ui-react';
-import actionCreatos from '~/store/actions';
-import selectors from '~/store/selectors';
+import * as actionCreators from '~/store/actions';
+import * as selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
 import styles from './left-panel.scss';
 
@@ -133,7 +133,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(actionCreatos, dispatch),
+  actions: bindActionCreators(actionCreators, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LeftPanel);
