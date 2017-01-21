@@ -1,6 +1,5 @@
 export * from './ajax';
 export * as cnames from './cnames';
-export * from './fbase';
 export * as genID from './generate-id';
 export * as PubSub from './pubsub';
 export * as requireAuth from './require-auth';

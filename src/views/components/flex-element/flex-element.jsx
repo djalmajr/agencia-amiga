@@ -1,11 +1,10 @@
 import React from 'react';
 import cn from 'classnames';
-import shallowCompare from 'react-addons-shallow-compare';
 import cnames from '~/helpers/cnames';
 import styles from './flex-element.scss';
 import DefaultProps from '../default-props';
 
-class FlexElement extends React.Component {
+class FlexElement extends React.PureComponent {
   static propTypes = {
     ...DefaultProps.propTypes,
 
@@ -47,10 +46,6 @@ class FlexElement extends React.Component {
     ...DefaultProps.defaultProps,
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  }
-
   getClassName() {
     const classes = {
       flex: true,
@@ -69,8 +64,8 @@ class FlexElement extends React.Component {
   }
 
   render() {
-    const { children, component, style, onClick } = this.props;
-    const props = { style, className: this.getClassName(), onClick };
+    const { children, component, innerRef, style, onClick } = this.props;
+    const props = { ref: innerRef, style, className: this.getClassName(), onClick };
 
     return React.createElement(component, props, children);
   }

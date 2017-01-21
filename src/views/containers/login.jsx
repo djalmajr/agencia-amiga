@@ -12,31 +12,47 @@ class Login extends React.Component {
     actions: React.PropTypes.object,
     isLogged: React.PropTypes.bool,
     isLogging: React.PropTypes.bool,
+    isRegistering: React.PropTypes.bool,
     location: React.PropTypes.object,
   };
 
-  username = null;
-
-  password = null;
-
-  handleLogin = (evt, { username, password }) => {
+  handleLogin = (evt, { email, password }) => {
     evt.preventDefault();
 
-    const { actions, isLogging } = this.props;
+    const { actions, isLogging, isRegistering } = this.props;
 
-    if (isLogging) {
+    if (isLogging || isRegistering) {
       return;
     }
 
-    if (username && password) {
-      actions.login({ username, password });
+    if (email && password) {
+      actions.login({ email, password });
+    } else {
+      actions.notifyError('Por favor, preencha todos os campos.');
+    }
+  };
+
+  handleRegister = (evt) => {
+    evt.preventDefault();
+
+    const { actions, isLogging, isRegistering } = this.props;
+
+    if (isRegistering || isLogging) {
+      return;
+    }
+
+    const email = this.el.querySelector('[name="email"]').value;
+    const password = this.el.querySelector('[name="password"]').value;
+
+    if (email && password) {
+      actions.register({ email, password });
     } else {
       actions.notifyError('Por favor, preencha todos os campos.');
     }
   };
 
   render() {
-    const { isLogged, isLogging, location } = this.props;
+    const { isLogged, isLogging, isRegistering, location } = this.props;
     const { redirect = { pathname: '/' } } = location.state || {};
 
     if (isLogged) {
@@ -44,42 +60,54 @@ class Login extends React.Component {
     }
 
     return (
-      <FlexElement column full align="center" justify="center">
+      <FlexElement column full align="center" justify="center" innerRef={el => (this.el = el)}>
         <FlexElement column align="center">
-          <Icon name="briefcase" color="blue" style={{ fontSize: '6em' }} />
+          <Icon name="travel" color="blue" style={{ fontSize: '6em' }} />
           <span style={{ color: 'rgba(0,0,0,0.5)' }}>Agência Amiga</span>
         </FlexElement>
-        <Form style={{ marginTop: 50, width: 300 }} onSubmit={this.handleLogin}>
-          <FlexElement column>
+        <FlexElement column align="center">
+          <Form style={{ marginTop: 50, width: 300 }} onSubmit={this.handleLogin}>
             <Form.Input
-              ref={el => (this.username = el)}
               type="text"
-              name="username"
-              disabled={isLogging}
+              name="email"
+              disabled={isLogging || isRegistering}
               placeholder="Email"
             />
             <Form.Input
-              ref={el => (this.password = el)}
               type="password"
               name="password"
               placeholder="Senha"
-              disabled={isLogging}
+              disabled={isLogging || isRegistering}
             />
             <Button
               primary
+              fluid
               size="large"
               type="submit"
               style={{ margin: 0 }}
               loading={isLogging}
-              disabled={isLogging}
+              disabled={isLogging || isRegistering}
             >
               <FlexElement align="center" justify="space-between">
                 <span>{isLogging ? 'Autenticando...' : 'Entrar'}</span>
                 <Icon name="sign in" />
               </FlexElement>
             </Button>
-          </FlexElement>
-        </Form>
+          </Form>
+          <Button
+            fluid
+            size="large"
+            style={{ margin: 0, marginTop: 10 }}
+            loading={isRegistering}
+            disabled={isLogging || isRegistering}
+            onClick={this.handleRegister}
+          >
+            <FlexElement align="center" justify="space-between">
+              <span>{isRegistering ? 'Registrando...' : 'Registrar'}</span>
+              <Icon name="signup" style={{ margin: 0 }} />
+            </FlexElement>
+          </Button>
+        </FlexElement>
       </FlexElement>
     );
   }
@@ -88,6 +116,7 @@ class Login extends React.Component {
 const mapStateToProps = state => ({
   isLogged: selectors.isAuthenticated(state),
   isLogging: selectors.isAuthenticating(state),
+  isRegistering: selectors.isRegistering(state),
 });
 
 const mapDispatchToProps = dispatch => ({

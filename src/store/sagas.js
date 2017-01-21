@@ -6,10 +6,10 @@ import * as actions from './actions';
 import * as api from './apis';
 
 function* handleLogin(action) {
-  const { username, password } = action.payload;
+  const { email, password } = action.payload;
 
   try {
-    const response = yield api.login(username, password);
+    const response = yield api.login(email, password);
 
     yield put(actions.authorize(response));
   } catch (error) {
@@ -25,6 +25,19 @@ function* handleLogout() {
   } catch (error) {
     yield put(actions.notifyError(error));
     yield put(actions.unauthorize(new Error(JSON.stringify(error))));
+  }
+}
+
+function* handleRegister(action) {
+  const { email, password } = action.payload;
+
+  try {
+    const response = yield api.register(email, password);
+
+    yield put(actions.authorize(response));
+  } catch (error) {
+    yield put(actions.notifyError(error));
+    yield put(actions.authorize(new Error(JSON.stringify(error))));
   }
 }
 
@@ -76,6 +89,7 @@ function* handleGetAllEntities() {
 export default function* () {
   yield takeEvery(actions.login.toString(), handleLogin);
   yield takeEvery(actions.logout.toString(), handleLogout);
+  yield takeEvery(actions.register.toString(), handleRegister);
   yield takeEvery(actions.getEntities.toString(), handleGetEntities);
   yield takeEvery(actions.getAllEntities.toString(), handleGetAllEntities);
 }

@@ -13,6 +13,7 @@ const handleNotify = (message) => {
 // Auth
 export const login = createAction('login');
 export const logout = createAction('logout');
+export const register = createAction('register');
 export const authorize = createAction('authorize');
 export const unauthorize = createAction('unauthorize');
 

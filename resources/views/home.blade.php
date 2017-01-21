@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8">
     <title>Agência Amiga</title>
-    <link href="/css/font-awesome.min.css" rel="stylesheet" />
     <link href="/css/semantic.min.css" rel="stylesheet" />
     <style media="screen">
       html, body {

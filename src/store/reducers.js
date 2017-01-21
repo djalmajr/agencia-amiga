@@ -4,9 +4,6 @@ import { handleActions } from 'redux-actions';
 import * as actions from './actions';
 
 const application = combineReducers({
-  /**
-   * Mantém os dados do usuário.
-   */
   userData: handleActions({
     [actions.unauthorize]: () => ({}),
     [actions.authorize]: (state, action) => {
@@ -14,13 +11,10 @@ const application = combineReducers({
         return state;
       }
 
-      return merge({}, action.payload.message);
+      return merge({}, action.payload);
     },
   }, {}),
 
-  /**
-   * Indica se o login está sendo realizado.
-   */
   isAuthenticating: handleActions({
     [actions.login]: () => true,
     [actions.logout]: () => true,
@@ -28,42 +22,33 @@ const application = combineReducers({
     [actions.unauthorize]: () => false,
   }, false),
 
-  /**
-   * Notificação Global.
-   */
+  isRegistering: handleActions({
+    [actions.register]: () => true,
+    [actions.authorize]: () => false,
+    [actions.unauthorize]: () => false,
+  }, false),
+
   notification: handleActions({
     [actions.notify]: (state, action) => merge({ position: 'br', level: 'success' }, action.payload),
     [actions.notifyError]: (state, action) => merge({ position: 'br', level: 'error' }, action.payload),
   }, {}),
 
-  /**
-   * Filtro que será aplicado na busca.
-   */
   searchFilter: handleActions({
     [actions.unauthorize]: () => ({ filter: 'all' }),
     [actions.changeSearchFilter]: (state, action) => assign({}, state, action.payload),
   }, ({ filter: 'all' })),
 
-  /**
-   * Termo a ser buscado.
-   */
   searchQuery: handleActions({
     [actions.unauthorize]: () => '',
     [actions.search]: (state, action) => action.payload,
   }, ''),
 
-  /**
-   * .
-   */
   isSearching: handleActions({
     [actions.unauthorize]: () => false,
     [actions.search]: () => true,
     [actions.searchDone]: () => false,
   }, false),
 
-  /**
-   * Atualiza o estado do menu do usuário (menu do topo).
-   */
   isUserMenuVisible: handleActions({
     [actions.unauthorize]: () => false,
     [actions.toggleUserMenu]: state => !state,

@@ -1,23 +1,15 @@
-import { createHash } from 'crypto';
-import { Url } from '~/constants';
-import { postForm } from '~/helpers/ajax';
-import { once } from '~/helpers/fbase';
+import { fb } from '~/constants';
 
 export const getEntities = ({ id, entity }) =>
-  once(id ? `${entity}/${id}` : entity);
+  new Promise((resolve, reject) => {
+    fb.database()
+      .ref(id ? `${entity}/${id}` : entity).once('value')
+      .then(snapshot => resolve(snapshot.val()))
+      .catch(reject);
+  });
 
-export const login = (username, password) => {
-  const data = {
-    userName: username,
-    password: createHash('sha512').update(password).digest('hex'),
-    password2: createHash('md5').update(password).digest('hex'),
-  };
+export const login = (email, password) =>
+  fb.auth().signInWithEmailAndPassword(email, password);
 
-  return postForm(`${Url.BASE}/authorization`, data, { cors: false });
-};
-
-export const logout = () => postForm(
-  `${Url.BASE}/authorization`,
-  { action: 'logout' },
-  { cors: false },
-);
+export const register = (email, password) =>
+  fb.auth().createUserWithEmailAndPassword(email, password);
