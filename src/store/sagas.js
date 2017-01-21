@@ -2,47 +2,47 @@ import { map, filter } from 'lodash';
 import { takeEvery } from 'redux-saga';
 import { put, select } from 'redux-saga/effects';
 import * as selectors from './selectors';
-import * as Actions from './actions';
-import * as API from './apis';
+import * as actions from './actions';
+import * as api from './apis';
 
 function* handleLogin(action) {
   const { username, password } = action.payload;
 
   try {
-    const response = yield API.login(username, password);
+    const response = yield api.login(username, password);
 
-    yield put(Actions.authorize(response));
+    yield put(actions.authorize(response));
   } catch (error) {
-    yield put(Actions.notify(error));
-    yield put(Actions.authorize(new Error(JSON.stringify(error))));
+    yield put(actions.notifyError(error));
+    yield put(actions.authorize(new Error(JSON.stringify(error))));
   }
 }
 
 function* handleLogout() {
   try {
-    yield API.logout();
-    yield put(Actions.unauthorize());
+    yield api.logout();
+    yield put(actions.unauthorize());
   } catch (error) {
-    yield put(Actions.notify(error));
-    yield put(Actions.unauthorize(new Error(JSON.stringify(error))));
+    yield put(actions.notifyError(error));
+    yield put(actions.unauthorize(new Error(JSON.stringify(error))));
   }
 }
 
 function* handleGetEntities(action) {
   const { entity } = action.payload || {};
 
-  yield put(Actions.updateEntitiesStatus({ entity, status: true }));
+  yield put(actions.updateEntitiesStatus({ entity, status: true }));
 
   try {
-    const response = yield API.getEntities({ entity });
+    const response = yield api.getEntities({ entity });
 
-    yield put(Actions.updateEntitiesCache({ entity, response }));
+    yield put(actions.updateEntitiesCache({ entity, response }));
   } catch (err) {
     const error = new Error(JSON.stringify(err));
 
-    yield put(Actions.updateEntitiesCache({ entity, error }));
+    yield put(actions.updateEntitiesCache({ entity, error }));
   } finally {
-    yield put(Actions.updateEntitiesStatus({ entity, status: false }));
+    yield put(actions.updateEntitiesStatus({ entity, status: false }));
   }
 }
 
@@ -51,31 +51,31 @@ function* handleGetAllEntities() {
   const entities = map(filter(filterOptions, opt => opt.value !== 'all'), 'value');
 
   for (let i = 0, entity; (entity = entities[i]); i++) {
-    yield put(Actions.updateEntitiesStatus({ entity, status: true }));
+    yield put(actions.updateEntitiesStatus({ entity, status: true }));
   }
 
   try {
     for (let i = 0, entity; (entity = entities[i]); i++) {
-      const response = yield API.getEntities({ entity });
+      const response = yield api.getEntities({ entity });
 
-      yield put(Actions.updateEntitiesCache({ entity, response }));
+      yield put(actions.updateEntitiesCache({ entity, response }));
     }
   } catch (err) {
     const error = new Error(JSON.stringify(err));
 
     for (let i = 0, entity; (entity = entities[i]); i++) {
-      yield put(Actions.updateEntitiesCache({ entity, error }));
+      yield put(actions.updateEntitiesCache({ entity, error }));
     }
   } finally {
     for (let i = 0, entity; (entity = entities[i]); i++) {
-      yield put(Actions.updateEntitiesStatus({ entity, status: false }));
+      yield put(actions.updateEntitiesStatus({ entity, status: false }));
     }
   }
 }
 
 export default function* () {
-  yield takeEvery('asdf', handleLogin);
-  yield takeEvery('fdsa', handleLogout);
-  yield takeEvery('GET_ENTITIES', handleGetEntities);
-  yield takeEvery('GET_ALL_ENTITIES', handleGetAllEntities);
+  yield takeEvery(actions.login.toString(), handleLogin);
+  yield takeEvery(actions.logout.toString(), handleLogout);
+  yield takeEvery(actions.getEntities.toString(), handleGetEntities);
+  yield takeEvery(actions.getAllEntities.toString(), handleGetAllEntities);
 }

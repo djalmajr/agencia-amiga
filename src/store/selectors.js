@@ -16,6 +16,14 @@ export const getNotification = state => _.merge({}, state.application.notificati
 export const getUserMenuVisibility = state => state.application.isUserMenuVisible;
 
 // ==============================================
+//  Auth
+// ==============================================
+
+export const isAuthenticated = state => !_.isEmpty(state.application.userData);
+
+export const isAuthenticating = state => state.application.isAuthenticating;
+
+// ==============================================
 //  Search Selectors
 // ==============================================
 
