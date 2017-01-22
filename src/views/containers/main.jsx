@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Match, Miss } from 'react-router';
+import { Match } from 'react-router';
+import { Loader } from 'semantic-ui-react';
 import requireAuth from '~/helpers/require-auth';
 import * as selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
@@ -10,38 +11,51 @@ import Organizacao from '~/views/content/organizacao';
 import Servico from '~/views/content/servico';
 import Usuario from '~/views/content/usuario';
 import Login from './login';
-import NotFound from './not-found';
 import Notification from './notification';
 import TopBar from './topbar';
 import styles from './main.scss';
 
-const Main = props => (
-  <FlexElement column className={styles.main}>
-    <Notification />
-    {props.isAuthorized && (
-      <FlexElement>
-        <TopBar />
+const Main = ({ isAuthorized, isLoadingState }) => {
+  if (isLoadingState) {
+    return (
+      <FlexElement column full align="center" justify="center" className={styles.wrapper}>
+        <Loader active>
+          <span style={{ color: 'rgba(0,0,0, 0.45)' }}>
+            Carregando o sistema...
+          </span>
+        </Loader>
       </FlexElement>
-    )}
-    <FlexElement full className={styles.content}>
-      <Match pattern="/login" component={Login} />
-      <Match pattern="/logout" component={NotFound} />
-      <Match pattern="/buscar" component={Buscar} />
-      <Match pattern="/campanhas/:id" component={Campanha} />
-      <Match pattern="/organizacoes/:id" component={Organizacao} />
-      <Match pattern="/pessoas/:id" component={Usuario} />
-      <Match pattern="/servicos/:id" component={Servico} />
-      <Miss component={requireAuth(NotFound)} />
+    );
+  }
+
+  return (
+    <FlexElement column className={styles.wrapper}>
+      <Notification />
+      {isAuthorized && (
+        <FlexElement>
+          <TopBar />
+        </FlexElement>
+      )}
+      <FlexElement full className={styles.content}>
+        <Match pattern="/login" component={Login} />
+        <Match pattern="/buscar" component={requireAuth(Buscar)} />
+        <Match pattern="/campanhas/:id" component={requireAuth(Campanha)} />
+        <Match pattern="/organizacoes/:id" component={requireAuth(Organizacao)} />
+        <Match pattern="/pessoas/:id" component={requireAuth(Usuario)} />
+        <Match pattern="/servicos/:id" component={requireAuth(Servico)} />
+      </FlexElement>
     </FlexElement>
-  </FlexElement>
-);
+  );
+};
 
 Main.propTypes = {
   isAuthorized: React.PropTypes.bool,
+  isLoadingState: React.PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
   isAuthorized: selectors.isAuthenticated(state),
+  isLoadingState: selectors.isLoadingState(state),
 });
 
 export default connect(mapStateToProps)(Main);

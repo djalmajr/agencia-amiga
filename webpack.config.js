@@ -8,6 +8,7 @@ module.exports = {
     app: [
       'react-hot-loader/patch',
       'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr',
+      './src/overrides.scss',
       './src/index.jsx',
     ],
   },
@@ -19,6 +20,7 @@ module.exports = {
     publicPath: 'http://localhost:3000/js/',
   },
   module: {
+    noParse: /localforage.js$/,
     preLoaders: [
       { test: /\.jsx?$/, loader: 'eslint', include: /src/ },
     ],

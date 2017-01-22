@@ -11,7 +11,7 @@ function* handleLogin(action) {
   try {
     const response = yield api.login(email, password);
 
-    yield put(actions.authorize(response));
+    yield put(actions.authorize(response.toJSON()));
   } catch (error) {
     yield put(actions.notifyError(error));
     yield put(actions.authorize(new Error(JSON.stringify(error))));
@@ -34,7 +34,7 @@ function* handleRegister(action) {
   try {
     const response = yield api.register(email, password);
 
-    yield put(actions.authorize(response));
+    yield put(actions.authorize(response.toJSON()));
   } catch (error) {
     yield put(actions.notifyError(error));
     yield put(actions.authorize(new Error(JSON.stringify(error))));

@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { assign, keys, merge } from 'lodash';
 import { handleActions } from 'redux-actions';
+import { innerReducer as asyncState } from 'redux-async-initial-state';
 import * as actions from './actions';
 
 const application = combineReducers({
@@ -86,4 +87,4 @@ const entities = combineReducers({
   }, {}),
 });
 
-export default combineReducers({ application, entities });
+export default combineReducers({ asyncState, application, entities });

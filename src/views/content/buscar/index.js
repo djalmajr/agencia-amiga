@@ -1,8 +1,13 @@
 import React from 'react';
-import { Page } from '~/views/components';
+import Page from '../../components/three-columns';
 import Filters from './filters';
 import Results from './results';
 
-const Buscar = () => <Page left={Filters} content={Results} />;
+const Buscar = props => (
+  <Page
+    panel={<Filters {...props} />}
+    content={<Results {...props} />}
+  />
+);
 
 export default Buscar;

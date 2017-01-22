@@ -11,5 +11,7 @@ export const getEntities = ({ id, entity }) =>
 export const login = (email, password) =>
   fb.auth().signInWithEmailAndPassword(email, password);
 
+export const logout = () => fb.auth().signOut();
+
 export const register = (email, password) =>
   fb.auth().createUserWithEmailAndPassword(email, password);

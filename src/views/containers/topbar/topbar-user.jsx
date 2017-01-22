@@ -1,17 +1,30 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Dropdown, Icon, Image } from 'semantic-ui-react';
+import * as actionCreators from '~/store/actions';
+import * as selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
 import defaultUserImage from './user.png';
 import SettingsModal from './topbar-settings';
 import styles from './topbar-user.scss';
 
 class TopBarUser extends React.Component {
+  static propTypes = {
+    onLogout: React.PropTypes.func,
+  };
+
   state = {
     isSettingsVisible: false,
   }
 
   handleSettingsToggle = () => {
     this.setState({ isSettingsVisible: !this.state.isSettingsVisible });
+  };
+
+  handleLogout = (evt) => {
+    evt.preventDefault();
+
+    this.props.onLogout();
   };
 
   render() {
@@ -34,7 +47,7 @@ class TopBarUser extends React.Component {
         <Dropdown icon={null} trigger={trigger} pointing="top right">
           <Dropdown.Menu>
             <Dropdown.Item text="Configurações" icon="settings" onClick={this.handleSettingsToggle} />
-            <Dropdown.Item text="Sair" icon="sign out" />
+            <Dropdown.Item text="Sair" icon="sign out" onClick={this.handleLogout} />
           </Dropdown.Menu>
         </Dropdown>
         <SettingsModal {...settingsProps} />
@@ -43,4 +56,12 @@ class TopBarUser extends React.Component {
   }
 }
 
-export default TopBarUser;
+const mapStateToProps = state => ({
+  user: selectors.getUserData(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+  onLogout: () => dispatch(actionCreators.logout()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(TopBarUser);

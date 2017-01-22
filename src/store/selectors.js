@@ -11,9 +11,10 @@ const format = data => ({
   created_at: data.created_at,
 });
 
+export const isLoadingState = state => state.asyncState.loading;
 export const getNotification = state => state.application.notification;
-
 export const getUserMenuVisibility = state => state.application.isUserMenuVisible;
+export const getUserData = state => state.application.userData;
 
 // ==============================================
 //  Auth

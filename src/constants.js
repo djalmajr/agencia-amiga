@@ -9,3 +9,7 @@ firebase.initializeApp({
 });
 
 export const fb = firebase;
+
+export const Cache = {
+  KEY: 'AGENCIA_AMIGA_STATE',
+};
