@@ -1,81 +1,191 @@
 import React from 'react';
-import { values } from 'lodash';
+import { isEmpty, values } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Button, Form, Input, Modal } from 'semantic-ui-react';
+import { Button, Form, Modal } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
 import * as selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
-import SelectHabilidades from './topbar-settings-habilidades';
 import styles from './topbar-settings.scss';
-
 
 class Settings extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
     isOpen: React.PropTypes.bool,
+    isUpdating: React.PropTypes.bool,
+    requiredFields: React.PropTypes.array,
     skills: React.PropTypes.object,
+    user: React.PropTypes.object,
     onClose: React.PropTypes.func,
   };
 
-  state = {
-    selectedSkills: [],
-  };
+  constructor(props) {
+    super(props);
 
-  handleChange = (e, { value }) => {
-    this.setState({ selectedSkills: value });
-  };
+    this.state = this.initialState;
+  }
+
+  get initialState() {
+    const { user } = this.props;
+
+    return {
+      formData: {
+        displayName: user.displayName || '',
+        state: user.state || '',
+        city: user.city || '',
+        skills: user.skills || [],
+      },
+    };
+  }
 
   handleAddItem = (e, { value }) => {
     const { actions } = this.props;
 
-    actions.addSkill(value);
+    actions.save(value);
   };
 
+  handleChange = (e, { name, value }) => {
+    const { formData } = this.state;
+
+    formData[name] = value;
+
+    this.setState({ formData });
+  };
+
+  handleClose = () => {
+    const { user, onClose } = this.props;
+
+    if (this.isValid(user)) {
+      this.setState(this.initialState, onClose);
+    }
+  };
+
+  handleSubmit = (evt) => {
+    const { formData } = this.state;
+    const { actions, user } = this.props;
+
+    evt.preventDefault();
+
+    if (this.isValid(formData)) {
+      actions.updateProfile({ ...user, ...formData });
+    }
+  }
+
+  isValid(data) {
+    const isValid = !this.props.requiredFields
+      .map(attr => data[attr])
+      .some(val => isEmpty(val));
+
+    if (!isValid) {
+      this.props.actions.notifyError(data.uid ?
+        'É completar os seus dados antes de continuar' :
+        'É necessário preencher os campos obrigatórios',
+      );
+    }
+
+    if (data.password && data.password !== data.password2) {
+      this.props.actions.notifyError('As senhas não conferem.');
+    }
+
+    return isValid;
+  }
+
   render() {
-    const { isOpen, skills, onClose } = this.props;
-    const { selectedSkills } = this.state;
+    const { isOpen, isUpdating, skills } = this.props;
+    const { formData } = this.state;
 
     return (
       <Modal
         open={isOpen}
         closeOnRootNodeClick={false}
         className={styles.settings}
-        onClose={onClose}
+        onClose={this.handleClose}
       >
         <Modal.Header>
           Configurações
         </Modal.Header>
         <Modal.Content>
-          <Form>
-            <Form.Input required label="Nome Completo" name="nome" placeholder="Ex.: José Cícero" />
-            <Form.Field
+          <Form ref={el => (this.form = el)}>
+            <Form.Input
               required
+              name="displayName"
+              label="Nome Completo"
+              placeholder="Ex.: José Cícero"
+              disabled={isUpdating}
+              value={formData.displayName}
+              onChange={this.handleChange}
+            />
+            <Form.Select
+              fluid
+              search
+              required
+              multiple
+              selection
+              allowAdditions
+              name="skills"
               label="Habilidades"
-              value={selectedSkills}
+              placeholder="Digite suas habilidades"
+              noResultsMessage="Nenhum resultado encontrado"
+              disabled={isUpdating}
+              value={formData.skills}
               options={values(skills).map(skill => ({ text: skill, value: skill }))}
               onAddItem={this.handleAddItem}
               onChange={this.handleChange}
-              control={SelectHabilidades}
             />
             <Form.Group widths="equal">
-              <Form.Input required label="Estado" name="estado" placeholder="Ex.: Alagoas" />
-              <Form.Input required label="Cidade" name="cidade" placeholder="Ex.: Maceió" />
+              <Form.Input
+                required
+                name="state"
+                label="Estado"
+                placeholder="Ex.: Alagoas"
+                disabled={isUpdating}
+                value={formData.state}
+                onChange={this.handleChange}
+              />
+              <Form.Input
+                required
+                name="city"
+                label="Cidade"
+                placeholder="Ex.: Maceió"
+                disabled={isUpdating}
+                value={formData.city}
+                onChange={this.handleChange}
+              />
             </Form.Group>
-            <Form.Group widths="equal">
-              <Form.Field>
-                <label htmlFor="js-senha-atual">Senha Atual</label>
-                <Input type="senha" placeholder="******" />
-                <small>Obs.: Deixe em branco para não alterar</small>
-              </Form.Field>
-              <Form.Input label="Nova Senha" name="senha2" placeholder="******" />
-            </Form.Group>
+            {/*
+              <Form.Group widths="equal">
+                <Form.Field disabled={isUpdating}>
+                  <label htmlFor>Senha Atual</label>
+                  <Form.Input name="password" type="password" placeholder="******" />
+                  <small>Obs.: Deixe em branco para não alterar</small>
+                </Form.Field>
+                <Form.Input
+                  name="password2"
+                  type="password"
+                  label="Nova Senha"
+                  placeholder="******"
+                  disabled={isUpdating}
+                />
+              </Form.Group>
+            */}
           </Form>
         </Modal.Content>
         <Modal.Actions>
           <FlexElement justify="flex-end">
-            <Button content="Fechar" style={{ marginRight: '0.8em' }} onClick={onClose} />
-            <Button primary content="Salvar" icon="save" type="submit" />
+            <Button
+              content="Fechar"
+              style={{ marginRight: '0.8em' }}
+              disabled={isUpdating}
+              onClick={this.handleClose}
+            />
+            <Button
+              primary
+              content="Salvar"
+              icon="save"
+              loading={isUpdating}
+              disabled={isUpdating}
+              onClick={this.handleSubmit}
+            />
           </FlexElement>
         </Modal.Actions>
       </Modal>
@@ -84,6 +194,7 @@ class Settings extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  isUpdating: selectors.isUpdatingProfile(state),
   skills: selectors.read(state, 'skills'),
 });
 

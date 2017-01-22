@@ -1,4 +1,6 @@
 import React from 'react';
+import { isEmpty } from 'lodash';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Dropdown, Icon, Image } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
@@ -8,13 +10,22 @@ import defaultUserImage from './user.png';
 import SettingsModal from './topbar-settings';
 import styles from './topbar-user.scss';
 
+const requiredFields = ['displayName', 'state', 'city', 'skills'];
+
 class TopBarUser extends React.Component {
   static propTypes = {
-    onLogout: React.PropTypes.func,
+    actions: React.PropTypes.object,
+    user: React.PropTypes.object,
   };
 
-  state = {
-    isSettingsVisible: false,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isSettingsVisible: requiredFields
+        .map(attr => props.user[attr])
+        .some(val => isEmpty(val)),
+    };
   }
 
   handleSettingsToggle = () => {
@@ -24,11 +35,13 @@ class TopBarUser extends React.Component {
   handleLogout = (evt) => {
     evt.preventDefault();
 
-    this.props.onLogout();
+    this.props.actions.logout();
   };
 
   render() {
     const settingsProps = {
+      requiredFields,
+      user: this.props.user,
       isOpen: this.state.isSettingsVisible,
       onClose: this.handleSettingsToggle,
     };
@@ -57,11 +70,11 @@ class TopBarUser extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  user: selectors.getUserData(state),
+  user: selectors.getUser(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  onLogout: () => dispatch(actionCreators.logout()),
+  actions: bindActionCreators(actionCreators, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBarUser);

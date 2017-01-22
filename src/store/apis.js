@@ -7,17 +7,11 @@ export const read = ref =>
       .catch(reject);
   });
 
-export const create = (ref, data) =>
-  new Promise((resolve, reject) => {
-    fb.database().ref(ref).set(data)
-      .then(res => resolve(res.val()))
-      .catch(reject);
-  });
-
-export const login = (email, password) =>
-  fb.auth().signInWithEmailAndPassword(email, password);
-
+export const save = (ref, data) => fb.database().ref(ref).set(data);
+export const saveAll = updates => fb.database().ref().update(updates);
+export const updateProfile = data => fb.auth().currentUser.updateProfile(data);
+export const updatePassword = data => fb.auth().currentUser.updatePassword(data);
+export const login = (email, password) => fb.auth().signInWithEmailAndPassword(email, password);
 export const logout = () => fb.auth().signOut();
-
 export const register = (email, password) =>
   fb.auth().createUserWithEmailAndPassword(email, password);

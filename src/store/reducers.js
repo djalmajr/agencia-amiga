@@ -4,18 +4,15 @@ import { handleActions } from 'redux-actions';
 import { innerReducer as asyncState } from 'redux-async-initial-state';
 import * as actions from './actions';
 
+const handleUpdateUser = (state, action) => {
+  if (action.error) {
+    return state;
+  }
+
+  return merge({}, state, action.payload);
+};
+
 const application = combineReducers({
-  userData: handleActions({
-    [actions.unauthorize]: () => ({}),
-    [actions.authorize]: (state, action) => {
-      if (action.error) {
-        return state;
-      }
-
-      return merge({}, action.payload);
-    },
-  }, {}),
-
   isAuthenticating: handleActions({
     [actions.login]: () => true,
     [actions.logout]: () => true,
@@ -29,9 +26,27 @@ const application = combineReducers({
     [actions.unauthorize]: () => false,
   }, false),
 
+  isSearching: handleActions({
+    [actions.unauthorize]: () => false,
+    [actions.search]: () => true,
+    [actions.searchDone]: () => false,
+  }, false),
+
+  isUpdatingProfile: handleActions({
+    [actions.unauthorize]: () => false,
+    [actions.updateProfileStatus]: (state, action) => action.payload,
+  }, false),
+
+  isUserMenuVisible: handleActions({
+    [actions.unauthorize]: () => false,
+    [actions.toggleUserMenu]: state => !state,
+  }, false),
+
   notification: handleActions({
     [actions.notify]: (state, action) => merge({ position: 'br', level: 'success' }, action.payload),
     [actions.notifyError]: (state, action) => merge({ position: 'br', level: 'error' }, action.payload),
+    [actions.notifyInfo]: (state, action) => merge({ position: 'br', level: 'info' }, action.payload),
+    [actions.notifyWarning]: (state, action) => merge({ position: 'br', level: 'warning' }, action.payload),
   }, {}),
 
   searchFilter: handleActions({
@@ -44,16 +59,11 @@ const application = combineReducers({
     [actions.search]: (state, action) => action.payload,
   }, ''),
 
-  isSearching: handleActions({
-    [actions.unauthorize]: () => false,
-    [actions.search]: () => true,
-    [actions.searchDone]: () => false,
-  }, false),
-
-  isUserMenuVisible: handleActions({
-    [actions.unauthorize]: () => false,
-    [actions.toggleUserMenu]: state => !state,
-  }, false),
+  user: handleActions({
+    [actions.unauthorize]: () => ({}),
+    [actions.authorize]: handleUpdateUser,
+    [actions.updateUserCache]: handleUpdateUser,
+  }, {}),
 });
 
 const entities = combineReducers({

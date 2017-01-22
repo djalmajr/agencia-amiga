@@ -12,15 +12,16 @@ const format = data => ({
 });
 
 export const isLoadingState = state => state.asyncState.loading;
+export const isUpdatingProfile = state => state.application.isUpdatingProfile;
 export const getNotification = state => state.application.notification;
 export const getUserMenuVisibility = state => state.application.isUserMenuVisible;
-export const getUserData = state => state.application.userData;
+export const getUser = state => state.application.user;
 
 // ==============================================
 //  Auth
 // ==============================================
 
-export const isAuthenticated = state => !_.isEmpty(state.application.userData);
+export const isAuthenticated = state => !_.isEmpty(state.application.user);
 export const isAuthenticating = state => state.application.isAuthenticating;
 export const isRegistering = state => state.application.isRegistering;
 
