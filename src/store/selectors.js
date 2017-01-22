@@ -33,7 +33,7 @@ export const getFilterOptions = () => [
   { text: 'Todos', value: 'all', icon: 'globe' },
   { text: 'Organizações', value: 'organizations', icon: 'university' },
   { text: 'Serviços', value: 'services', icon: 'wrench' },
-  { text: 'Pessoas', value: 'users', icon: 'user' },
+  { text: 'Voluntários', value: 'users', icon: 'user' },
   { text: 'Campanhas', value: 'campaigns', icon: 'bullhorn' },
 ];
 

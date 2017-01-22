@@ -2,7 +2,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
-import { Button, Form, Icon } from 'semantic-ui-react';
+import { Button, Divider, Form, Icon, Segment } from 'semantic-ui-react';
 import FlexElement from '~/views/components/flex-element';
 import * as selectors from '~/store/selectors';
 import * as actionCreators from '~/store/actions';
@@ -16,9 +16,18 @@ class Login extends React.Component {
     location: React.PropTypes.object,
   };
 
+  state = {
+    role: 'volunteer',
+  };
+
+  handleChange = (evt, { name, value }) => {
+    this.setState({ [name]: value });
+  };
+
   handleLogin = (evt, { email, password }) => {
     evt.preventDefault();
 
+    const { role } = this.state;
     const { actions, isLogging, isRegistering } = this.props;
 
     if (isLogging || isRegistering) {
@@ -26,7 +35,7 @@ class Login extends React.Component {
     }
 
     if (email && password) {
-      actions.login({ email, password });
+      actions.login({ email, password, role });
     } else {
       actions.notifyError('Por favor, preencha todos os campos.');
     }
@@ -35,6 +44,7 @@ class Login extends React.Component {
   handleRegister = (evt) => {
     evt.preventDefault();
 
+    const { role } = this.state;
     const { actions, isLogging, isRegistering } = this.props;
 
     if (isRegistering || isLogging) {
@@ -45,13 +55,14 @@ class Login extends React.Component {
     const password = this.el.querySelector('[name="password"]').value;
 
     if (email && password) {
-      actions.register({ email, password });
+      actions.register({ email, password, role });
     } else {
       actions.notifyError('Por favor, preencha todos os campos.');
     }
   };
 
   render() {
+    const { role } = this.state;
     const { isLogged, isLogging, isRegistering, location } = this.props;
     const { redirect = { pathname: '/' } } = location.state || {};
 
@@ -63,10 +74,13 @@ class Login extends React.Component {
       <FlexElement column full align="center" justify="center" innerRef={el => (this.el = el)}>
         <FlexElement column align="center">
           <Icon name="travel" color="blue" style={{ fontSize: '6em' }} />
-          <span style={{ color: 'rgba(0,0,0,0.5)' }}>Agência Amiga</span>
+          <span style={{ color: 'rgba(0,0,0,0.5)', fontSize: '1.3em' }}>Agência Amiga</span>
         </FlexElement>
-        <FlexElement column align="center">
-          <Form style={{ marginTop: 50, width: 300 }} onSubmit={this.handleLogin}>
+        <Segment column align="center" as={FlexElement} style={{ marginTop: 30, width: 300 }}>
+          <Form style={{ marginBottom: '1em', width: '100%' }} onSubmit={this.handleLogin}>
+            <Form.Field>
+              <label htmlFor>Login</label>
+            </Form.Field>
             <Form.Input
               type="text"
               name="email"
@@ -94,6 +108,32 @@ class Login extends React.Component {
               </FlexElement>
             </Button>
           </Form>
+          <Divider horizontal style={{ width: '100%' }}>ou</Divider>
+          <Form style={{ marginTop: '1em', width: '100%' }} >
+            <Form.Field>
+              <label htmlFor>Cadastre-se como:</label>
+            </Form.Field>
+            <Form.Group widths="equal">
+              <Form.Checkbox
+                radio
+                name="role"
+                label="Voluntário"
+                value="volunteer"
+                checked={role === 'volunteer'}
+                disabled={isLogging || isRegistering}
+                onChange={this.handleChange}
+              />
+              <Form.Checkbox
+                radio
+                name="role"
+                label="Organização"
+                value="organization"
+                checked={role === 'organization'}
+                disabled={isLogging || isRegistering}
+                onChange={this.handleChange}
+              />
+            </Form.Group>
+          </Form>
           <Button
             fluid
             size="large"
@@ -107,7 +147,7 @@ class Login extends React.Component {
               <Icon name="signup" style={{ margin: 0 }} />
             </FlexElement>
           </Button>
-        </FlexElement>
+        </Segment>
       </FlexElement>
     );
   }

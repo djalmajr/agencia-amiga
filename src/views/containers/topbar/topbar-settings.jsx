@@ -1,5 +1,5 @@
+import _ from 'lodash';
 import React from 'react';
-import { isEmpty, values, merge } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Form, Modal } from 'semantic-ui-react';
@@ -26,18 +26,21 @@ class Settings extends React.PureComponent {
     this.state = this.initialState;
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.skills !== this.state.skills) {
-  //     this.setState({ isCreatingSkill: false });
-  //   }
-  // }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.skills !== this.state.skills) {
+      this.setState({
+        isCreatingSkill: false,
+        skills: _.merge({}, nextProps.skills),
+      });
+    }
+  }
 
   get initialState() {
     const { skills, user } = this.props;
 
     return {
       isCreatingSkill: false,
-      skills: merge({}, skills),
+      skills: _.merge({}, skills),
       formData: {
         name: user.name || '',
         state: user.state || '',
@@ -47,27 +50,27 @@ class Settings extends React.PureComponent {
     };
   }
 
-  handleAddItem = (e, { value }) => {
-    const { skills } = this.state;
-
-    if (!skills[value]) {
-      const uid = genUID('skills');
-
-      skills[uid] = { uid, name: value };
-
-      console.log(skills[uid]);
-      this.setState({ skills }, () => {
-        this.props.actions.save('skills', skills[uid]);
-      });
-    }
-  };
-
   handleChange = (e, { name, value }) => {
-    const { formData } = this.state;
+    const { skills } = this.state;
+    const formData = _.merge({}, this.state.formData);
+
+    if (name === 'skills') {
+      const newSkill = _.remove(value, attr => !skills[attr])[0];
+
+      if (newSkill) {
+        const uid = genUID('skills');
+
+        skills[uid] = { uid, name: newSkill };
+
+        this.setState({ skills }, () => {
+          this.props.actions.save('skills', skills[uid]);
+        });
+
+        value.push(uid);
+      }
+    }
 
     formData[name] = value;
-
-    console.log(formData, name, value);
 
     this.setState({ formData });
   };
@@ -94,11 +97,11 @@ class Settings extends React.PureComponent {
   isValid(data) {
     const isValid = !this.props.requiredFields
       .map(attr => data[attr])
-      .some(val => isEmpty(val));
+      .some(val => _.isEmpty(val));
 
     if (!isValid) {
       this.props.actions.notifyError(data.uid ?
-        'É completar os seus dados antes de continuar' :
+        'É necessário completar os seus dados antes de continuar' :
         'É necessário preencher os campos obrigatórios',
       );
     }
@@ -113,6 +116,7 @@ class Settings extends React.PureComponent {
   render() {
     const { isOpen, isUpdating } = this.props;
     const { formData, skills, isCreatingSkill } = this.state;
+    const options = _.values(skills).map(({ uid, name }) => ({ text: name, value: uid }));
 
     return (
       <Modal
@@ -149,8 +153,7 @@ class Settings extends React.PureComponent {
               disabled={isUpdating}
               loading={isCreatingSkill}
               value={formData.skills}
-              options={values(skills).map(({ uid, name }) => ({ text: name, value: uid }))}
-              onAddItem={this.handleAddItem}
+              options={options}
               onChange={this.handleChange}
             />
             <Form.Group widths="equal">

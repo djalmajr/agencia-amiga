@@ -1,7 +1,6 @@
 import { map, filter } from 'lodash';
 import { takeEvery } from 'redux-saga';
 import { put, select } from 'redux-saga/effects';
-import genUID from '~/helpers/gen-uid';
 import * as selectors from './selectors';
 import * as actions from './actions';
 import * as api from './apis';
@@ -14,7 +13,7 @@ function* handleLogin(action) {
     const auth = response.toJSON();
     const user = yield api.read(`/users/${auth.uid}`);
 
-    yield put(actions.authorize(user));
+    yield put(actions.authorize({ ...auth, ...user }));
   } catch (error) {
     yield put(actions.notifyError(error));
     yield put(actions.authorize(new Error(JSON.stringify(error))));
@@ -32,14 +31,15 @@ function* handleLogout() {
 }
 
 function* handleRegister(action) {
-  const { email, password } = action.payload;
+  const { email, password, role } = action.payload;
 
   try {
     const response = yield api.register(email, password);
     const auth = response.toJSON();
+    const user = { uid: auth.uid, email, role };
 
-    yield api.save(`/users/${auth.uid}`, { uid: auth.uid });
-    yield put(actions.authorize(auth));
+    yield api.save('users', user);
+    yield put(actions.authorize({ ...auth, ...user }));
   } catch (err) {
     const error = JSON.parse(JSON.stringify(err));
     const message = err.code === 'PERMISSION_DENIED' ?
@@ -48,19 +48,19 @@ function* handleRegister(action) {
 
     console.error(err, error); // eslint-disable-line
 
-    yield put(actions.notifyError(message));
+    yield put(actions.notifyError(error.message || message));
     yield put(actions.authorize(err));
   }
 }
 
 function* handleReadError(err, showNotification = true) {
-  const { code } = JSON.parse(JSON.stringify(err));
-  const message = code === 'PERMISSION_DENIED' ?
+  const error = JSON.parse(JSON.stringify(err));
+  const message = error.code === 'PERMISSION_DENIED' ?
     'Sua sessão expirou. Por favor, faça login novamente' :
     'Ocorreu um erro ao tentar realizar a ação solicitada. Por favor, tente novamente.';
 
   if (showNotification) {
-    yield put(actions.notifyError(message));
+    yield put(actions.notifyError(error.message || message));
   }
 
   yield put(actions.updateCache(err));
@@ -109,10 +109,6 @@ function* handleSave(action) {
   const { ref, data } = action.payload || {};
 
   try {
-    if (!data.uid) {
-      data.uid = yield genUID(ref);
-    }
-
     yield api.save(ref, data);
     yield put(actions.updateCache({ entity: ref, response: { [data.uid]: data } }));
   } catch (err) {

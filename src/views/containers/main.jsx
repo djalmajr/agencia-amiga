@@ -41,7 +41,7 @@ const Main = ({ isAuthorized, isLoadingState }) => {
         <Match pattern="/buscar" component={requireAuth(Buscar)} />
         <Match pattern="/campanhas/:id" component={requireAuth(Campanha)} />
         <Match pattern="/organizacoes/:id" component={requireAuth(Organizacao)} />
-        <Match pattern="/pessoas/:id" component={requireAuth(Usuario)} />
+        <Match pattern="/voluntarios/:id" component={requireAuth(Usuario)} />
         <Match pattern="/servicos/:id" component={requireAuth(Servico)} />
       </FlexElement>
     </FlexElement>
