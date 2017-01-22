@@ -1,14 +1,15 @@
 import React from 'react';
-import { isEmpty, values } from 'lodash';
+import { isEmpty, values, merge } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Form, Modal } from 'semantic-ui-react';
+import genUID from '~/helpers/gen-uid';
 import * as actionCreators from '~/store/actions';
 import * as selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
 import styles from './topbar-settings.scss';
 
-class Settings extends React.Component {
+class Settings extends React.PureComponent {
   static propTypes = {
     actions: React.PropTypes.object,
     isOpen: React.PropTypes.bool,
@@ -25,12 +26,20 @@ class Settings extends React.Component {
     this.state = this.initialState;
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.skills !== this.state.skills) {
+  //     this.setState({ isCreatingSkill: false });
+  //   }
+  // }
+
   get initialState() {
-    const { user } = this.props;
+    const { skills, user } = this.props;
 
     return {
+      isCreatingSkill: false,
+      skills: merge({}, skills),
       formData: {
-        displayName: user.displayName || '',
+        name: user.name || '',
         state: user.state || '',
         city: user.city || '',
         skills: user.skills || [],
@@ -39,15 +48,26 @@ class Settings extends React.Component {
   }
 
   handleAddItem = (e, { value }) => {
-    const { actions } = this.props;
+    const { skills } = this.state;
 
-    actions.save(value);
+    if (!skills[value]) {
+      const uid = genUID('skills');
+
+      skills[uid] = { uid, name: value };
+
+      console.log(skills[uid]);
+      this.setState({ skills }, () => {
+        this.props.actions.save('skills', skills[uid]);
+      });
+    }
   };
 
   handleChange = (e, { name, value }) => {
     const { formData } = this.state;
 
     formData[name] = value;
+
+    console.log(formData, name, value);
 
     this.setState({ formData });
   };
@@ -62,12 +82,12 @@ class Settings extends React.Component {
 
   handleSubmit = (evt) => {
     const { formData } = this.state;
-    const { actions, user } = this.props;
+    const { actions, user: { uid, email } } = this.props;
 
     evt.preventDefault();
 
     if (this.isValid(formData)) {
-      actions.updateProfile({ ...user, ...formData });
+      actions.updateProfile({ ...formData, uid, email });
     }
   }
 
@@ -91,8 +111,8 @@ class Settings extends React.Component {
   }
 
   render() {
-    const { isOpen, isUpdating, skills } = this.props;
-    const { formData } = this.state;
+    const { isOpen, isUpdating } = this.props;
+    const { formData, skills, isCreatingSkill } = this.state;
 
     return (
       <Modal
@@ -108,11 +128,11 @@ class Settings extends React.Component {
           <Form ref={el => (this.form = el)}>
             <Form.Input
               required
-              name="displayName"
+              name="name"
               label="Nome Completo"
               placeholder="Ex.: José Cícero"
               disabled={isUpdating}
-              value={formData.displayName}
+              value={formData.name}
               onChange={this.handleChange}
             />
             <Form.Select
@@ -127,8 +147,9 @@ class Settings extends React.Component {
               placeholder="Digite suas habilidades"
               noResultsMessage="Nenhum resultado encontrado"
               disabled={isUpdating}
+              loading={isCreatingSkill}
               value={formData.skills}
-              options={values(skills).map(skill => ({ text: skill, value: skill }))}
+              options={values(skills).map(({ uid, name }) => ({ text: name, value: uid }))}
               onAddItem={this.handleAddItem}
               onChange={this.handleChange}
             />

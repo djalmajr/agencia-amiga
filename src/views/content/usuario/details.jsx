@@ -40,7 +40,7 @@ class Details extends React.Component {
             <Label.Group>
               {values(user.skills).map(skillID =>
                 <Label key={skillID}>
-                  {skills[skillID]}
+                  {skills[skillID].name}
                 </Label>,
               )}
             </Label.Group>

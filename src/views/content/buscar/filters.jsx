@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import React from 'react';
 import latinize from 'latinize';
-import { find, map } from 'lodash';
+import { find, values } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Divider, Dropdown, Form, Header, Icon, Segment } from 'semantic-ui-react';
@@ -97,8 +97,8 @@ class Filters extends React.Component {
                 selection
                 disabled={isSearching}
                 ref={el => (this.dropdown = el)}
-                noResultsMessage="......... ¯\_(ツ)_/¯ ........"
-                options={map(skills, (text, value) => ({ text, value }))}
+                noResultsMessage="Nenhum registro encontrado"
+                options={values(skills).map(({ name, uid }) => ({ text: name, value: uid }))}
                 placeholder="Habilidades..."
               />
               {/*

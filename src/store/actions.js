@@ -33,7 +33,7 @@ export const updateUserCache = createAction('update-user-cache');
 // Entity Actions
 export const read = createAction('read');
 export const readAll = createAction('read-all');
-export const save = createAction('save');
+export const save = createAction('save', (ref, data) => ({ ref, data }));
 export const saveAll = createAction('save-all');
 export const updateCache = createAction('update-cache');
 export const updateStatus = createAction('update-status');

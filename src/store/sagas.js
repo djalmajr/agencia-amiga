@@ -1,6 +1,7 @@
 import { map, filter } from 'lodash';
 import { takeEvery } from 'redux-saga';
 import { put, select } from 'redux-saga/effects';
+import genUID from '~/helpers/gen-uid';
 import * as selectors from './selectors';
 import * as actions from './actions';
 import * as api from './apis';
@@ -13,7 +14,7 @@ function* handleLogin(action) {
     const auth = response.toJSON();
     const user = yield api.read(`/users/${auth.uid}`);
 
-    yield put(actions.authorize({ ...auth, ...user }));
+    yield put(actions.authorize(user));
   } catch (error) {
     yield put(actions.notifyError(error));
     yield put(actions.authorize(new Error(JSON.stringify(error))));
@@ -105,49 +106,42 @@ function* handleReadAll() {
 }
 
 function* handleSave(action) {
-  const { entity } = action.payload || {};
-
-  yield put(actions.updateStatus({ entity, status: true }));
+  const { ref, data } = action.payload || {};
 
   try {
-    const response = yield api.save(entity);
+    if (!data.uid) {
+      data.uid = yield genUID(ref);
+    }
 
-    yield put(actions.updateCache({ entity, response }));
+    yield api.save(ref, data);
+    yield put(actions.updateCache({ entity: ref, response: { [data.uid]: data } }));
   } catch (err) {
     console.log(err); // eslint-disable-line
     yield put(actions.notifyError(err));
-    yield put(actions.updateCache(err));
-  } finally {
-    yield put(actions.updateStatus({ entity, status: false }));
+    yield put(actions.save(err));
   }
 }
 
-function* handleUpdateProfile(action) {
-  const {
-    city,
-    displayName,
-    password,
-    skills,
-    state,
-    uid,
-  } = action.payload;
+function* handleUpdateProfile({ payload }) {
+  const { password, ...user } = payload;
 
   yield put(actions.updateProfileStatus(true));
 
   try {
-    yield api.updateProfile({ displayName });
-    yield api.save(`/users/${uid}`, { uid, skills, state, city });
+    yield api.updateProfile({ displayName: payload.name });
+    yield api.save('users', user);
 
     if (password) {
       yield api.updatePassword(password);
     }
 
     yield put(actions.notify('Dados atualizados!'));
-    yield put(actions.updateUserCache(action.payload));
+    yield put(actions.updateUserCache(user));
+    yield put(actions.updateCache({ entity: 'users', response: { [user.uid]: user } }));
   } catch (err) {
     console.log(err); // eslint-disable-line
     yield put(actions.notifyError(err));
-    yield put(actions.updateUserCache(err));
+    yield put(actions.updateProfile(err));
   } finally {
     yield put(actions.updateProfileStatus(false));
   }

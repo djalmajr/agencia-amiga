@@ -7,7 +7,7 @@ export const read = ref =>
       .catch(reject);
   });
 
-export const save = (ref, data) => fb.database().ref(ref).set(data);
+export const save = (ref, data) => fb.database().ref(data.uid ? `${ref}/${data.uid}` : ref).set(data);
 export const saveAll = updates => fb.database().ref().update(updates);
 export const updateProfile = data => fb.auth().currentUser.updateProfile(data);
 export const updatePassword = data => fb.auth().currentUser.updatePassword(data);

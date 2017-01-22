@@ -10,7 +10,7 @@ import defaultUserImage from './user.png';
 import SettingsModal from './topbar-settings';
 import styles from './topbar-user.scss';
 
-const requiredFields = ['displayName', 'state', 'city', 'skills'];
+const requiredFields = ['name', 'state', 'city', 'skills'];
 
 class TopBarUser extends React.Component {
   static propTypes = {
