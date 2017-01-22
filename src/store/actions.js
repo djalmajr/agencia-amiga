@@ -26,7 +26,7 @@ export const changeSearchFilter = createAction('change-search-filter');
 export const toggleUserMenu = createAction('toggle-user-menu');
 
 // Entity Actions
-export const getEntities = createAction('get-entities');
-export const getAllEntities = createAction('get-all-entities');
-export const updateEntitiesCache = createAction('update-entities-cache');
-export const updateEntitiesStatus = createAction('update-entities-status');
+export const read = createAction('read');
+export const readAll = createAction('read-all');
+export const updateCache = createAction('update-cache');
+export const updateStatus = createAction('update-status');

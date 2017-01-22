@@ -59,7 +59,7 @@ const application = combineReducers({
 const entities = combineReducers({
   byId: handleActions({
     [actions.unauthorize]: () => ({}),
-    [actions.updateEntitiesCache]: (state, { error, payload }) => {
+    [actions.updateCache]: (state, { error, payload }) => {
       if (error) {
         return state;
       }
@@ -70,14 +70,14 @@ const entities = combineReducers({
 
   isFetching: handleActions({
     [actions.unauthorize]: () => ({}),
-    [actions.updateEntitiesStatus]: (state, { error, payload }) => merge({}, state, {
+    [actions.updateStatus]: (state, { error, payload }) => merge({}, state, {
       [payload.entity]: error ? false : payload.status,
     }),
   }, {}),
 
   visibleIds: handleActions({
     [actions.unauthorize]: () => ({}),
-    [actions.updateEntitiesCache]: (state, { error, payload }) => {
+    [actions.updateCache]: (state, { error, payload }) => {
       if (error) {
         return state;
       }

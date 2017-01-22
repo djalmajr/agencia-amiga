@@ -84,7 +84,7 @@ class Settings extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  skills: selectors.getEntities(state, 'skills'),
+  skills: selectors.read(state, 'skills'),
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -41,47 +41,54 @@ function* handleRegister(action) {
   }
 }
 
-function* handleGetEntities(action) {
+function* handleReadError(err, showNotification = true) {
+  const { code } = JSON.parse(JSON.stringify(err));
+  const message = code === 'PERMISSION_DENIED' ?
+    'Sua sessão expirou. Por favor, faça login novamente' :
+    'Ocorreu um erro ao tentar realizar a ação solicitada. Por favor, tente novamente.';
+
+  if (showNotification) {
+    yield put(actions.notifyError(message));
+  }
+
+  yield put(actions.updateCache(err));
+}
+
+function* handleRead(action) {
   const { entity } = action.payload || {};
 
-  yield put(actions.updateEntitiesStatus({ entity, status: true }));
+  yield put(actions.updateStatus({ entity, status: true }));
 
   try {
-    const response = yield api.getEntities({ entity });
+    const response = yield api.read(entity);
 
-    yield put(actions.updateEntitiesCache({ entity, response }));
+    yield put(actions.updateCache({ entity, response }));
   } catch (err) {
-    const error = new Error(JSON.stringify(err));
-
-    yield put(actions.updateEntitiesCache({ entity, error }));
+    yield handleReadError(err);
   } finally {
-    yield put(actions.updateEntitiesStatus({ entity, status: false }));
+    yield put(actions.updateStatus({ entity, status: false }));
   }
 }
 
-function* handleGetAllEntities() {
+function* handleReadAll() {
   const filterOptions = yield select(selectors.getFilterOptions);
   const entities = map(filter(filterOptions, opt => opt.value !== 'all'), 'value');
 
   for (let i = 0, entity; (entity = entities[i]); i++) {
-    yield put(actions.updateEntitiesStatus({ entity, status: true }));
+    yield put(actions.updateStatus({ entity, status: true }));
   }
 
   try {
     for (let i = 0, entity; (entity = entities[i]); i++) {
-      const response = yield api.getEntities({ entity });
+      const response = yield api.read(entity);
 
-      yield put(actions.updateEntitiesCache({ entity, response }));
+      yield put(actions.updateCache({ entity, response }));
     }
   } catch (err) {
-    const error = new Error(JSON.stringify(err));
-
-    for (let i = 0, entity; (entity = entities[i]); i++) {
-      yield put(actions.updateEntitiesCache({ entity, error }));
-    }
+    yield handleReadError(err, false);
   } finally {
     for (let i = 0, entity; (entity = entities[i]); i++) {
-      yield put(actions.updateEntitiesStatus({ entity, status: false }));
+      yield put(actions.updateStatus({ entity, status: false }));
     }
   }
 }
@@ -90,6 +97,6 @@ export default function* () {
   yield takeEvery(actions.login.toString(), handleLogin);
   yield takeEvery(actions.logout.toString(), handleLogout);
   yield takeEvery(actions.register.toString(), handleRegister);
-  yield takeEvery(actions.getEntities.toString(), handleGetEntities);
-  yield takeEvery(actions.getAllEntities.toString(), handleGetAllEntities);
+  yield takeEvery(actions.read.toString(), handleRead);
+  yield takeEvery(actions.readAll.toString(), handleReadAll);
 }

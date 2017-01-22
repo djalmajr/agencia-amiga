@@ -16,7 +16,7 @@ class Details extends React.Component {
   };
 
   componentDidMount() {
-    this.props.actions.getEntities({ entity: 'users' });
+    this.props.actions.read({ entity: 'users' });
   }
 
   render() {
@@ -52,8 +52,8 @@ class Details extends React.Component {
 }
 
 const mapStateToProps = (state, { params: { id } }) => ({
-  user: selectors.getEntities(state, 'users', id),
-  skills: selectors.getEntities(state, 'skills'),
+  user: selectors.read(state, 'users', id),
+  skills: selectors.read(state, 'skills'),
 });
 
 const mapDispatchToProps = dispatch => ({

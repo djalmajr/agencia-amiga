@@ -1,10 +1,16 @@
 import { fb } from '~/constants';
 
-export const getEntities = ({ id, entity }) =>
+export const read = ref =>
   new Promise((resolve, reject) => {
-    fb.database()
-      .ref(id ? `${entity}/${id}` : entity).once('value')
-      .then(snapshot => resolve(snapshot.val()))
+    fb.database().ref(ref).once('value')
+      .then(res => resolve(res.val()))
+      .catch(reject);
+  });
+
+export const create = (ref, data) =>
+  new Promise((resolve, reject) => {
+    fb.database().ref(ref).set(data)
+      .then(res => resolve(res.val()))
       .catch(reject);
   });
 

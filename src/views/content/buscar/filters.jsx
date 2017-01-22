@@ -24,7 +24,7 @@ class Filters extends React.Component {
   };
 
   componentDidMount() {
-    this.props.actions.getEntities({ entity: 'skills' });
+    this.props.actions.read({ entity: 'skills' });
   }
 
   handleClear = () => {
@@ -56,12 +56,12 @@ class Filters extends React.Component {
   };
 
   applySearch(value) {
-    const { getEntities, getAllEntities } = this.props.actions;
+    const { read, readAll } = this.props.actions;
 
     if (value === 'all') {
-      getAllEntities();
+      readAll();
     } else {
-      getEntities({ entity: value });
+      read({ entity: value });
     }
   }
 
@@ -127,7 +127,7 @@ class Filters extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  skills: selectors.getEntities(state, 'skills'),
+  skills: selectors.read(state, 'skills'),
   isSearching: selectors.getSearchStatus(state),
   filterOptions: selectors.getFilterOptions(state),
   searchFilter: selectors.getSearchFilter(state),

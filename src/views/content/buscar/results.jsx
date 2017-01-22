@@ -41,9 +41,9 @@ class Results extends React.Component {
 
     if (isEmpty(records) && !isSearching && !timeoutID) {
       if (filter === 'all') {
-        actions.getAllEntities();
+        actions.readAll();
       } else {
-        actions.getEntities({ entity: filter });
+        actions.read({ entity: filter });
       }
 
       timeoutID = setTimeout(() => (timeoutID = null), 10000);

@@ -37,9 +37,9 @@ class TopBarSearch extends React.Component {
     actions.search(query);
 
     if (searchFilter.filter === 'all') {
-      actions.getAllEntities();
+      actions.readAll();
     } else {
-      actions.getEntities({ entity: searchFilter.filter });
+      actions.read({ entity: searchFilter.filter });
     }
 
     this.context.router.transitionTo({
