@@ -5,6 +5,7 @@ import { Loader } from 'semantic-ui-react';
 import requireAuth from '~/helpers/require-auth';
 import * as selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
+import Feed from '~/views/content/feed';
 import Buscar from '~/views/content/buscar';
 import Campanha from '~/views/content/campanha';
 import Organizacao from '~/views/content/organizacao';
@@ -38,6 +39,7 @@ const Main = ({ isAuthorized, isLoadingState }) => {
       )}
       <FlexElement full className={styles.content}>
         <Match pattern="/login" component={Login} />
+        <Match pattern="/" exactly component={requireAuth(Feed)} />
         <Match pattern="/buscar" component={requireAuth(Buscar)} />
         <Match pattern="/campanhas/:id" component={requireAuth(Campanha)} />
         <Match pattern="/organizacoes/:id" component={requireAuth(Organizacao)} />

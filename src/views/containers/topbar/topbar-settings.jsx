@@ -55,6 +55,7 @@ class Settings extends React.PureComponent {
     const formData = _.merge({}, this.state.formData);
 
     if (name === 'skills') {
+      const newValue = {};
       const newSkill = _.remove(value, attr => !skills[attr])[0];
 
       if (newSkill) {
@@ -66,8 +67,11 @@ class Settings extends React.PureComponent {
           this.props.actions.save('skills', skills[uid]);
         });
 
-        value.push(uid);
+        newValue[uid] = skills[uid];
       }
+
+      value.forEach(uid => (newValue[uid] = skills[uid]));
+      value = newValue;
     }
 
     formData[name] = value;
@@ -152,7 +156,7 @@ class Settings extends React.PureComponent {
               noResultsMessage="Nenhum resultado encontrado"
               disabled={isUpdating}
               loading={isCreatingSkill}
-              value={formData.skills}
+              value={_.keys(formData.skills)}
               options={options}
               onChange={this.handleChange}
             />
