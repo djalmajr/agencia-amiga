@@ -17,7 +17,7 @@ class Login extends React.Component {
   };
 
   state = {
-    role: 'volunteer',
+    type: 'volunteer',
   };
 
   handleChange = (evt, { name, value }) => {
@@ -27,7 +27,7 @@ class Login extends React.Component {
   handleLogin = (evt, { email, password }) => {
     evt.preventDefault();
 
-    const { role } = this.state;
+    const { type } = this.state;
     const { actions, isLogging, isRegistering } = this.props;
 
     if (isLogging || isRegistering) {
@@ -35,7 +35,7 @@ class Login extends React.Component {
     }
 
     if (email && password) {
-      actions.login({ email, password, role });
+      actions.login({ email, password, type });
     } else {
       actions.notifyError('Por favor, preencha todos os campos.');
     }
@@ -44,7 +44,7 @@ class Login extends React.Component {
   handleRegister = (evt) => {
     evt.preventDefault();
 
-    const { role } = this.state;
+    const { type } = this.state;
     const { actions, isLogging, isRegistering } = this.props;
 
     if (isRegistering || isLogging) {
@@ -55,14 +55,14 @@ class Login extends React.Component {
     const password = this.el.querySelector('[name="password"]').value;
 
     if (email && password) {
-      actions.register({ email, password, role });
+      actions.register({ email, password, type });
     } else {
       actions.notifyError('Por favor, preencha todos os campos.');
     }
   };
 
   render() {
-    const { role } = this.state;
+    const { type } = this.state;
     const { isLogged, isLogging, isRegistering, location } = this.props;
     const { redirect = { pathname: '/' } } = location.state || {};
 
@@ -116,19 +116,19 @@ class Login extends React.Component {
             <Form.Group widths="equal">
               <Form.Checkbox
                 radio
-                name="role"
+                name="type"
                 label="Voluntário"
                 value="volunteer"
-                checked={role === 'volunteer'}
+                checked={type === 'volunteer'}
                 disabled={isLogging || isRegistering}
                 onChange={this.handleChange}
               />
               <Form.Checkbox
                 radio
-                name="role"
+                name="type"
                 label="Organização"
                 value="organization"
-                checked={role === 'organization'}
+                checked={type === 'organization'}
                 disabled={isLogging || isRegistering}
                 onChange={this.handleChange}
               />

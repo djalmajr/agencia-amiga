@@ -10,8 +10,6 @@ import defaultUserImage from './user.png';
 import SettingsModal from './topbar-settings';
 import styles from './topbar-user.scss';
 
-const requiredFields = ['name', 'state', 'city', 'skills'];
-
 class TopBarUser extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
@@ -21,8 +19,12 @@ class TopBarUser extends React.Component {
   constructor(props) {
     super(props);
 
+    this.requiredFields = props.user.type === 'volunteer' ?
+      ['name', 'state', 'city', 'skills'] :
+      ['name', 'state', 'city'];
+
     this.state = {
-      isSettingsVisible: requiredFields
+      isSettingsVisible: this.requiredFields
         .map(attr => props.user[attr])
         .some(val => isEmpty(val)),
     };
@@ -40,7 +42,7 @@ class TopBarUser extends React.Component {
 
   render() {
     const settingsProps = {
-      requiredFields,
+      requiredFields: this.requiredFields,
       user: this.props.user,
       isOpen: this.state.isSettingsVisible,
       onClose: this.handleSettingsToggle,

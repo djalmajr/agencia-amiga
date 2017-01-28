@@ -17,6 +17,7 @@ class Results extends React.Component {
     actions: React.PropTypes.object,
     filterOptions: React.PropTypes.array,
     isSearching: React.PropTypes.bool,
+    isLogged: React.PropTypes.bool,
     location: React.PropTypes.object,
     records: React.PropTypes.array,
     searchFilter: React.PropTypes.object,
@@ -36,10 +37,10 @@ class Results extends React.Component {
   }
 
   componentDidMount() {
-    const { actions, searchFilter, records, isSearching } = this.props;
+    const { actions, searchFilter, records, isSearching, isLogged } = this.props;
     const filter = this.getFilter() || searchFilter.filter;
 
-    if (isEmpty(records) && !isSearching && !timeoutID) {
+    if (isEmpty(records) && !isSearching && !timeoutID && isLogged) {
       if (filter === 'all') {
         actions.readAll();
       } else {
@@ -157,6 +158,7 @@ class Results extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  isLogged: !isEmpty(selectors.getUser(state)),
   isSearching: selectors.getSearchStatus(state),
   filterOptions: selectors.getFilterOptions(state),
   searchFilter: selectors.getSearchFilter(state),

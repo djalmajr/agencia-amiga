@@ -118,7 +118,7 @@ class Settings extends React.PureComponent {
   }
 
   render() {
-    const { isOpen, isUpdating } = this.props;
+    const { isOpen, isUpdating, user } = this.props;
     const { formData, skills, isCreatingSkill } = this.state;
     const options = _.values(skills).map(({ uid, name }) => ({ text: name, value: uid }));
 
@@ -143,23 +143,25 @@ class Settings extends React.PureComponent {
               value={formData.name}
               onChange={this.handleChange}
             />
-            <Form.Select
-              fluid
-              search
-              required
-              multiple
-              selection
-              allowAdditions
-              name="skills"
-              label="Habilidades"
-              placeholder="Digite suas habilidades"
-              noResultsMessage="Nenhum resultado encontrado"
-              disabled={isUpdating}
-              loading={isCreatingSkill}
-              value={_.keys(formData.skills)}
-              options={options}
-              onChange={this.handleChange}
-            />
+            {user.type === 'volunteer' && (
+              <Form.Select
+                fluid
+                search
+                required
+                multiple
+                selection
+                allowAdditions
+                name="skills"
+                label="Habilidades"
+                placeholder="Digite suas habilidades"
+                noResultsMessage="Nenhum resultado encontrado"
+                disabled={isUpdating}
+                loading={isCreatingSkill}
+                value={_.keys(formData.skills)}
+                options={options}
+                onChange={this.handleChange}
+              />
+            )}
             <Form.Group widths="equal">
               <Form.Input
                 required

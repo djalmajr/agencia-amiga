@@ -1,15 +1,21 @@
 import React from 'react';
-import Page from '../../components/three-columns';
-import Panel from './panel';
-import Details from './details';
-import Related from './related';
+import { connect } from 'react-redux';
+import * as selectors from '~/store/selectors';
+import Organization from './organization';
+import Volunteer from './volunteer';
 
-const Usuario = props => (
-  <Page
-    panel={<Panel {...props} />}
-    content={<Details {...props} />}
-    related={<Related {...props} />}
-  />
+const Feed = ({ user, ...props }) => (
+  user.type === 'organization' ?
+    <Organization {...props} /> :
+    <Volunteer {...props} />
 );
 
-export default Usuario;
+Feed.propTypes = {
+  user: React.PropTypes.object,
+};
+
+const mapStateToProps = state => ({
+  user: selectors.getUser(state),
+});
+
+export default connect(mapStateToProps)(Feed);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { values } from 'lodash';
+import { isEmpty, values } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Container, Header, Icon, Label, Segment } from 'semantic-ui-react';
@@ -11,12 +11,15 @@ import styles from './details.scss';
 class Details extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
+    isLogged: React.PropTypes.bool,
     user: React.PropTypes.object,
     skills: React.PropTypes.object,
   };
 
   componentDidMount() {
-    this.props.actions.read({ entity: 'users' });
+    if (this.props.isLogged) {
+      this.props.actions.read({ entity: 'users' });
+    }
   }
 
   render() {
@@ -52,6 +55,7 @@ class Details extends React.Component {
 }
 
 const mapStateToProps = (state, { params: { id } }) => ({
+  isLogged: !isEmpty(selectors.getUser(state)),
   user: selectors.getEntities(state, 'users', id),
   skills: selectors.getEntities(state, 'skills'),
 });

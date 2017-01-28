@@ -31,12 +31,12 @@ function* handleLogout() {
 }
 
 function* handleRegister(action) {
-  const { email, password, role } = action.payload;
+  const { email, password, type } = action.payload;
 
   try {
     const response = yield api.register(email, password);
     const auth = response.toJSON();
-    const user = { uid: auth.uid, email, role };
+    const user = { uid: auth.uid, email, type };
 
     yield api.save('users', user);
     yield put(actions.authorize({ ...auth, ...user }));

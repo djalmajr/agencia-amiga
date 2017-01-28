@@ -1,4 +1,5 @@
 import React from 'react';
+import { isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Match } from 'react-router';
@@ -21,12 +22,16 @@ import styles from './main.scss';
 class Main extends React.PureComponent {
   static propTypes = {
     actions: React.PropTypes.object,
+    hasSkills: React.PropTypes.bool,
+    isLogged: React.PropTypes.bool,
     isAuthorized: React.PropTypes.bool,
     isLoadingState: React.PropTypes.bool,
   };
 
-  componentDidMount() {
-    this.props.actions.read({ entity: 'skills' });
+  componentWillReceiveProps({ hasSkills, isLogged }) {
+    if (!hasSkills && isLogged) {
+      this.props.actions.read({ entity: 'skills' });
+    }
   }
 
   render() {
@@ -67,6 +72,8 @@ class Main extends React.PureComponent {
 }
 
 const mapStateToProps = state => ({
+  hasSkills: !isEmpty(selectors.getEntities(state, 'skills')),
+  isLogged: !isEmpty(selectors.getUser(state)),
   isAuthorized: selectors.isAuthenticated(state),
   isLoadingState: selectors.isLoadingState(state),
 });
