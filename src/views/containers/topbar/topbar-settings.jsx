@@ -67,10 +67,10 @@ class Settings extends React.PureComponent {
           this.props.actions.save('skills', skills[uid]);
         });
 
-        newValue[uid] = skills[uid];
+        newValue[uid] = uid;
       }
 
-      value.forEach(uid => (newValue[uid] = skills[uid]));
+      value.forEach(uid => (newValue[uid] = uid));
       value = newValue;
     }
 
@@ -223,7 +223,7 @@ class Settings extends React.PureComponent {
 
 const mapStateToProps = state => ({
   isUpdating: selectors.isUpdatingProfile(state),
-  skills: selectors.read(state, 'skills'),
+  skills: selectors.getEntities(state, 'skills'),
 });
 
 const mapDispatchToProps = dispatch => ({

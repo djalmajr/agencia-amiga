@@ -4,17 +4,22 @@ import { connect } from 'react-redux';
 import { Header, Label, Segment } from 'semantic-ui-react';
 import * as selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
-import styles from './panel.scss';
 
-const Panel = ({ user }) => (
-  <FlexElement column className={styles.wrapper}>
+const style = {
+  fontSize: '1rem',
+  marginRight: '0.8em',
+  width: '16em',
+};
+
+const Panel = ({ skills, user }) => (
+  <FlexElement column style={style}>
     <Segment>
       <Header as="h5" style={{ fontSize: '0.95em' }}>
         MINHAS HABILIDADES
       </Header>
-      {_.map(user.skills, val =>
-        <Label>
-          {val.name}
+      {_.keys(user.skills, key =>
+        <Label key={key}>
+          {skills[key].name}
         </Label>,
       )}
       <Header as="h5" style={{ fontSize: '0.95em' }}>
@@ -28,11 +33,13 @@ const Panel = ({ user }) => (
 );
 
 Panel.propTypes = {
+  skills: React.PropTypes.object,
   user: React.PropTypes.object,
 };
 
 const mapStateToProps = state => ({
-  user: selectors.getuser(state),
+  user: selectors.getUser(state),
+  skills: selectors.getEntities(state, 'skills'),
 });
 
 export default connect(mapStateToProps)(Panel);

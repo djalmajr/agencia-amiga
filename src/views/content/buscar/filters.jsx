@@ -23,10 +23,6 @@ class Filters extends React.Component {
     router: React.PropTypes.object.isRequired,
   };
 
-  componentDidMount() {
-    this.props.actions.read({ entity: 'skills' });
-  }
-
   handleClear = () => {
     this.dropdown.setValue('');
     this.props.actions.changeSearchFilter({ skills: null });
@@ -127,7 +123,7 @@ class Filters extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  skills: selectors.read(state, 'skills'),
+  skills: selectors.getEntities(state, 'skills'),
   isSearching: selectors.getSearchStatus(state),
   filterOptions: selectors.getFilterOptions(state),
   searchFilter: selectors.getSearchFilter(state),

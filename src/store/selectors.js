@@ -86,7 +86,7 @@ export const getSearchResults = (state) => {
     result;
 };
 
-export const read = (state, entity, id) => {
+export const getEntities = (state, entity, id) => {
   const result = _.merge({}, state.entities.byId[entity]);
 
   return id ? (result[id] || {}) : result;

@@ -1,59 +1,76 @@
 import React from 'react';
-import { values } from 'lodash';
+import faker from 'faker';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Container, Header, Icon, Label, Segment } from 'semantic-ui-react';
+import { Card, Container, Feed, Image } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
 import * as selectors from '~/store/selectors';
-import FlexElement from '~/views/components/flex-element';
-import styles from './details.scss';
 
-class Details extends React.Component {
-  static propTypes = {
-    actions: React.PropTypes.object,
-    user: React.PropTypes.object,
-    skills: React.PropTypes.object,
-  };
+const srcImg = 'http://xpenology.org/wp-content/themes/qaengine/img/default-thumbnail.jpg';
 
-  componentDidMount() {
-    this.props.actions.read({ entity: 'users' });
-  }
+const style = {
+  fontSize: '1rem',
+};
 
-  render() {
-    const { user, skills } = this.props;
+const Details = () => (
+  <Container fluid style={style}>
+    <Card fluid>
+      <Card.Content>
+        <Image floated="left" size="small" src={srcImg} />
+        <Card.Header style={{ fontSize: '1em', marginBottom: '0.3em' }}>
+          NOME DA CAMPANHA
+        </Card.Header>
+        <Card.Meta>
+          {faker.lorem.paragraph(4)}
+        </Card.Meta>
+      </Card.Content>
+    </Card>
+    <Card fluid>
+      <Card.Content>
+        <Card.Header style={{ fontSize: '1em' }}>
+          FEED DE NOTÍCIAS
+        </Card.Header>
+      </Card.Content>
+      <Card.Content>
+        <Feed>
+          <Feed.Event>
+            <Feed.Label image="http://semantic-ui.com/images/avatar/small/jenny.jpg" />
+            <Feed.Content>
+              <Feed.Date content="1 day ago" />
+              <Feed.Summary>
+                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
+              </Feed.Summary>
+            </Feed.Content>
+          </Feed.Event>
 
-    return (
-      <Segment className={styles.wrapper}>
-        <Container fluid>
-          <FlexElement column style={{ marginBottom: 30 }}>
-            <Header as="h5">
-              <Icon name="clipboard" />
-              <Header.Content>SOBRE MIM</Header.Content>
-            </Header>
-            <p>{user.description}</p>
-          </FlexElement>
-          <FlexElement column style={{ marginBottom: 30 }}>
-            <Header as="h5">
-              <Icon name="lightbulb" />
-              <Header.Content>HABILIDADES</Header.Content>
-            </Header>
-            <Label.Group>
-              {values(user.skills).map(skillID =>
-                <Label key={skillID}>
-                  {skills[skillID].name}
-                </Label>,
-              )}
-            </Label.Group>
-          </FlexElement>
-        </Container>
-      </Segment>
-    );
-  }
-}
+          <Feed.Event>
+            <Feed.Label image="http://semantic-ui.com/images/avatar2/small/molly.png" />
+            <Feed.Content>
+              <Feed.Date content="3 days ago" />
+              <Feed.Summary>
+                You added <a>Molly Malone</a> as a friend.
+              </Feed.Summary>
+            </Feed.Content>
+          </Feed.Event>
+
+          <Feed.Event>
+            <Feed.Label image="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
+            <Feed.Content>
+              <Feed.Date content="4 days ago" />
+              <Feed.Summary>
+                You added <a>Elliot Baker</a> to your <a>musicians</a> group.
+              </Feed.Summary>
+            </Feed.Content>
+          </Feed.Event>
+        </Feed>
+      </Card.Content>
+    </Card>
+  </Container>
+);
 
 const mapStateToProps = (state, { params: { id } }) => ({
-  user: selectors.read(state, 'users', id),
-  skills: selectors.read(state, 'skills'),
+  user: selectors.getEntities(state, 'users', id),
+  skills: selectors.getEntities(state, 'skills'),
 });
 
 const mapDispatchToProps = dispatch => ({
