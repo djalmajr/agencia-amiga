@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import selectors from '~/store/selectors';
-import { Button, Divider, Icon, Table } from 'semantic-ui-react';
+import { Button, Divider, Icon, Loader, Table } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
 import FlexElement from '~/views/components/flex-element';
 import Service from './service';
@@ -18,6 +18,7 @@ const styles = {
 class Services extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
+    isFetching: React.PropTypes.bool,
     user: React.PropTypes.object,
   };
 
@@ -30,13 +31,17 @@ class Services extends React.Component {
     const oldServices = this.props.user.services;
 
     if (services !== oldServices) {
-      const message = _.keys(services).length !== _.keys(oldServices).length ?
-        'Serviço criado com sucesso!' :
-        'Serviço editado com sucesso!';
+      const newLen = _.keys(services).length;
+      const oldLen = _.keys(oldServices).length;
+      const operation = (
+        (newLen > oldLen && 'criado') ||
+        (newLen < oldLen && 'removido') ||
+        'editado'
+      );
 
       this.handleClose();
 
-      actions.notify(message);
+      actions.notify(`Serviço ${operation} com sucesso!`);
     }
   }
 
@@ -52,13 +57,13 @@ class Services extends React.Component {
     this.setState({ isOpen: true, selectedId });
   };
 
-  handleRemove = (selectedId) => {
-    console.log('remove', selectedId); // eslint-disable-line
+  handleRemove = (uid) => {
+    this.props.actions.remove({ entity: 'services', uid });
   };
 
   render() {
     const { isOpen, selectedId } = this.state;
-    const { user } = this.props;
+    const { isFetching, user } = this.props;
 
     return (
       <FlexElement column>
@@ -74,13 +79,24 @@ class Services extends React.Component {
         </FlexElement>
         <Modal isOpen={isOpen} uid={selectedId} onClose={this.handleClose} />
         <Divider style={{ marginBottom: 0 }} />
-        {_.isEmpty(user.services) ?
+        {isFetching && !_.isEmpty(user.services) && (
+          <FlexElement column align="center" justify="center" style={styles.emptyContainer}>
+            <Loader active>
+              <span style={{ color: 'rgba(0,0,0, 0.45)' }}>
+                Carregando serviços...
+              </span>
+            </Loader>
+          </FlexElement>
+        )}
+        {!isFetching && _.isEmpty(user.services) && (
           <FlexElement column align="center" justify="center" style={styles.emptyContainer}>
             <Icon name="wrench" style={styles.emptyIcon} />
             <span style={styles.emptyText}>
               Clique no botão acima para adicionar um serviço.
             </span>
-          </FlexElement> :
+          </FlexElement>
+        )}
+        {!isFetching && !_.isEmpty(user.services) && (
           <Table basic="very" style={{ margin: 0 }}>
             <Table.Body>
               {_.map(user.services, uid =>
@@ -93,7 +109,7 @@ class Services extends React.Component {
               )}
             </Table.Body>
           </Table>
-        }
+        )}
       </FlexElement>
     );
   }
@@ -101,6 +117,7 @@ class Services extends React.Component {
 
 const mapStateToProps = state => ({
   user: selectors.getUserData(state),
+  isFetching: selectors.isFetching(state, 'services'),
 });
 
 const mapDispatchToProps = dispatch => ({

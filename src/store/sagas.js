@@ -105,6 +105,34 @@ function* handleReadAll() {
   }
 }
 
+function* handleRemove(action) {
+  const { entity, uid } = action.payload;
+
+  yield put(actions.updateRemoveStatus({ entity, uid, status: true }));
+
+  try {
+    yield api.remove(`${entity}/${uid}`);
+
+    if (entity === 'services' || entity === 'campaigns') {
+      let user = yield select(selectors.getUserData);
+
+      user = _.merge({}, user);
+      delete user[entity][uid];
+      user = yield api.save('users', user);
+
+      yield put(actions.updateCache({ entity: 'users', response: { [user.uid]: user } }));
+    }
+
+    yield put(actions.removeCache({ entity, uid }));
+  } catch (err) {
+    console.log(err); // eslint-disable-line
+    yield put(actions.notifyError(err));
+    yield put(actions.removeCache(err));
+  } finally {
+    yield put(actions.updateRemoveStatus({ entity, uid, status: false }));
+  }
+}
+
 function* handleSave(action) {
   const { ref, data } = action.payload || {};
 
@@ -174,6 +202,7 @@ export default function* () {
   yield takeEvery(actions.register.toString(), handleRegister);
   yield takeEvery(actions.read.toString(), handleRead);
   yield takeEvery(actions.readAll.toString(), handleReadAll);
+  yield takeEvery(actions.remove.toString(), handleRemove);
   yield takeEvery(actions.save.toString(), handleSave);
   yield takeEvery(actions.updateProfile.toString(), handleUpdateProfile);
 }

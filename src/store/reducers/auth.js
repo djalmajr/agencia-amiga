@@ -37,6 +37,6 @@ export const userData = handleActions({
       payload.response[state.uid] :
       _.values(payload.response)[0];
 
-    return _.merge({}, state, user);
+    return _.assign({}, state, user);
   },
 }, {});

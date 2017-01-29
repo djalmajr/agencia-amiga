@@ -26,6 +26,7 @@ export const save = (ref, data) => {
   });
 };
 
+export const remove = ref => fb.database().ref(ref).remove();
 export const saveAll = updates => fb.database().ref().update(updates);
 export const updateProfile = data => fb.auth().currentUser.updateProfile(data);
 export const updatePassword = data => fb.auth().currentUser.updatePassword(data);
