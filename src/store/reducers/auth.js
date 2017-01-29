@@ -33,6 +33,10 @@ export const userData = handleActions({
       return state;
     }
 
-    return _.merge({}, state, _.values(payload.response)[0]);
+    const user = state.uid ?
+      payload.response[state.uid] :
+      _.values(payload.response)[0];
+
+    return _.merge({}, state, user);
   },
 }, {});
