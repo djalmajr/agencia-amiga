@@ -9,7 +9,17 @@ export const byId = handleActions({
       return state;
     }
 
-    return _.merge({}, state, { [payload.entity]: payload.response });
+    const newState = _.merge({}, state);
+
+    _.forEach(payload.response, (val, key) => {
+      if (!newState[payload.entity]) {
+        newState[payload.entity] = {};
+      }
+
+      newState[payload.entity][key] = val;
+    });
+
+    return newState;
   },
 }, {});
 

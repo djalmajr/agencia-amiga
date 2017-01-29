@@ -155,7 +155,6 @@ function* handleAddToOrg({ payload: { data, entity } }) {
       [entity]: { [res.uid]: res.uid },
     }));
 
-    yield put(actions.notify('Criado com sucesso!'));
     yield put(actions.updateCache({ entity, response: { [res.uid]: res } }));
     yield put(actions.updateCache({ entity: 'users', response: { [val.uid]: val } }));
   } catch (err) {
