@@ -200,23 +200,20 @@ class Settings extends React.PureComponent {
             */}
           </Form>
         </Modal.Content>
-        <Modal.Actions>
-          <FlexElement justify="flex-end">
-            <Button
-              content="Fechar"
-              style={{ marginRight: '0.8em' }}
-              disabled={isUpdating}
-              onClick={this.handleClose}
-            />
-            <Button
-              primary
-              content="Salvar"
-              icon="save"
-              loading={isUpdating}
-              disabled={isUpdating}
-              onClick={this.handleSubmit}
-            />
-          </FlexElement>
+        <Modal.Actions as={FlexElement} justify="flex-end">
+          <Button
+            content="Fechar"
+            disabled={isUpdating}
+            onClick={this.handleClose}
+          />
+          <Button
+            primary
+            content="Salvar"
+            icon="save"
+            loading={isUpdating}
+            disabled={isUpdating}
+            onClick={this.handleSubmit}
+          />
         </Modal.Actions>
       </Modal>
     );

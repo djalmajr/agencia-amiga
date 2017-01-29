@@ -31,6 +31,7 @@ export const updateProfileStatus = createAction('update-profile-status');
 export const updateUserCache = createAction('update-user-cache');
 
 // Entity Actions
+export const addToOrg = createAction('add-to-org');
 export const read = createAction('read');
 export const readAll = createAction('read-all');
 export const save = createAction('save', (ref, data) => ({ ref, data }));

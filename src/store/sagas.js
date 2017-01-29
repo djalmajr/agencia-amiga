@@ -1,9 +1,15 @@
-import { map, filter } from 'lodash';
+import _ from 'lodash';
 import { takeEvery } from 'redux-saga';
 import { put, select } from 'redux-saga/effects';
+import genUID from '~/helpers/gen-uid';
 import * as selectors from './selectors';
 import * as actions from './actions';
 import * as api from './apis';
+
+const authAttrs = [
+  'displayName', 'photoURL', 'emailVerified', 'isAnonymous', 'providerData',
+  'apiKey', 'appName', 'authDomain', 'stsTokenManager', 'redirectEventId',
+];
 
 function* handleLogin(action) {
   const { email, password } = action.payload;
@@ -84,7 +90,7 @@ function* handleRead(action) {
 
 function* handleReadAll() {
   const filterOptions = yield select(selectors.getFilterOptions);
-  const entities = map(filter(filterOptions, opt => opt.value !== 'all'), 'value');
+  const entities = _.map(_.filter(filterOptions, opt => opt.value !== 'all'), 'value');
 
   for (let i = 0, entity; (entity = entities[i]); i++) {
     yield put(actions.updateStatus({ entity, status: true }));
@@ -143,7 +149,31 @@ function* handleUpdateProfile({ payload }) {
   }
 }
 
+function* handleAddToOrg({ payload: { formData, entity } }) {
+  const user = yield select(selectors.getUser);
+  const data = _.merge({}, formData, { uid: genUID(entity) });
+  const newUser = _.merge({}, _.omit(user, authAttrs), { services: { [data.uid]: data.uid } });
+
+  yield put(actions.updateStatus({ entity, status: true }));
+
+  try {
+    yield api.save(entity, data);
+    yield api.save('users', newUser);
+
+    yield put(actions.notify('Criado com sucesso!'));
+    yield put(actions.updateUserCache(newUser));
+    yield put(actions.updateCache({ entity: 'users', response: { [newUser.uid]: newUser } }));
+  } catch (err) {
+    console.log(err); // eslint-disable-line
+    yield put(actions.notifyError(err));
+    yield put(actions.createService(err));
+  } finally {
+    yield put(actions.updateStatus({ entity, status: false }));
+  }
+}
+
 export default function* () {
+  yield takeEvery(actions.addToOrg.toString(), handleAddToOrg);
   yield takeEvery(actions.login.toString(), handleLogin);
   yield takeEvery(actions.logout.toString(), handleLogout);
   yield takeEvery(actions.register.toString(), handleRegister);
