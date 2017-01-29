@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Header, Segment } from 'semantic-ui-react';
-import * as selectors from '~/store/selectors';
+import selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
 
 const Related = () => (

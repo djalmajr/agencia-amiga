@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
-import * as selectors from '~/store/selectors';
+import selectors from '~/store/selectors';
 
 const requireAuth = (ComposedComponent) => {
   const Auth = ({ isAuthorized, ...otherProps }) => (

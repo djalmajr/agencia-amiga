@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Button, Divider, Form, Icon, Segment } from 'semantic-ui-react';
 import FlexElement from '~/views/components/flex-element';
-import * as selectors from '~/store/selectors';
+import selectors from '~/store/selectors';
 import * as actionCreators from '~/store/actions';
 
 class Login extends React.Component {

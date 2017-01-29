@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { takeEvery } from 'redux-saga';
 import { put, select } from 'redux-saga/effects';
-import * as selectors from './selectors';
+import selectors from './selectors';
 import * as actions from './actions';
 import * as api from './apis';
 

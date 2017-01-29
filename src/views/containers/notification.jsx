@@ -1,7 +1,7 @@
 import React from 'react';
 import NotificationSystem from 'react-notification-system';
 import { connect } from 'react-redux';
-import * as selectors from '~/store/selectors';
+import selectors from '~/store/selectors';
 
 class NotificationContainer extends React.PureComponent {
   static propTypes = {

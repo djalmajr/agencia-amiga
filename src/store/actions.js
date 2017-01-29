@@ -1,7 +1,5 @@
 import { v4 } from 'uuid';
-import { createAction as createReduxActions } from 'redux-actions';
-
-const createAction = (name, ...args) => createReduxActions(`${name}-${v4()}`, ...args);
+import createAction from '~/helpers/create-action';
 
 const handleNotify = (message) => {
   message = typeof message === 'string' ? { message } : message;
@@ -29,6 +27,7 @@ export const toggleUserMenu = createAction('toggle-user-menu');
 export const updateFilter = createAction('update-filter');
 export const updateProfile = createAction('update-profile');
 export const updateProfileStatus = createAction('update-profile-status');
+export const updateTabFeed = createAction('update-tab-feed');
 
 // Entity Actions
 export const addToOrg = createAction('add-to-org');

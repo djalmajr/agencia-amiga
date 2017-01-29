@@ -6,7 +6,7 @@ import { Match } from 'react-router';
 import { Loader } from 'semantic-ui-react';
 import requireAuth from '~/helpers/require-auth';
 import * as actionCreators from '~/store/actions';
-import * as selectors from '~/store/selectors';
+import selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
 import Feed from '~/views/content/feed';
 import Buscar from '~/views/content/buscar';

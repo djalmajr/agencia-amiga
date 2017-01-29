@@ -31,9 +31,9 @@ const configureStore = () => {
   store.runSaga = sagaMiddleware.run;
 
   store.subscribe(throttle(() => {
-    const { application: { userData } } = store.getState();
+    const { auth: { userData } } = store.getState();
 
-    saveState({ application: { userData } });
+    saveState({ auth: { userData } });
   }, 2000));
 
   store.runSaga(rootSaga);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as selectors from '~/store/selectors';
+import selectors from '~/store/selectors';
 import Organization from './organization';
 import Volunteer from './volunteer';
 

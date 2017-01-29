@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Container, Header, Icon, Label, Segment } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
-import * as selectors from '~/store/selectors';
+import selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
 import styles from './details.scss';
 

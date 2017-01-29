@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Form, Icon, Input, Dropdown } from 'semantic-ui-react';
 import * as actionCreatos from '~/store/actions';
-import * as selectors from '~/store/selectors';
+import selectors from '~/store/selectors';
 import styles from './topbar-search.scss';
 
 class TopBarSearch extends React.Component {

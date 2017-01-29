@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Segment, Container, Menu } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
-import * as selectors from '~/store/selectors';
+import selectors from '~/store/selectors';
 import Timeline from './tabs/timeline';
 import Campaigns from './tabs/campaigns';
 import Services from './tabs/services';
@@ -27,11 +27,7 @@ const views = {
 class Details extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
-    // hasServices: React.PropTypes.bool,
-  };
-
-  state = {
-    activeItem: 'timeline',
+    activeItem: React.PropTypes.string,
   };
 
   componentDidMount() {
@@ -49,11 +45,11 @@ class Details extends React.Component {
   }
 
   handleTabClick = (evt, { name }) => {
-    this.setState({ activeItem: name });
+    this.props.actions.updateTabFeed(name);
   };
 
   render() {
-    const { activeItem } = this.state;
+    const { activeItem } = this.props;
     const Component = views[activeItem].component;
 
     return (
@@ -79,6 +75,7 @@ class Details extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  activeItem: selectors.getCurrentTabFeed(state),
   isLogged: selectors.isAuthenticated(state),
   hasServices: !_.isEmpty(selectors.getEntities(state, 'services')),
   isFetchingServices: selectors.isFetching(state, 'services'),
