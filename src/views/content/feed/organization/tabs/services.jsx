@@ -12,7 +12,7 @@ const styles = {
   emptyText: { color: 'rgba(0,0,0,0.5)', marginTop: '1em', textAlign: 'center' },
 };
 
-const Services = ({ user }) => (
+const Services = ({ services, user }) => (
   <FlexElement column>
     <Modal />
     <Divider style={{ marginBottom: 0 }} />
@@ -31,8 +31,8 @@ const Services = ({ user }) => (
                 <Header as="h4" image>
                   <Icon name="wrench" />
                   <Header.Content>
-                    {key}
-                    <Header.Subheader>Human Resources</Header.Subheader>
+                    {services[key].name}
+                    <Header.Subheader>{services[key].details}</Header.Subheader>
                   </Header.Content>
                 </Header>
               </Table.Cell>
@@ -49,12 +49,13 @@ const Services = ({ user }) => (
 );
 
 Services.propTypes = {
+  services: React.PropTypes.object,
   user: React.PropTypes.object,
 };
 
 const mapStateToProps = state => ({
   user: selectors.getUserData(state),
-  // services: selectors.getUserData(state),
+  services: selectors.getEntities(state, 'services'),
 });
 
 export default connect(mapStateToProps)(Services);

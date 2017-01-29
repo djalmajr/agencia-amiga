@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Segment, Container, Menu } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
 import * as selectors from '~/store/selectors';
@@ -25,9 +25,28 @@ const views = {
 };
 
 class Details extends React.Component {
+  static propTypes = {
+    actions: React.PropTypes.object,
+    // hasServices: React.PropTypes.bool,
+  };
+
   state = {
     activeItem: 'timeline',
   };
+
+  componentDidMount() {
+    this.fetchServices(this.props);
+  }
+
+  componentWillReceiveProps(props) {
+    this.fetchServices(props);
+  }
+
+  fetchServices({ hasServices, isLogged, isFetchingServices }) {
+    if (!hasServices && isLogged && !isFetchingServices) {
+      this.props.actions.read({ entity: 'services' });
+    }
+  }
 
   handleTabClick = (evt, { name }) => {
     this.setState({ activeItem: name });
@@ -59,9 +78,10 @@ class Details extends React.Component {
   }
 }
 
-const mapStateToProps = (state, { params: { id } }) => ({
-  user: selectors.getEntities(state, 'users', id),
-  skills: selectors.getEntities(state, 'skills'),
+const mapStateToProps = state => ({
+  isLogged: selectors.isAuthenticated(state),
+  hasServices: !_.isEmpty(selectors.getEntities(state, 'services')),
+  isFetchingServices: selectors.isFetching(state, 'services'),
 });
 
 const mapDispatchToProps = dispatch => ({
