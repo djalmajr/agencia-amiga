@@ -24,7 +24,6 @@ class Main extends React.PureComponent {
     actions: React.PropTypes.object,
     hasSkills: React.PropTypes.bool,
     isLogged: React.PropTypes.bool,
-    isAuthorized: React.PropTypes.bool,
     isLoadingState: React.PropTypes.bool,
   };
 
@@ -35,7 +34,7 @@ class Main extends React.PureComponent {
   }
 
   render() {
-    const { isAuthorized, isLoadingState } = this.props;
+    const { isLogged, isLoadingState } = this.props;
 
     if (isLoadingState) {
       return (
@@ -52,7 +51,7 @@ class Main extends React.PureComponent {
     return (
       <FlexElement column className={styles.wrapper}>
         <Notification />
-        {isAuthorized && (
+        {isLogged && (
           <FlexElement>
             <TopBar />
           </FlexElement>
@@ -73,8 +72,7 @@ class Main extends React.PureComponent {
 
 const mapStateToProps = state => ({
   hasSkills: !isEmpty(selectors.getEntities(state, 'skills')),
-  isLogged: !isEmpty(selectors.getUser(state)),
-  isAuthorized: selectors.isAuthenticated(state),
+  isLogged: selectors.isAuthenticated(state),
   isLoadingState: selectors.isLoadingState(state),
 });
 

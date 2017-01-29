@@ -13,7 +13,7 @@ class TopBarSearch extends React.Component {
     actions: React.PropTypes.object,
     filterOptions: React.PropTypes.array,
     isSearching: React.PropTypes.bool,
-    searchFilter: React.PropTypes.object,
+    selectedFilter: React.PropTypes.object,
     searchQuery: React.PropTypes.string,
   };
 
@@ -24,33 +24,33 @@ class TopBarSearch extends React.Component {
   handleFilterClick = (evt, { value }) => {
     evt.preventDefault();
 
-    this.props.actions.changeSearchFilter({ filter: value });
+    this.props.actions.updateFilter({ filter: value });
   };
 
   handleSearch = (evt, { query }) => {
-    const { actions, searchFilter, filterOptions } = this.props;
-    const { text } = find(filterOptions, { value: searchFilter.filter });
+    const { actions, selectedFilter, filterOptions } = this.props;
+    const { text } = find(filterOptions, { value: selectedFilter.filter });
     const slug = latinize(text).toLowerCase();
 
     evt.preventDefault();
 
     actions.search(query);
 
-    if (searchFilter.filter === 'all') {
+    if (selectedFilter.filter === 'all') {
       actions.readAll();
     } else {
-      actions.read({ entity: searchFilter.filter });
+      actions.read({ entity: selectedFilter.filter });
     }
 
     this.context.router.transitionTo({
       pathname: '/buscar',
-      query: searchFilter.filter === 'all' ? null : { filtro: slug },
+      query: selectedFilter.filter === 'all' ? null : { filtro: slug },
     });
   };
 
   render() {
-    const { isSearching, searchQuery, searchFilter, filterOptions } = this.props;
-    const selected = find(filterOptions, { value: searchFilter.filter });
+    const { isSearching, searchQuery, selectedFilter, filterOptions } = this.props;
+    const selected = find(filterOptions, { value: selectedFilter.filter });
 
     return (
       <Form className={styles.searchForm} onSubmit={this.handleSearch}>
@@ -62,7 +62,7 @@ class TopBarSearch extends React.Component {
               {filterOptions.map(option =>
                 <Dropdown.Item
                   key={option.value}
-                  selected={searchFilter.filter === option.value}
+                  selected={selectedFilter.filter === option.value}
                   icon={option.icon}
                   value={option.value}
                   text={option.text}
@@ -83,7 +83,7 @@ class TopBarSearch extends React.Component {
 const mapStateToProps = state => ({
   isSearching: selectors.getSearchStatus(state),
   filterOptions: selectors.getFilterOptions(state),
-  searchFilter: selectors.getSearchFilter(state),
+  selectedFilter: selectors.getSelectedFilter(state),
   searchQuery: selectors.getSearchQuery(state),
 });
 

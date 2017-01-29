@@ -15,7 +15,7 @@ Feed.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  user: selectors.getUser(state),
+  user: selectors.getUserData(state),
 });
 
 export default connect(mapStateToProps)(Feed);

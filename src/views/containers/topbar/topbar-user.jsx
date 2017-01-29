@@ -16,22 +16,20 @@ class TopBarUser extends React.Component {
     user: React.PropTypes.object,
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    isModalVisible: false,
+  };
 
-    this.requiredFields = props.user.type === 'volunteer' ?
-      ['name', 'state', 'city', 'skills'] :
-      ['name', 'state', 'city'];
+  componentDidMount() {
+    this.validateUserFields(this.props);
+  }
 
-    this.state = {
-      isSettingsVisible: this.requiredFields
-        .map(attr => props.user[attr])
-        .some(val => isEmpty(val)),
-    };
+  componentWillReceiveProps(props) {
+    this.validateUserFields(props);
   }
 
   handleSettingsToggle = () => {
-    this.setState({ isSettingsVisible: !this.state.isSettingsVisible });
+    this.setState({ isModalVisible: !this.state.isModalVisible });
   };
 
   handleLogout = (evt) => {
@@ -40,11 +38,25 @@ class TopBarUser extends React.Component {
     this.props.actions.logout();
   };
 
+  validateUserFields(props) {
+    this.requiredFields = props.user.type === 'volunteer' ?
+      ['name', 'state', 'city', 'skills'] :
+      ['name', 'state', 'city'];
+
+    setTimeout(() => {
+      this.setState({
+        isModalVisible: this.requiredFields
+          .map(attr => props.user[attr])
+          .some(val => isEmpty(val)),
+      });
+    }, 1);
+  }
+
   render() {
     const settingsProps = {
-      requiredFields: this.requiredFields,
       user: this.props.user,
-      isOpen: this.state.isSettingsVisible,
+      requiredFields: this.requiredFields,
+      isOpen: this.state.isModalVisible,
       onClose: this.handleSettingsToggle,
     };
 
@@ -72,7 +84,7 @@ class TopBarUser extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  user: selectors.getUser(state),
+  user: selectors.getUserData(state),
 });
 
 const mapDispatchToProps = dispatch => ({

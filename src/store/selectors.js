@@ -5,23 +5,24 @@ import latinize from 'latinize';
 const format = data => ({
   title: data.name,
   meta: data.email,
-  // image: data.image || faker.image.imageUrl(100, 100, 'abstract'),
   image: data.image,
   description: data.resume || data.description || '',
   created_at: data.created_at,
 });
 
+export const isFetching = (state, entity) => state.entities.isFetching[entity];
 export const isLoadingState = state => state.asyncState.loading;
 export const isUpdatingProfile = state => state.application.isUpdatingProfile;
+export const getAuthData = state => state.application.authData;
+export const getUserData = state => state.application.userData;
 export const getNotification = state => state.application.notification;
 export const getUserMenuVisibility = state => state.application.isUserMenuVisible;
-export const getUser = state => state.application.user;
 
 // ==============================================
 //  Auth
 // ==============================================
 
-export const isAuthenticated = state => !_.isEmpty(state.application.user);
+export const isAuthenticated = state => !_.isEmpty(state.application.userData);
 export const isAuthenticating = state => state.application.isAuthenticating;
 export const isRegistering = state => state.application.isRegistering;
 
@@ -37,29 +38,32 @@ export const getFilterOptions = () => [
   { text: 'Campanhas', value: 'campaigns', icon: 'bullhorn' },
 ];
 
-export const getSearchFilter = state =>
-  state.application.searchFilter;
+export const getAppliedFilter = state =>
+  state.application.appliedFilter;
+
+export const getSelectedFilter = state =>
+  state.application.selectedFilter;
 
 export const getSearchQuery = state =>
   state.application.searchQuery;
 
 export const getSearchStatus = (state) => {
-  const searchFilter = getSearchFilter(state);
+  const appliedFilter = getAppliedFilter(state);
 
-  if (searchFilter.filter === 'all') {
+  if (appliedFilter.filter === 'all') {
     return _.some(_.values(state.entities.isFetching));
   }
 
-  return state.entities.isFetching[searchFilter.filter];
+  return state.entities.isFetching[appliedFilter.filter];
 };
 
 export const getSearchResults = (state) => {
   let result, byId = {};
-  const searchFilter = getSearchFilter(state);
+  const appliedFilter = getAppliedFilter(state);
   const query = getSearchQuery(state);
 
-  if (!_.isEmpty(searchFilter.filter)) {
-    if (searchFilter.filter === 'all') {
+  if (!_.isEmpty(appliedFilter.filter)) {
+    if (appliedFilter.filter === 'all') {
       _.forEach(_.omit(state.entities.byId, ['skills']), (value, entity) => {
         _.forEach(value, (val, id) => _.merge(byId, {
           [id]: { id, ...val, entity, ...format(val) },
@@ -68,16 +72,16 @@ export const getSearchResults = (state) => {
 
       result = _.values(byId);
     } else {
-      byId = state.entities.byId[searchFilter.filter];
+      byId = state.entities.byId[appliedFilter.filter];
       result = _.map(byId, (val, id) =>
-        ({ id, ...val, entity: searchFilter.filter, ...format(val) }),
+        ({ id, ...val, entity: appliedFilter.filter, ...format(val) }),
       );
     }
   }
 
-  if (!_.isEmpty(searchFilter.skills)) {
+  if (!_.isEmpty(appliedFilter.skills)) {
     result = _.filter(result, item =>
-      !!_.intersection(_.values(item.skills), searchFilter.skills).length,
+      !!_.intersection(_.values(item.skills), appliedFilter.skills).length,
     );
   }
 

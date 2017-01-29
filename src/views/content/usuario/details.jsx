@@ -1,5 +1,5 @@
 import React from 'react';
-import { isEmpty, values } from 'lodash';
+import { values } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Container, Header, Icon, Label, Segment } from 'semantic-ui-react';
@@ -55,7 +55,7 @@ class Details extends React.Component {
 }
 
 const mapStateToProps = (state, { params: { id } }) => ({
-  isLogged: !isEmpty(selectors.getUser(state)),
+  isLogged: selectors.isAuthenticated(state),
   user: selectors.getEntities(state, 'users', id),
   skills: selectors.getEntities(state, 'skills'),
 });

@@ -1,15 +1,9 @@
 import _ from 'lodash';
 import { takeEvery } from 'redux-saga';
 import { put, select } from 'redux-saga/effects';
-import genUID from '~/helpers/gen-uid';
 import * as selectors from './selectors';
 import * as actions from './actions';
 import * as api from './apis';
-
-const authAttrs = [
-  'displayName', 'photoURL', 'emailVerified', 'isAnonymous', 'providerData',
-  'apiKey', 'appName', 'authDomain', 'stsTokenManager', 'redirectEventId',
-];
 
 function* handleLogin(action) {
   const { email, password } = action.payload;
@@ -19,10 +13,11 @@ function* handleLogin(action) {
     const auth = response.toJSON();
     const user = yield api.read(`/users/${auth.uid}`);
 
-    yield put(actions.authorize({ ...auth, ...user }));
-  } catch (error) {
-    yield put(actions.notifyError(error));
-    yield put(actions.authorize(new Error(JSON.stringify(error))));
+    yield put(actions.authorize(auth));
+    yield put(actions.updateCache({ entity: 'users', response: { [user.uid]: user } }));
+  } catch (err) {
+    yield put(actions.notifyError(err));
+    yield put(actions.authorize(new Error(JSON.stringify(err))));
   }
 }
 
@@ -30,9 +25,9 @@ function* handleLogout() {
   try {
     yield api.logout();
     yield put(actions.unauthorize());
-  } catch (error) {
-    yield put(actions.notifyError(error));
-    yield put(actions.unauthorize(new Error(JSON.stringify(error))));
+  } catch (err) {
+    yield put(actions.notifyError(err));
+    yield put(actions.unauthorize(new Error(JSON.stringify(err))));
   }
 }
 
@@ -45,12 +40,11 @@ function* handleRegister(action) {
     const user = { uid: auth.uid, email, type };
 
     yield api.save('users', user);
-    yield put(actions.authorize({ ...auth, ...user }));
+    yield put(actions.authorize(auth));
+    yield put(actions.updateCache({ entity: 'users', response: { [user.uid]: user } }));
   } catch (err) {
     const error = JSON.parse(JSON.stringify(err));
-    const message = err.code === 'PERMISSION_DENIED' ?
-      'Sua sessão expirou. Por favor, faça login novamente' :
-      'Ocorreu um erro ao tentar realizar a ação solicitada. Por favor, tente novamente.';
+    const message = 'Ocorreu um erro ao tentar realizar a ação solicitada. Por favor, tente novamente.';
 
     console.error(err, error); // eslint-disable-line
 
@@ -115,8 +109,9 @@ function* handleSave(action) {
   const { ref, data } = action.payload || {};
 
   try {
-    yield api.save(ref, data);
-    yield put(actions.updateCache({ entity: ref, response: { [data.uid]: data } }));
+    const res = yield api.save(ref, data);
+
+    yield put(actions.updateCache({ entity: ref, response: { [res.uid]: res } }));
   } catch (err) {
     console.log(err); // eslint-disable-line
     yield put(actions.notifyError(err));
@@ -125,20 +120,20 @@ function* handleSave(action) {
 }
 
 function* handleUpdateProfile({ payload }) {
-  const { password, ...user } = payload;
+  const { password, ...userData } = payload;
 
   yield put(actions.updateProfileStatus(true));
 
   try {
+    const user = yield api.save('users', userData);
+
     yield api.updateProfile({ displayName: payload.name });
-    yield api.save('users', user);
 
     if (password) {
       yield api.updatePassword(password);
     }
 
     yield put(actions.notify('Dados atualizados!'));
-    yield put(actions.updateUserCache(user));
     yield put(actions.updateCache({ entity: 'users', response: { [user.uid]: user } }));
   } catch (err) {
     console.log(err); // eslint-disable-line
@@ -149,26 +144,27 @@ function* handleUpdateProfile({ payload }) {
   }
 }
 
-function* handleAddToOrg({ payload: { formData, entity } }) {
-  const user = yield select(selectors.getUser);
-  const data = _.merge({}, formData, { uid: genUID(entity) });
-  const newUser = _.merge({}, _.omit(user, authAttrs), { services: { [data.uid]: data.uid } });
-
+function* handleAddToOrg({ payload: { data, entity } }) {
   yield put(actions.updateStatus({ entity, status: true }));
+  yield put(actions.updateStatus({ entity: 'users', status: true }));
 
   try {
-    yield api.save(entity, data);
-    yield api.save('users', newUser);
+    const user = yield select(selectors.getUserData);
+    const res = yield api.save(entity, data);
+    const val = yield api.save('users', _.merge({}, user, {
+      [entity]: { [res.uid]: res.uid },
+    }));
 
     yield put(actions.notify('Criado com sucesso!'));
-    yield put(actions.updateUserCache(newUser));
-    yield put(actions.updateCache({ entity: 'users', response: { [newUser.uid]: newUser } }));
+    yield put(actions.updateCache({ entity, response: { [res.uid]: res } }));
+    yield put(actions.updateCache({ entity: 'users', response: { [val.uid]: val } }));
   } catch (err) {
     console.log(err); // eslint-disable-line
     yield put(actions.notifyError(err));
-    yield put(actions.createService(err));
+    yield put(actions.addToOrg(err));
   } finally {
     yield put(actions.updateStatus({ entity, status: false }));
+    yield put(actions.updateStatus({ entity: 'users', status: false }));
   }
 }
 

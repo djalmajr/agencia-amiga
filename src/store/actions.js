@@ -18,17 +18,17 @@ export const authorize = createAction('authorize');
 export const unauthorize = createAction('unauthorize');
 
 // App Actions
+export const applyFilter = createAction('apply-filter');
 export const notify = createAction('notify', handleNotify);
 export const notifyError = createAction('notify', handleNotify);
 export const notifyInfo = createAction('notify', handleNotify);
 export const notifyWarning = createAction('notify', handleNotify);
 export const search = createAction('search-request');
 export const searchDone = createAction('search-done');
-export const changeSearchFilter = createAction('change-search-filter');
 export const toggleUserMenu = createAction('toggle-user-menu');
+export const updateFilter = createAction('update-filter');
 export const updateProfile = createAction('update-profile');
 export const updateProfileStatus = createAction('update-profile-status');
-export const updateUserCache = createAction('update-user-cache');
 
 // Entity Actions
 export const addToOrg = createAction('add-to-org');

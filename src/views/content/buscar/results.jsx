@@ -20,7 +20,7 @@ class Results extends React.Component {
     isLogged: React.PropTypes.bool,
     location: React.PropTypes.object,
     records: React.PropTypes.array,
-    searchFilter: React.PropTypes.object,
+    appliedFilter: React.PropTypes.object,
   };
 
   static contextTypes = {
@@ -32,13 +32,13 @@ class Results extends React.Component {
     const filter = this.getFilter();
 
     if (filter) {
-      actions.changeSearchFilter({ filter });
+      actions.updateFilter({ filter });
     }
   }
 
   componentDidMount() {
-    const { actions, searchFilter, records, isSearching, isLogged } = this.props;
-    const filter = this.getFilter() || searchFilter.filter;
+    const { actions, appliedFilter, records, isSearching, isLogged } = this.props;
+    const filter = this.getFilter() || appliedFilter.filter;
 
     if (isEmpty(records) && !isSearching && !timeoutID && isLogged) {
       if (filter === 'all') {
@@ -158,10 +158,10 @@ class Results extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  isLogged: !isEmpty(selectors.getUser(state)),
+  isLogged: selectors.isAuthenticated(state),
   isSearching: selectors.getSearchStatus(state),
   filterOptions: selectors.getFilterOptions(state),
-  searchFilter: selectors.getSearchFilter(state),
+  appliedFilter: selectors.getAppliedFilter(state),
   records: selectors.getSearchResults(state),
 });
 

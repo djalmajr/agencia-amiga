@@ -15,7 +15,7 @@ class Filters extends React.Component {
     actions: React.PropTypes.object,
     filterOptions: React.PropTypes.array,
     isSearching: React.PropTypes.bool,
-    searchFilter: React.PropTypes.object,
+    appliedFilter: React.PropTypes.object,
     skills: React.PropTypes.object,
   };
 
@@ -25,15 +25,15 @@ class Filters extends React.Component {
 
   handleClear = () => {
     this.dropdown.setValue('');
-    this.props.actions.changeSearchFilter({ skills: null });
+    this.props.actions.updateFilter({ skills: null });
   };
 
   handleSearch = () => {
     const skills = this.dropdown.state.value;
 
-    this.props.actions.changeSearchFilter({ skills });
+    this.props.actions.updateFilter({ skills });
 
-    this.applySearch(this.props.searchFilter.filter);
+    this.applySearch(this.props.appliedFilter.filter);
   };
 
   handleFilterClick = (value) => {
@@ -47,7 +47,7 @@ class Filters extends React.Component {
       query: value === 'all' ? null : { filtro: slug },
     });
 
-    actions.changeSearchFilter({ filter: value });
+    actions.updateFilter({ filter: value });
     this.applySearch(value);
   };
 
@@ -62,7 +62,7 @@ class Filters extends React.Component {
   }
 
   render() {
-    const { isSearching, searchFilter, filterOptions, skills } = this.props;
+    const { isSearching, appliedFilter, filterOptions, skills } = this.props;
 
     return (
       <FlexElement column className={styles.wrapper}>
@@ -73,7 +73,7 @@ class Filters extends React.Component {
                 align="center"
                 key={option.value}
                 className={cn(styles.menuItem, {
-                  [styles.selected]: option.value === searchFilter.filter,
+                  [styles.selected]: option.value === appliedFilter.filter,
                 })}
                 onClick={() => this.handleFilterClick(option.value)}
               >
@@ -123,10 +123,10 @@ class Filters extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  skills: selectors.getEntities(state, 'skills'),
-  isSearching: selectors.getSearchStatus(state),
+  appliedFilter: selectors.getAppliedFilter(state),
   filterOptions: selectors.getFilterOptions(state),
-  searchFilter: selectors.getSearchFilter(state),
+  isSearching: selectors.getSearchStatus(state),
+  skills: selectors.getEntities(state, 'skills'),
 });
 
 const mapDispatchToProps = dispatch => ({

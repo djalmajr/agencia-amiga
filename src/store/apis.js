@@ -19,7 +19,11 @@ export const save = (ref, data) => {
 
   data.updatedAt = fb.database.ServerValue.TIMESTAMP;
 
-  return fb.database().ref(`${ref}/${data.uid}`).set(data);
+  return new Promise((resolve, reject) => {
+    fb.database().ref(`${ref}/${data.uid}`).set(data)
+      .then(() => read(`${ref}/${data.uid}`).then(resolve))
+      .catch(reject);
+  });
 };
 
 export const saveAll = updates => fb.database().ref().update(updates);

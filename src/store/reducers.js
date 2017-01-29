@@ -1,16 +1,8 @@
+import _ from 'lodash';
 import { combineReducers } from 'redux';
-import { assign, keys, merge } from 'lodash';
 import { handleActions } from 'redux-actions';
 import { innerReducer as asyncState } from 'redux-async-initial-state';
 import * as actions from './actions';
-
-const handleUpdateUser = (state, action) => {
-  if (action.error) {
-    return state;
-  }
-
-  return merge({}, state, action.payload);
-};
 
 const application = combineReducers({
   isAuthenticating: handleActions({
@@ -43,15 +35,20 @@ const application = combineReducers({
   }, false),
 
   notification: handleActions({
-    [actions.notify]: (state, action) => merge({ position: 'br', level: 'success' }, action.payload),
-    [actions.notifyError]: (state, action) => merge({ position: 'br', level: 'error' }, action.payload),
-    [actions.notifyInfo]: (state, action) => merge({ position: 'br', level: 'info' }, action.payload),
-    [actions.notifyWarning]: (state, action) => merge({ position: 'br', level: 'warning' }, action.payload),
+    [actions.notify]: (state, action) => _.merge({ position: 'br', level: 'success' }, action.payload),
+    [actions.notifyError]: (state, action) => _.merge({ position: 'br', level: 'error' }, action.payload),
+    [actions.notifyInfo]: (state, action) => _.merge({ position: 'br', level: 'info' }, action.payload),
+    [actions.notifyWarning]: (state, action) => _.merge({ position: 'br', level: 'warning' }, action.payload),
   }, {}),
 
-  searchFilter: handleActions({
+  appliedFilter: handleActions({
     [actions.unauthorize]: () => ({ filter: 'all' }),
-    [actions.changeSearchFilter]: (state, action) => assign({}, state, action.payload),
+    [actions.applyFilter]: (state, action) => _.assign({}, state, action.payload),
+  }, ({ filter: 'all' })),
+
+  selectedFilter: handleActions({
+    [actions.unauthorize]: () => ({ filter: 'all' }),
+    [actions.updateFilter]: (state, action) => _.assign({}, state, action.payload),
   }, ({ filter: 'all' })),
 
   searchQuery: handleActions({
@@ -59,10 +56,26 @@ const application = combineReducers({
     [actions.search]: (state, action) => action.payload,
   }, ''),
 
-  user: handleActions({
+  authData: handleActions({
     [actions.unauthorize]: () => ({}),
-    [actions.authorize]: handleUpdateUser,
-    [actions.updateUserCache]: handleUpdateUser,
+    [actions.authorize]: (state, { error, payload }) => {
+      if (error) {
+        return state;
+      }
+
+      return _.merge({}, state, payload);
+    },
+  }, {}),
+
+  userData: handleActions({
+    [actions.unauthorize]: () => ({}),
+    [actions.updateCache]: (state, { error, payload }) => {
+      if (error || payload.entity !== 'users') {
+        return state;
+      }
+
+      return _.merge({}, state, _.values(payload.response)[0]);
+    },
   }, {}),
 });
 
@@ -74,14 +87,14 @@ const entities = combineReducers({
         return state;
       }
 
-      return merge({}, state, { [payload.entity]: payload.response });
+      return _.merge({}, state, { [payload.entity]: payload.response });
     },
   }, {}),
 
   isFetching: handleActions({
     [actions.unauthorize]: () => ({}),
-    [actions.updateStatus]: (state, { error, payload }) => merge({}, state, {
-      [payload.entity]: error ? false : payload.status,
+    [actions.updateStatus]: (state, { payload }) => _.merge({}, state, {
+      [payload.entity]: payload.status,
     }),
   }, {}),
 
@@ -92,7 +105,7 @@ const entities = combineReducers({
         return state;
       }
 
-      return merge({}, state, { [payload.entity]: keys(payload.response) });
+      return _.merge({}, state, { [payload.entity]: _.keys(payload.response) });
     },
   }, {}),
 });

@@ -89,12 +89,12 @@ class Settings extends React.PureComponent {
 
   handleSubmit = (evt) => {
     const { formData } = this.state;
-    const { actions, user: { uid, email } } = this.props;
+    const { actions, user } = this.props;
 
     evt.preventDefault();
 
     if (this.isValid(formData)) {
-      actions.updateProfile({ ...formData, uid, email });
+      actions.updateProfile(_.merge({}, user, formData));
     }
   }
 

@@ -15,6 +15,7 @@ class ServicesModal extends React.Component {
     actions: React.PropTypes.object,
     isSaving: React.PropTypes.bool,
     skills: React.PropTypes.object,
+    user: React.PropTypes.object,
   };
 
   constructor(props) {
@@ -23,12 +24,19 @@ class ServicesModal extends React.Component {
     this.state = this.initialState;
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.skills !== this.state.skills) {
+  componentWillReceiveProps({ skills, user: { services } }) {
+    const oldSkills = this.state.skills;
+    const oldServices = this.props.user.services;
+
+    if (_.values(skills).length !== _.values(oldSkills).length) {
       this.setState({
         isCreatingSkill: false,
-        skills: _.merge({}, nextProps.skills),
+        skills: _.merge({}, skills),
       });
+    }
+
+    if (_.values(services).length !== _.values(oldServices).length) {
+      this.setState({ isOpen: false });
     }
   }
 
@@ -96,7 +104,7 @@ class ServicesModal extends React.Component {
     evt.preventDefault();
 
     if (this.isValid(formData)) {
-      actions.addToOrg({ formData, entity: 'services' });
+      actions.addToOrg({ data: formData, entity: 'services' });
     }
   }
 
@@ -154,7 +162,7 @@ class ServicesModal extends React.Component {
             <Form.Input
               required
               name="qtyAvailable"
-              label="Vagas"
+              label="Vagas disponíveis"
               placeholder="Número de vagas disponíveis"
               disabled={isSaving}
               value={formData.qtyAvailable}
@@ -211,8 +219,12 @@ class ServicesModal extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  isSaving: false,
+  user: selectors.getUserData(state),
   skills: selectors.getEntities(state, 'skills'),
+  isSaving: (
+    selectors.isFetching(state, 'services') ||
+    selectors.isFetching(state, 'users')
+  ),
 });
 
 const mapDispatchToProps = dispatch => ({
