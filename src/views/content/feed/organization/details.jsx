@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Segment, Container, Menu } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
 import selectors from '~/store/selectors';
@@ -24,65 +23,41 @@ const views = {
   },
 };
 
-class Details extends React.Component {
-  static propTypes = {
-    actions: React.PropTypes.object,
-    activeItem: React.PropTypes.string,
-  };
+const Details = ({ active, onTabClick }) => {
+  const Component = views[active].component;
 
-  componentDidMount() {
-    this.fetchServices(this.props);
-  }
+  return (
+    <Container fluid style={{ fontSize: '1rem' }}>
+      <Menu attached="top" tabular>
+        {_.map(views, (val, key) =>
+          <Menu.Item
+            key={key}
+            name={key}
+            active={active === key}
+            onClick={onTabClick}
+          >
+            {val.description}
+          </Menu.Item>,
+        )}
+      </Menu>
+      <Segment attached="bottom">
+        <Component />
+      </Segment>
+    </Container>
+  );
+};
 
-  componentWillReceiveProps(props) {
-    this.fetchServices(props);
-  }
-
-  fetchServices({ hasServices, isLogged, isFetchingServices }) {
-    if (!hasServices && isLogged && !isFetchingServices) {
-      this.props.actions.read({ entity: 'services' });
-    }
-  }
-
-  handleTabClick = (evt, { name }) => {
-    this.props.actions.updateTabFeed(name);
-  };
-
-  render() {
-    const { activeItem } = this.props;
-    const Component = views[activeItem].component;
-
-    return (
-      <Container fluid style={{ fontSize: '1rem' }}>
-        <Menu attached="top" tabular>
-          {_.map(views, (val, key) =>
-            <Menu.Item
-              key={key}
-              name={key}
-              active={activeItem === key}
-              onClick={this.handleTabClick}
-            >
-              {val.description}
-            </Menu.Item>,
-          )}
-        </Menu>
-        <Segment attached="bottom">
-          <Component />
-        </Segment>
-      </Container>
-    );
-  }
-}
+Details.propTypes = {
+  active: React.PropTypes.string,
+  onTabClick: React.PropTypes.func,
+};
 
 const mapStateToProps = state => ({
-  activeItem: selectors.getCurrentTabFeed(state),
-  isLogged: selectors.isAuthenticated(state),
-  hasServices: !_.isEmpty(selectors.getEntities(state, 'services')),
-  isFetchingServices: selectors.isFetching(state, 'services'),
+  active: selectors.getCurrentTabFeed(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(actionCreators, dispatch),
+  onTabClick: (evt, { name }) => dispatch(actionCreators.updateTabFeed(name)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Details);

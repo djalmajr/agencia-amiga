@@ -6,7 +6,7 @@ import selectors from '~/store/selectors';
 import { Button, Divider, Icon, Loader, Table } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
 import FlexElement from '~/views/components/flex-element';
-import Service from './service';
+import Campaign from './campaign';
 import Modal from './modal';
 
 const styles = {
@@ -15,12 +15,12 @@ const styles = {
   emptyText: { color: 'rgba(0,0,0,0.5)', marginTop: '1em', textAlign: 'center' },
 };
 
-class Services extends React.Component {
+class Campaigns extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
     isFetching: React.PropTypes.bool,
     isLogged: React.PropTypes.bool,
-    hasServices: React.PropTypes.bool,
+    hasCampaigns: React.PropTypes.bool,
     user: React.PropTypes.object,
   };
 
@@ -30,28 +30,28 @@ class Services extends React.Component {
   };
 
   componentDidMount() {
-    const { actions, hasServices, isLogged, isFetching } = this.props;
+    const { actions, hasCampaigns, isLogged, isFetching } = this.props;
 
-    if (!hasServices && isLogged && !isFetching) {
-      actions.read({ entity: 'services' });
+    if (!hasCampaigns && isLogged && !isFetching) {
+      actions.read({ entity: 'campaigns' });
     }
   }
 
-  componentWillReceiveProps({ actions, user: { services } }) {
-    const oldServices = this.props.user.services;
+  componentWillReceiveProps({ actions, user: { campaigns } }) {
+    const oldCampaigns = this.props.user.campaigns;
 
-    if (services !== oldServices) {
-      const newLen = _.keys(services).length;
-      const oldLen = _.keys(oldServices).length;
+    if (campaigns !== oldCampaigns) {
+      const newLen = _.keys(campaigns).length;
+      const oldLen = _.keys(oldCampaigns).length;
       const operation = (
-        (newLen > oldLen && 'criado') ||
-        (newLen < oldLen && 'removido') ||
-        'editado'
+        (newLen > oldLen && 'criada') ||
+        (newLen < oldLen && 'removida') ||
+        'editada'
       );
 
       this.handleClose();
 
-      actions.notify(`Serviço ${operation} com sucesso!`);
+      actions.notify(`Campanha ${operation} com sucesso!`);
     }
   }
 
@@ -68,7 +68,7 @@ class Services extends React.Component {
   };
 
   handleRemove = (uid) => {
-    this.props.actions.remove({ entity: 'services', uid });
+    this.props.actions.remove({ entity: 'campaigns', uid });
   };
 
   render() {
@@ -83,34 +83,34 @@ class Services extends React.Component {
             primary
             icon="plus"
             size="small"
-            content="Serviço"
+            content="Campanha"
             onClick={this.handleCreate}
           />
         </FlexElement>
         <Modal isOpen={isOpen} uid={selectedId} onClose={this.handleClose} />
         <Divider style={{ marginBottom: 0 }} />
-        {isFetching && !_.isEmpty(user.services) && (
+        {isFetching && !_.isEmpty(user.campaigns) && (
           <FlexElement column align="center" justify="center" style={styles.emptyContainer}>
             <Loader active>
               <span style={{ color: 'rgba(0,0,0, 0.45)' }}>
-                Carregando serviços...
+                Carregando campanhas...
               </span>
             </Loader>
           </FlexElement>
         )}
-        {!isFetching && _.isEmpty(user.services) && (
+        {!isFetching && _.isEmpty(user.campaigns) && (
           <FlexElement column align="center" justify="center" style={styles.emptyContainer}>
-            <Icon name="wrench" style={styles.emptyIcon} />
+            <Icon name="bullhorn" style={styles.emptyIcon} />
             <span style={styles.emptyText}>
-              Clique no botão acima para adicionar um serviço.
+              Clique no botão acima para adicionar um campanha.
             </span>
           </FlexElement>
         )}
-        {!isFetching && !_.isEmpty(user.services) && (
+        {!isFetching && !_.isEmpty(user.campaigns) && (
           <Table basic="very" style={{ margin: 0 }}>
             <Table.Body>
-              {_.map(user.services, uid =>
-                <Service
+              {_.map(user.campaigns, uid =>
+                <Campaign
                   key={uid}
                   uid={uid}
                   onEdit={this.handleEdit}
@@ -128,12 +128,12 @@ class Services extends React.Component {
 const mapStateToProps = state => ({
   user: selectors.getUserData(state),
   isLogged: selectors.isAuthenticated(state),
-  isFetching: selectors.isFetching(state, 'services'),
-  hasServices: !_.isEmpty(selectors.getEntities(state, 'services')),
+  isFetching: selectors.isFetching(state, 'campaigns'),
+  hasCampaigns: !_.isEmpty(selectors.getEntities(state, 'campaigns')),
 });
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(actionCreators, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Services);
+export default connect(mapStateToProps, mapDispatchToProps)(Campaigns);

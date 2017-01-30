@@ -140,7 +140,7 @@ class ModalService extends React.Component {
         <Modal.Header>
           {service.uid ? 'Editar Serviço' : 'Novo Serviço'}
         </Modal.Header>
-        <Modal.Content as={Form}>
+        <Modal.Content as={Form} onSubmit={this.handleSubmit}>
           <Form.Group widths="equal">
             <Form.Input
               required

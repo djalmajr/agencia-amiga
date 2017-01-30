@@ -9,10 +9,10 @@ const styles = {
   loader: { marginLeft: 8, marginRight: 5, position: 'relative' },
 };
 
-class Service extends React.Component {
+class Campaign extends React.Component {
   static propTypes = {
     isRemoving: React.PropTypes.bool,
-    service: React.PropTypes.object,
+    campaign: React.PropTypes.object,
     uid: React.PropTypes.string,
     onEdit: React.PropTypes.func,
     onRemove: React.PropTypes.func,
@@ -38,7 +38,7 @@ class Service extends React.Component {
 
   render() {
     const { isOpen } = this.state;
-    const { isRemoving, service, onEdit } = this.props;
+    const { isRemoving, campaign, onEdit } = this.props;
     const trigger = isRemoving ?
       <span style={styles.loader}><Loader active size="mini" /></span> :
       <Icon link name="trash outline" style={styles.remove} onClick={this.handleOpen} />;
@@ -47,10 +47,10 @@ class Service extends React.Component {
       <Table.Row>
         <Table.Cell>
           <Header as="h4" image>
-            <Icon name="wrench" />
+            <Icon name="bullhorn" />
             <Header.Content>
-              {service.name}
-              <Header.Subheader>{service.details}</Header.Subheader>
+              {campaign.name}
+              <Header.Subheader>{campaign.details}</Header.Subheader>
             </Header.Content>
           </Header>
         </Table.Cell>
@@ -59,7 +59,7 @@ class Service extends React.Component {
             link
             name="edit"
             style={styles.edit}
-            onClick={() => onEdit(service.uid)}
+            onClick={() => onEdit(campaign.uid)}
           />
           <Modal
             size="small"
@@ -68,9 +68,9 @@ class Service extends React.Component {
             closeOnEscape={false}
             closeOnRootNodeClick={false}
           >
-            <Header size="mini" content="Remover Serviço" />
+            <Header size="mini" content="Remover Campanha" />
             <Modal.Content>
-              Confirmar a remoção de <strong>{service.name}</strong>?
+              Confirmar a remoção de <strong>{campaign.name}</strong>?
             </Modal.Content>
             <Modal.Actions>
               <Button onClick={this.handleClose}>
@@ -88,8 +88,8 @@ class Service extends React.Component {
 }
 
 const mapStateToProps = (state, { uid }) => ({
-  service: selectors.getEntities(state, 'services', uid),
-  isRemoving: selectors.isRemoving(state, 'services', uid),
+  campaign: selectors.getEntities(state, 'campaigns', uid),
+  isRemoving: selectors.isRemoving(state, 'campaigns', uid),
 });
 
-export default connect(mapStateToProps)(Service);
+export default connect(mapStateToProps)(Campaign);

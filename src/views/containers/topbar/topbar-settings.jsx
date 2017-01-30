@@ -132,73 +132,75 @@ class Settings extends React.PureComponent {
         <Modal.Header>
           Configurações
         </Modal.Header>
-        <Modal.Content>
-          <Form ref={el => (this.form = el)}>
-            <Form.Input
+        <Modal.Content
+          as={Form}
+          ref={el => (this.form = el)}
+          onSubmit={this.handleSubmit}
+        >
+          <Form.Input
+            required
+            name="name"
+            label="Nome Completo"
+            placeholder="Ex.: José Cícero"
+            disabled={isUpdating}
+            value={formData.name}
+            onChange={this.handleChange}
+          />
+          {user.type === 'volunteer' && (
+            <Form.Select
+              fluid
+              search
               required
-              name="name"
-              label="Nome Completo"
-              placeholder="Ex.: José Cícero"
+              multiple
+              selection
+              allowAdditions
+              name="skills"
+              label="Habilidades"
+              placeholder="Digite suas habilidades"
+              noResultsMessage="Nenhum resultado encontrado"
               disabled={isUpdating}
-              value={formData.name}
+              loading={isCreatingSkill}
+              value={_.keys(formData.skills)}
+              options={options}
               onChange={this.handleChange}
             />
-            {user.type === 'volunteer' && (
-              <Form.Select
-                fluid
-                search
-                required
-                multiple
-                selection
-                allowAdditions
-                name="skills"
-                label="Habilidades"
-                placeholder="Digite suas habilidades"
-                noResultsMessage="Nenhum resultado encontrado"
-                disabled={isUpdating}
-                loading={isCreatingSkill}
-                value={_.keys(formData.skills)}
-                options={options}
-                onChange={this.handleChange}
-              />
-            )}
+          )}
+          <Form.Group widths="equal">
+            <Form.Input
+              required
+              name="state"
+              label="Estado"
+              placeholder="Ex.: Alagoas"
+              disabled={isUpdating}
+              value={formData.state}
+              onChange={this.handleChange}
+            />
+            <Form.Input
+              required
+              name="city"
+              label="Cidade"
+              placeholder="Ex.: Maceió"
+              disabled={isUpdating}
+              value={formData.city}
+              onChange={this.handleChange}
+            />
+          </Form.Group>
+          {/*
             <Form.Group widths="equal">
+              <Form.Field disabled={isUpdating}>
+                <label htmlFor>Senha Atual</label>
+                <Form.Input name="password" type="password" placeholder="******" />
+                <small>Obs.: Deixe em branco para não alterar</small>
+              </Form.Field>
               <Form.Input
-                required
-                name="state"
-                label="Estado"
-                placeholder="Ex.: Alagoas"
+                name="password2"
+                type="password"
+                label="Nova Senha"
+                placeholder="******"
                 disabled={isUpdating}
-                value={formData.state}
-                onChange={this.handleChange}
-              />
-              <Form.Input
-                required
-                name="city"
-                label="Cidade"
-                placeholder="Ex.: Maceió"
-                disabled={isUpdating}
-                value={formData.city}
-                onChange={this.handleChange}
               />
             </Form.Group>
-            {/*
-              <Form.Group widths="equal">
-                <Form.Field disabled={isUpdating}>
-                  <label htmlFor>Senha Atual</label>
-                  <Form.Input name="password" type="password" placeholder="******" />
-                  <small>Obs.: Deixe em branco para não alterar</small>
-                </Form.Field>
-                <Form.Input
-                  name="password2"
-                  type="password"
-                  label="Nova Senha"
-                  placeholder="******"
-                  disabled={isUpdating}
-                />
-              </Form.Group>
-            */}
-          </Form>
+          */}
         </Modal.Content>
         <Modal.Actions as={FlexElement} justify="flex-end">
           <Button
