@@ -1,8 +1,11 @@
+import moment from 'moment';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import configureStore from './store/configure-store';
 import Application from './application';
+
+moment.locale('pt-br');
 
 const rootEl = document.querySelector('#wrapper');
 const store = configureStore();

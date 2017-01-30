@@ -50,7 +50,12 @@ class Service extends React.Component {
             <Icon name="wrench" />
             <Header.Content>
               {service.name}
-              <Header.Subheader>{service.details}</Header.Subheader>
+              <Header.Subheader>
+                {(service.details || '').length > 200 ?
+                  `${service.details.substr(0, 200)}...` :
+                  service.details
+                }
+              </Header.Subheader>
             </Header.Content>
           </Header>
         </Table.Cell>

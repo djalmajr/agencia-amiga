@@ -50,7 +50,12 @@ class Campaign extends React.Component {
             <Icon name="bullhorn" />
             <Header.Content>
               {campaign.name}
-              <Header.Subheader>{campaign.details}</Header.Subheader>
+              <Header.Subheader>
+                {(campaign.details || '').length > 200 ?
+                  `${campaign.details.substr(0, 200)}...` :
+                  campaign.details
+                }
+              </Header.Subheader>
             </Header.Content>
           </Header>
         </Table.Cell>

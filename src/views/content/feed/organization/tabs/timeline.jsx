@@ -1,65 +1,58 @@
+import _ from 'lodash';
 import React from 'react';
+import moment from 'moment';
+import { connect } from 'react-redux';
 import { Icon, Feed } from 'semantic-ui-react';
 import FlexElement from '~/views/components/flex-element';
+import selectors from '~/store/selectors';
 
 const styles = {
   emptyContainer: { height: 300, fontSize: '1rem' },
+  emptyContent: { maxWidth: 350 },
   emptyIcon: { color: 'rgba(0,0,0,0.1)', fontSize: '6em' },
   emptyText: { color: 'rgba(0,0,0,0.5)', marginTop: '1em', textAlign: 'center' },
 };
 
-const Timeline = ({ isEmpty }) => {
-  if (isEmpty) {
+const Timeline = ({ feed }) => {
+  if (_.isEmpty(feed)) {
     return (
       <FlexElement column align="center" justify="center" style={styles.emptyContainer}>
-        <Icon name="cloud" style={styles.emptyIcon} />
-        <span style={styles.emptyText}>
-          Está meio parado por aqui...
-          Que tal procurar por voluntários?
-        </span>
+        <FlexElement column align="center" justify="center" style={styles.emptyContent}>
+          <Icon name="cloud" style={styles.emptyIcon} />
+          <span style={styles.emptyText}>
+            Está meio parado por aqui...
+            Que tal procurar por voluntários, criar campanhas ou serviços?
+          </span>
+        </FlexElement>
       </FlexElement>
     );
   }
 
   return (
     <Feed>
-      <Feed.Event>
-        <Feed.Label image="http://semantic-ui.com/images/avatar/small/jenny.jpg" />
-        <Feed.Content>
-          <Feed.Date content="1 day ago" />
-          <Feed.Summary>
-            You added <a>Jenny Hess</a> to your <a>coworker</a> group.
-          </Feed.Summary>
-        </Feed.Content>
-      </Feed.Event>
-      <Feed.Event>
-        <Feed.Label image="http://semantic-ui.com/images/avatar2/small/molly.png" />
-        <Feed.Content>
-          <Feed.Date content="3 days ago" />
-          <Feed.Summary>
-            You added <a>Molly Malone</a> as a friend.
-          </Feed.Summary>
-        </Feed.Content>
-      </Feed.Event>
-      <Feed.Event>
-        <Feed.Label image="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-        <Feed.Content>
-          <Feed.Date content="4 days ago" />
-          <Feed.Summary>
-            You added <a>Elliot Baker</a> to your <a>musicians</a> group.
-          </Feed.Summary>
-        </Feed.Content>
-      </Feed.Event>
+      {_.keys(feed).sort().reverse().map(key =>
+        <Feed.Event key={key} style={{ borderBottom: '1px solid #eee' }}>
+          <Feed.Label>
+            <Icon circular name={feed[key].icon} style={{ color: 'rgba(0,0,0,0.3)', fontSize: '1.4em' }} />
+          </Feed.Label>
+          <Feed.Content>
+            <Feed.Date content={moment(parseInt(key, 10)).fromNow()} />
+            <Feed.Summary>
+              <span style={{ fontWeight: 'normal' }}>{feed[key].pretext}</span> {feed[key].text}
+            </Feed.Summary>
+          </Feed.Content>
+        </Feed.Event>,
+      )}
     </Feed>
   );
 };
 
 Timeline.propTypes = {
-  isEmpty: React.PropTypes.bool,
+  feed: React.PropTypes.object,
 };
 
-Timeline.defaultProps = {
-  isEmpty: true,
-};
+const mapStateToProps = state => ({
+  feed: selectors.getFeed(state),
+});
 
-export default Timeline;
+export default connect(mapStateToProps)(Timeline);
