@@ -5,22 +5,22 @@ import { isEmpty, map, find } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Card, Icon, Image, Segment, Loader } from 'semantic-ui-react';
+import { Filter } from '~/constants';
 import * as actionCreators from '~/store/actions';
 import selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
 import styles from './results.scss';
 
-let timeoutID = null;
+// const timeoutID = null;
 
 class Results extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
-    filterOptions: React.PropTypes.array,
     isSearching: React.PropTypes.bool,
-    isLogged: React.PropTypes.bool,
+    // isLogged: React.PropTypes.bool,
     location: React.PropTypes.object,
     records: React.PropTypes.array,
-    appliedFilter: React.PropTypes.object,
+    // appliedFilter: React.PropTypes.object,
   };
 
   static contextTypes = {
@@ -37,28 +37,26 @@ class Results extends React.Component {
   }
 
   componentDidMount() {
-    const { actions, appliedFilter, records, isSearching, isLogged } = this.props;
-    const filter = this.getFilter() || appliedFilter.filter;
+    // const { actions, appliedFilter, records, isSearching, isLogged } = this.props;
+    // const filter = this.getFilter() || appliedFilter.filter;
 
-    if (isEmpty(records) && !isSearching && !timeoutID && isLogged) {
-      if (filter === 'all') {
-        actions.readAll();
-      } else {
-        actions.read({ entity: filter });
-      }
+    // if (isEmpty(records) && !isSearching && !timeoutID && isLogged) {
+    //   if (filter === 'all') {
+    //     actions.readAll();
+    //   } else {
+    //     actions.read({ entity: filter });
+    //   }
 
-      timeoutID = setTimeout(() => (timeoutID = null), 10000);
-    }
+    //   timeoutID = setTimeout(() => (timeoutID = null), 10000);
+    // }
   }
 
   getFilter() {
     const { filtro } = this.props.location.query || {};
 
     if (filtro) {
-      const { value } = find(
-        this.props.filterOptions,
-        opt => filtro === latinize(opt.text).toLowerCase(),
-      ) || {};
+      const comparator = option => filtro === latinize(option.text).toLowerCase();
+      const { value } = find(Filter.OPTIONS, comparator) || {};
 
       return value;
     }
@@ -67,16 +65,15 @@ class Results extends React.Component {
   }
 
   navigateTo(entity, id) {
-    const { filterOptions } = this.props;
     const { transitionTo } = this.context.router;
-    const { text } = find(filterOptions, { value: entity });
+    const { text } = find(Filter.OPTIONS, { value: entity });
     const slug = latinize(text).toLowerCase();
 
     transitionTo(`/${slug}/${id}`);
   }
 
   render() {
-    const { records, isSearching, filterOptions } = this.props;
+    const { records, isSearching } = this.props;
 
     if (isSearching) {
       return (
@@ -110,7 +107,7 @@ class Results extends React.Component {
         <Card.Group itemsPerRow={4} className={styles.cards}>
           {map(records, (record, key) => {
             const date = moment(record.created_at);
-            const { icon } = find(filterOptions, { value: record.entity });
+            const { icon } = find(Filter.OPTIONS, { value: record.entity });
 
             return (
               <Card
@@ -159,8 +156,7 @@ class Results extends React.Component {
 
 const mapStateToProps = state => ({
   isLogged: selectors.isAuthenticated(state),
-  isSearching: selectors.getSearchStatus(state),
-  filterOptions: selectors.getFilterOptions(state),
+  isSearching: selectors.isSearching(state),
   appliedFilter: selectors.getAppliedFilter(state),
   records: selectors.getSearchResults(state),
 });

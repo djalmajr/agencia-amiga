@@ -5,6 +5,7 @@ import { find, values } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Divider, Dropdown, Form, Header, Icon, Segment } from 'semantic-ui-react';
+import { Filter } from '~/constants';
 import * as actionCreators from '~/store/actions';
 import selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
@@ -13,7 +14,6 @@ import styles from './filters.scss';
 class Filters extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
-    filterOptions: React.PropTypes.array,
     isSearching: React.PropTypes.bool,
     appliedFilter: React.PropTypes.object,
     skills: React.PropTypes.object,
@@ -38,8 +38,8 @@ class Filters extends React.Component {
 
   handleFilterClick = (value) => {
     const { transitionTo } = this.context.router;
-    const { actions, filterOptions } = this.props;
-    const { text } = find(filterOptions, { value });
+    const { actions } = this.props;
+    const { text } = find(Filter.OPTIONS, { value });
     const slug = latinize(text).toLowerCase();
 
     transitionTo({
@@ -62,13 +62,13 @@ class Filters extends React.Component {
   }
 
   render() {
-    const { isSearching, appliedFilter, filterOptions, skills } = this.props;
+    const { isSearching, appliedFilter, skills } = this.props;
 
     return (
       <FlexElement column className={styles.wrapper}>
         <Segment>
           <FlexElement column className={styles.menu}>
-            {filterOptions.map(option =>
+            {Filter.OPTIONS.map(option =>
               <FlexElement
                 align="center"
                 key={option.value}
@@ -124,8 +124,7 @@ class Filters extends React.Component {
 
 const mapStateToProps = state => ({
   appliedFilter: selectors.getAppliedFilter(state),
-  filterOptions: selectors.getFilterOptions(state),
-  isSearching: selectors.getSearchStatus(state),
+  isSearching: selectors.isSearching(state),
   skills: selectors.getEntities(state, 'skills'),
 });
 

@@ -26,7 +26,6 @@ export const searchDone = createAction('search-done');
 export const toggleUserMenu = createAction('toggle-user-menu');
 export const updateFilter = createAction('update-filter');
 export const updateProfile = createAction('update-profile');
-export const updateProfileStatus = createAction('update-profile-status');
 export const updateTabFeed = createAction('update-tab-feed');
 
 // Entity Actions
@@ -38,5 +37,3 @@ export const removeCache = createAction('remove-cache');
 export const save = createAction('save', (ref, data) => ({ ref, data }));
 export const saveAll = createAction('save-all');
 export const updateCache = createAction('update-cache');
-export const updateStatus = createAction('update-status');
-export const updateRemoveStatus = createAction('update-remove-status');

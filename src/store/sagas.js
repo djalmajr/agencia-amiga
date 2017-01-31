@@ -1,21 +1,40 @@
 import _ from 'lodash';
 import { takeEvery } from 'redux-saga';
 import { put, select } from 'redux-saga/effects';
+import { fb } from '~/constants';
 import selectors from './selectors';
 import * as actions from './actions';
 import * as api from './apis';
 
 function* handleLogin(action) {
   const { email, password } = action.payload;
+  const entities = ['skills', 'services', 'campaigns'];
 
   try {
-    const response = yield api.login(email, password);
-    const auth = response.toJSON();
-    const user = yield api.read(`/users/${auth.uid}`);
+    const authResp = yield api.login(email, password);
+    const auth = authResp.toJSON();
+    const userSnap = yield fb.database().ref(`/users/${auth.uid}`).once('value');
+    const user = userSnap.val();
+
+    for (let i = 0, entity; (entity = entities[i]); i++) {
+      if (userSnap.hasChild(entity)) {
+        const response = {};
+        const snapshot = yield fb.database().ref(entity).once('value');
+
+        _.forEach(user[entity], (uid) => {
+          if (snapshot.hasChild(uid)) {
+            response[uid] = snapshot.child(uid).val();
+          }
+        });
+
+        yield put(actions.updateCache({ entity, response }));
+      }
+    }
 
     yield put(actions.authorize(auth));
     yield put(actions.updateCache({ entity: 'users', response: { [user.uid]: user } }));
   } catch (err) {
+    console.log(err); // eslint-disable-line
     yield put(actions.notifyError(err));
     yield put(actions.authorize(new Error(JSON.stringify(err))));
   }
@@ -53,62 +72,26 @@ function* handleRegister(action) {
   }
 }
 
-function* handleReadError(err, showNotification = true) {
-  const error = JSON.parse(JSON.stringify(err));
-  const message = error.code === 'PERMISSION_DENIED' ?
-    'Sua sessão expirou. Por favor, faça login novamente' :
-    'Ocorreu um erro ao tentar realizar a ação solicitada. Por favor, tente novamente.';
-
-  if (showNotification) {
-    yield put(actions.notifyError(error.message || message));
-  }
-
-  yield put(actions.updateCache(err));
-}
-
 function* handleRead(action) {
   const { entity } = action.payload || {};
-
-  yield put(actions.updateStatus({ entity, status: true }));
 
   try {
     const response = yield api.read(entity);
 
     yield put(actions.updateCache({ entity, response }));
   } catch (err) {
-    yield handleReadError(err);
-  } finally {
-    yield put(actions.updateStatus({ entity, status: false }));
-  }
-}
+    const error = JSON.parse(JSON.stringify(err));
+    const message = error.code === 'PERMISSION_DENIED' ?
+      'Sua sessão expirou. Por favor, faça login novamente' :
+      'Ocorreu um erro ao tentar realizar a ação solicitada. Por favor, tente novamente.';
 
-function* handleReadAll() {
-  const filterOptions = yield select(selectors.getFilterOptions);
-  const entities = _.map(_.filter(filterOptions, opt => opt.value !== 'all'), 'value');
-
-  for (let i = 0, entity; (entity = entities[i]); i++) {
-    yield put(actions.updateStatus({ entity, status: true }));
-  }
-
-  try {
-    for (let i = 0, entity; (entity = entities[i]); i++) {
-      const response = yield api.read(entity);
-
-      yield put(actions.updateCache({ entity, response }));
-    }
-  } catch (err) {
-    yield handleReadError(err, false);
-  } finally {
-    for (let i = 0, entity; (entity = entities[i]); i++) {
-      yield put(actions.updateStatus({ entity, status: false }));
-    }
+    yield put(actions.notifyError(error.message || message));
+    yield put(actions.updateCache(err));
   }
 }
 
 function* handleRemove(action) {
   const { entity, uid } = action.payload;
-
-  yield put(actions.updateRemoveStatus({ entity, uid, status: true }));
 
   try {
     yield api.remove(`${entity}/${uid}`);
@@ -128,8 +111,6 @@ function* handleRemove(action) {
     console.log(err); // eslint-disable-line
     yield put(actions.notifyError(err));
     yield put(actions.removeCache(err));
-  } finally {
-    yield put(actions.updateRemoveStatus({ entity, uid, status: false }));
   }
 }
 
@@ -150,8 +131,6 @@ function* handleSave(action) {
 function* handleUpdateProfile({ payload }) {
   const { password, ...userData } = payload;
 
-  yield put(actions.updateProfileStatus(true));
-
   try {
     const user = yield api.save('users', userData);
 
@@ -166,16 +145,11 @@ function* handleUpdateProfile({ payload }) {
   } catch (err) {
     console.log(err); // eslint-disable-line
     yield put(actions.notifyError(err));
-    yield put(actions.updateProfile(err));
-  } finally {
-    yield put(actions.updateProfileStatus(false));
+    yield put(actions.updateCache(err));
   }
 }
 
 function* handleAddToOrg({ payload: { data, entity } }) {
-  yield put(actions.updateStatus({ entity, status: true }));
-  yield put(actions.updateStatus({ entity: 'users', status: true }));
-
   try {
     const user = yield select(selectors.getUserData);
     const res = yield api.save(entity, data);
@@ -188,10 +162,7 @@ function* handleAddToOrg({ payload: { data, entity } }) {
   } catch (err) {
     console.log(err); // eslint-disable-line
     yield put(actions.notifyError(err));
-    yield put(actions.addToOrg(err));
-  } finally {
-    yield put(actions.updateStatus({ entity, status: false }));
-    yield put(actions.updateStatus({ entity: 'users', status: false }));
+    yield put(actions.updateCache(err));
   }
 }
 
@@ -201,7 +172,6 @@ export default function* () {
   yield takeEvery(actions.logout.toString(), handleLogout);
   yield takeEvery(actions.register.toString(), handleRegister);
   yield takeEvery(actions.read.toString(), handleRead);
-  yield takeEvery(actions.readAll.toString(), handleReadAll);
   yield takeEvery(actions.remove.toString(), handleRemove);
   yield takeEvery(actions.save.toString(), handleSave);
   yield takeEvery(actions.updateProfile.toString(), handleUpdateProfile);

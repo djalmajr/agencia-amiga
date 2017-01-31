@@ -51,14 +51,10 @@ class Main extends React.PureComponent {
     return (
       <FlexElement column className={styles.wrapper}>
         <Notification />
-        {isLogged && (
-          <FlexElement>
-            <TopBar />
-          </FlexElement>
-        )}
+        {isLogged && <TopBar />}
         <FlexElement full className={styles.content}>
-          <Match pattern="/login" component={Login} />
           <Match pattern="/" exactly component={requireAuth(Feed)} />
+          <Match pattern="/login" component={Login} />
           <Match pattern="/buscar" component={requireAuth(Buscar)} />
           <Match pattern="/campanhas/:id" component={requireAuth(Campanha)} />
           <Match pattern="/organizacoes/:id" component={requireAuth(Organizacao)} />

@@ -4,7 +4,8 @@ import * as actions from '../actions';
 
 export const isUpdatingProfile = handleActions({
   [actions.unauthorize]: () => false,
-  [actions.updateProfileStatus]: (state, action) => action.payload,
+  [actions.updateProfile]: () => true,
+  [actions.updateCache]: (state, { payload }) => payload.entity !== 'users',
 }, false);
 
 export const isUserMenuVisible = handleActions({

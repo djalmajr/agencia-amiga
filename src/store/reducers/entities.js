@@ -52,33 +52,25 @@ export const toRemove = handleActions({
 
 export const isFetching = handleActions({
   [actions.unauthorize]: () => ({}),
-  [actions.updateStatus]: (state, { payload }) => _.merge({}, state, {
-    [payload.entity]: payload.status,
-  }),
+  [actions.read]: (state, { payload }) => _.assign({}, state, { [payload.entity]: true }),
+  [actions.addToOrg]: (state, { payload }) => _.assign({}, state, { [payload.entity]: true }),
+  [actions.updateCache]: (state, { error, payload }) => {
+    if (error) {
+      return {};
+    }
+
+    return _.assign({}, state, { [payload.entity]: false });
+  },
 }, {});
 
 export const isRemoving = handleActions({
   [actions.unauthorize]: () => ({}),
-  [actions.updateRemoveStatus]: (state, { payload }) => {
-    if (payload.status) {
-      return _.merge({}, state, { [payload.entity]: { [payload.uid]: payload.status } });
-    }
-
+  [actions.remove]: (state, { payload }) => _.assign({}, state, { [payload.entity]: true }),
+  [actions.removeCache]: (state, { payload }) => {
     const newState = _.merge({}, state);
 
     delete newState[payload.entity][payload.uid];
 
     return newState;
-  },
-}, {});
-
-export const visibleIds = handleActions({
-  [actions.unauthorize]: () => ({}),
-  [actions.updateCache]: (state, { error, payload }) => {
-    if (error) {
-      return state;
-    }
-
-    return _.merge({}, state, { [payload.entity]: _.keys(payload.response) });
   },
 }, {});
