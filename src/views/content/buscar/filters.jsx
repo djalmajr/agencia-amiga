@@ -14,7 +14,7 @@ import styles from './filters.scss';
 class Filters extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
-    isSearching: React.PropTypes.bool,
+    isFiltering: React.PropTypes.bool,
     appliedFilter: React.PropTypes.object,
     skills: React.PropTypes.object,
   };
@@ -62,7 +62,7 @@ class Filters extends React.Component {
   }
 
   render() {
-    const { isSearching, appliedFilter, skills } = this.props;
+    const { isFiltering, appliedFilter, skills } = this.props;
 
     return (
       <FlexElement column className={styles.wrapper}>
@@ -91,7 +91,7 @@ class Filters extends React.Component {
                 search
                 multiple
                 selection
-                disabled={isSearching}
+                disabled={isFiltering}
                 ref={el => (this.dropdown = el)}
                 noResultsMessage="Nenhum registro encontrado"
                 options={values(skills).map(({ name, uid }) => ({ text: name, value: uid }))}
@@ -106,12 +106,12 @@ class Filters extends React.Component {
                 primary
                 size="small"
                 type="submit"
-                disabled={isSearching}
+                disabled={isFiltering}
                 onClick={this.handleSearch}
               >
                 Buscar
               </Button>
-              <Button size="small" disabled={isSearching} onClick={this.handleClear}>
+              <Button size="small" disabled={isFiltering} onClick={this.handleClear}>
                 Limpar
               </Button>
             </FlexElement>
@@ -124,7 +124,7 @@ class Filters extends React.Component {
 
 const mapStateToProps = state => ({
   appliedFilter: selectors.getAppliedFilter(state),
-  isSearching: selectors.isSearching(state),
+  isFiltering: selectors.isFiltering(state),
   skills: selectors.getEntities(state, 'skills'),
 });
 

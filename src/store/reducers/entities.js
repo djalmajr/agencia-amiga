@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import { handleActions } from 'redux-actions';
+import emptyObject from 'fbjs/lib/emptyObject';
 import * as actions from '../actions';
 
 export const byId = handleActions({
-  [actions.unauthorize]: () => ({}),
+  [actions.unauthorize]: () => emptyObject,
   [actions.removeCache]: (state, { error, payload }) => {
     if (error) {
       return state;
@@ -36,19 +37,7 @@ export const byId = handleActions({
 
     return newState;
   },
-}, {});
-
-export const toRemove = handleActions({
-  [actions.unauthorize]: () => ({}),
-  [actions.remove]: (state, { payload }) => _.merge({}, state, { [payload.entity]: payload.uid }),
-  [actions.removeCache]: (state, { payload }) => {
-    const newState = _.merge({}, state);
-
-    delete newState[payload.entity][payload.uid];
-
-    return newState;
-  },
-}, {});
+}, emptyObject);
 
 export const isFetching = handleActions({
   [actions.unauthorize]: () => ({}),
@@ -61,10 +50,10 @@ export const isFetching = handleActions({
 
     return _.assign({}, state, { [payload.entity]: false });
   },
-}, {});
+}, emptyObject);
 
 export const isRemoving = handleActions({
-  [actions.unauthorize]: () => ({}),
+  [actions.unauthorize]: () => emptyObject,
   [actions.remove]: (state, { payload }) => _.assign({}, state, { [payload.entity]: true }),
   [actions.removeCache]: (state, { payload }) => {
     const newState = _.merge({}, state);
@@ -73,4 +62,4 @@ export const isRemoving = handleActions({
 
     return newState;
   },
-}, {});
+}, emptyObject);

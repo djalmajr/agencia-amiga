@@ -12,6 +12,6 @@
   </head>
   <body>
     <div id="wrapper"></div>
-    <script src="//localhost:3000/js/app.js"></script>
+    <script src="//localhost:4000/js/app.js"></script>
   </body>
 </html>

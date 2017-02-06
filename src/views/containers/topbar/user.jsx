@@ -85,7 +85,7 @@ class TopBarUser extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  user: selectors.getUserData(state),
+  user: selectors.getUser(state),
 });
 
 const mapDispatchToProps = dispatch => ({

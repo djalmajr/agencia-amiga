@@ -16,7 +16,7 @@ import styles from './results.scss';
 class Results extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
-    isSearching: React.PropTypes.bool,
+    isFiltering: React.PropTypes.bool,
     // isLogged: React.PropTypes.bool,
     location: React.PropTypes.object,
     records: React.PropTypes.array,
@@ -37,10 +37,10 @@ class Results extends React.Component {
   }
 
   componentDidMount() {
-    // const { actions, appliedFilter, records, isSearching, isLogged } = this.props;
+    // const { actions, appliedFilter, records, isFiltering, isLogged } = this.props;
     // const filter = this.getFilter() || appliedFilter.filter;
 
-    // if (isEmpty(records) && !isSearching && !timeoutID && isLogged) {
+    // if (isEmpty(records) && !isFiltering && !timeoutID && isLogged) {
     //   if (filter === 'all') {
     //     actions.readAll();
     //   } else {
@@ -73,9 +73,9 @@ class Results extends React.Component {
   }
 
   render() {
-    const { records, isSearching } = this.props;
+    const { records, isFiltering } = this.props;
 
-    if (isSearching) {
+    if (isFiltering) {
       return (
         <Segment basic style={{ height: '100%', width: '100%' }}>
           <Loader active size="small" />
@@ -83,7 +83,7 @@ class Results extends React.Component {
       );
     }
 
-    if (!isSearching && isEmpty(records)) {
+    if (!isFiltering && isEmpty(records)) {
       return (
         <FlexElement column full align="center" justify="center" className={styles.wrapper}>
           <Icon name="cloud" size="massive" style={{ color: 'rgba(0,0,0, 0.1)' }} />
@@ -156,7 +156,7 @@ class Results extends React.Component {
 
 const mapStateToProps = state => ({
   isLogged: selectors.isAuthenticated(state),
-  isSearching: selectors.isSearching(state),
+  isFiltering: selectors.isFiltering(state),
   appliedFilter: selectors.getAppliedFilter(state),
   records: selectors.getSearchResults(state),
 });

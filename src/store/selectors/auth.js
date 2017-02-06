@@ -1,8 +1,21 @@
 import _ from 'lodash';
+import { createSelector } from 'reselect';
+import createGetData from '~/helpers/create-get-data';
+import { getEntitiesByIds } from './entities';
 
-export const getAuthData = state => state.auth.authData;
-export const getUserData = state => state.auth.userData;
+const getData = createGetData('auth');
 
-export const isAuthenticated = state => !_.isEmpty(state.auth.userData);
-export const isAuthenticating = state => state.auth.isAuthenticating;
-export const isRegistering = state => state.auth.isRegistering;
+export const getAuth = getData('authData');
+
+export const getUser = createSelector(
+  getAuth,
+  state => getEntitiesByIds('users', _)(state),
+  (auth, fnGetUser) => {
+    console.log(auth, fnGetUser([auth.uid]));
+    return fnGetUser([auth.uid]);
+  },
+);
+
+export const isRegistering = getData('isRegistering');
+export const isAuthenticating = getData('isAuthenticating');
+export const isAuthenticated = createSelector(getAuth, auth => !_.isEmpty(auth));

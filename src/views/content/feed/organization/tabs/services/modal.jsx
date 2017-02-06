@@ -211,7 +211,7 @@ class ModalService extends React.Component {
 }
 
 const mapStateToProps = (state, { uid }) => ({
-  user: selectors.getUserData(state),
+  user: selectors.getUser(state),
   skills: selectors.getEntities(state, 'skills'),
   service: selectors.getEntities(state, 'services', uid),
   isSaving: (

@@ -7,7 +7,7 @@ module.exports = {
   entry: {
     app: [
       'react-hot-loader/patch',
-      'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr',
+      'webpack-hot-middleware/client?path=http://localhost:4000/__webpack_hmr',
       './src/overrides.scss',
       './src/index.jsx',
     ],
