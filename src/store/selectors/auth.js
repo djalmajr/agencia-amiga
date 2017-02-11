@@ -9,11 +9,8 @@ export const getAuth = getData('authData');
 
 export const getUser = createSelector(
   getAuth,
-  state => getEntitiesByIds('users', _)(state),
-  (auth, fnGetUser) => {
-    console.log(auth, fnGetUser([auth.uid]));
-    return fnGetUser([auth.uid]);
-  },
+  state => getEntitiesByIds('users', _, state),
+  (auth, fnGetUser) => fnGetUser([auth.uid])[auth.uid],
 );
 
 export const isRegistering = getData('isRegistering');

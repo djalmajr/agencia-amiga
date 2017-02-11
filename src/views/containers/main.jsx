@@ -25,18 +25,26 @@ class Main extends React.PureComponent {
     hasSkills: React.PropTypes.bool,
     isLogged: React.PropTypes.bool,
     isLoadingState: React.PropTypes.bool,
+    user: React.PropTypes.object,
   };
 
-  componentWillReceiveProps({ hasSkills, isLogged }) {
-    if (!hasSkills && isLogged) {
-      this.props.actions.read({ entity: 'skills' });
+  componentWillReceiveProps({ actions, hasSkills, isLogged, user }) {
+    if (!isLogged) {
+      return;
+    }
+    
+    if (!hasSkills) {
+      actions.read({ entity: 'skills' });
+    }
+
+    if (!user.id) {
     }
   }
 
   render() {
-    const { isLogged, isLoadingState } = this.props;
+    const { isLogged, isLoadingState, user } = this.props;
 
-    if (isLoadingState) {
+    if (isLoadingState || !user.id) {
       return (
         <FlexElement column full align="center" justify="center" className={styles.wrapper}>
           <Loader active>
@@ -70,6 +78,7 @@ const mapStateToProps = state => ({
   hasSkills: !isEmpty(selectors.getEntities(state, 'skills')),
   isLogged: selectors.isAuthenticated(state),
   isLoadingState: selectors.isLoadingState(state),
+  user: selectors.getUser(state),
 });
 
 const mapDispatchToProps = dispatch => ({

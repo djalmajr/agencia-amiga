@@ -28,7 +28,6 @@ export const updateTabFeed = createAction('update-tab-feed');
 // Entity Actions
 export const addToOrg = createAction('add-to-org');
 export const read = createAction('read');
-export const readAll = createAction('read-all');
 export const remove = createAction('remove');
 export const removeCache = createAction('remove-cache');
 export const save = createAction('save', (ref, data) => ({ ref, data }));

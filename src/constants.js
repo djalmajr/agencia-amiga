@@ -16,10 +16,9 @@ export const Cache = {
 
 export const Filter = {
   OPTIONS: [
-    { text: 'Todos', value: 'all', icon: 'globe' },
+    { text: 'Voluntários', value: 'users', icon: 'user' },
     { text: 'Organizações', value: 'organizations', icon: 'university' },
     { text: 'Serviços', value: 'services', icon: 'wrench' },
-    { text: 'Voluntários', value: 'users', icon: 'user' },
     { text: 'Campanhas', value: 'campaigns', icon: 'bullhorn' },
   ],
 };

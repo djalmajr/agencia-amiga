@@ -41,11 +41,7 @@ class Results extends React.Component {
     // const filter = this.getFilter() || appliedFilter.filter;
 
     // if (isEmpty(records) && !isFiltering && !timeoutID && isLogged) {
-    //   if (filter === 'all') {
-    //     actions.readAll();
-    //   } else {
-    //     actions.read({ entity: filter });
-    //   }
+    //   actions.read({ entity: filter });
 
     //   timeoutID = setTimeout(() => (timeoutID = null), 10000);
     // }

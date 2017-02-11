@@ -51,14 +51,8 @@ class Filters extends React.Component {
     this.applySearch(value);
   };
 
-  applySearch(value) {
-    const { read, readAll } = this.props.actions;
-
-    if (value === 'all') {
-      readAll();
-    } else {
-      read({ entity: value });
-    }
+  applySearch(entity) {
+    this.props.actions.read({ entity });
   }
 
   render() {
