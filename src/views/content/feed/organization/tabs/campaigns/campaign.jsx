@@ -93,8 +93,8 @@ class Campaign extends React.Component {
 }
 
 const mapStateToProps = (state, { uid }) => ({
-  campaign: selectors.getEntities(state, 'campaigns', uid),
-  isRemoving: selectors.isRemoving(state, 'campaigns', uid),
+  campaign: selectors.getEntity('campaigns', uid)(state),
+  isRemoving: selectors.isRemoving('campaigns', uid)(state),
 });
 
 export default connect(mapStateToProps)(Campaign);

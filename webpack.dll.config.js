@@ -8,12 +8,11 @@ const LIBRARY_NAME = '___AGENCIA_AMIGA___';
 delete config.entry;
 delete config.plugins;
 
-module.exports = webpackMerge.smart(baseConfig, {
+module.exports = webpackMerge.smart(config, {
   entry: {
-    'vendor': [
+    vendor: [
       'classnames',
       'faker',
-      'fbjs',
       'firebase',
       'html-entities',
       'latinize',

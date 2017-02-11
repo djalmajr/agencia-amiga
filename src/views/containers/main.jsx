@@ -22,29 +22,35 @@ import styles from './main.scss';
 class Main extends React.PureComponent {
   static propTypes = {
     actions: React.PropTypes.object,
+    auth: React.PropTypes.object,
     hasSkills: React.PropTypes.bool,
     isLogged: React.PropTypes.bool,
     isLoadingState: React.PropTypes.bool,
+    isFetchingSkills: React.PropTypes.bool,
+    isFetchingUsers: React.PropTypes.bool,
     user: React.PropTypes.object,
   };
 
-  componentWillReceiveProps({ actions, hasSkills, isLogged, user }) {
+  componentWillReceiveProps({
+    actions, auth, hasSkills, isFetchingSkills, isFetchingUsers, isLogged, user,
+  }) {
     if (!isLogged) {
       return;
     }
-    
-    if (!hasSkills) {
+
+    if (!hasSkills && !isFetchingSkills) {
       actions.read({ entity: 'skills' });
     }
 
-    if (!user.id) {
+    if (!user.uid && !isFetchingUsers) {
+      actions.read({ entity: 'users', uid: auth.uid });
     }
   }
 
   render() {
     const { isLogged, isLoadingState, user } = this.props;
 
-    if (isLoadingState || !user.id) {
+    if (isLoadingState || !user.uid) {
       return (
         <FlexElement column full align="center" justify="center" className={styles.wrapper}>
           <Loader active>
@@ -75,9 +81,12 @@ class Main extends React.PureComponent {
 }
 
 const mapStateToProps = state => ({
-  hasSkills: !isEmpty(selectors.getEntities(state, 'skills')),
+  hasSkills: !isEmpty(selectors.getEntities('skills')(state)),
   isLogged: selectors.isAuthenticated(state),
   isLoadingState: selectors.isLoadingState(state),
+  isFetchingSkills: selectors.isFetching('skills')(state),
+  isFetchingUsers: selectors.isFetching('users')(state),
+  auth: selectors.getAuth(state),
   user: selectors.getUser(state),
 });
 

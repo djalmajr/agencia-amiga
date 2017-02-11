@@ -30,6 +30,14 @@ const configureStore = () => {
 
   store.runSaga = sagaMiddleware.run;
 
+  if (module.hot) {
+    module.hot.accept('./reducers', () => {
+      const nextReducer = require('./reducers').default;
+
+      store.replaceReducer(outerReducer(nextReducer));
+    });
+  }
+
   store.subscribe(throttle(() => {
     const { auth: { authData } } = store.getState();
 

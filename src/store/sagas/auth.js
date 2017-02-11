@@ -1,35 +1,15 @@
-import _ from 'lodash';
 import { put } from 'redux-saga/effects';
-import { fb } from '~/constants';
 import * as actions from '../actions';
 import * as api from '../apis';
 
 export function* login(action) {
   const { email, password } = action.payload;
-  const entities = ['skills', 'services', 'campaigns'];
 
   try {
     const auth = (yield api.login(email, password)).toJSON();
-    const userSnap = yield fb.database().ref(`/users/${auth.uid}`).once('value');
-    const user = userSnap.val();
 
-    for (let i = 0, entity; (entity = entities[i]); i++) {
-      if (userSnap.hasChild(entity)) {
-        const response = {};
-        const snapshot = yield fb.database().ref(entity).once('value');
-
-        _.forEach(user[entity], (uid) => {
-          if (snapshot.hasChild(uid)) {
-            response[uid] = snapshot.child(uid).val();
-          }
-        });
-
-        yield put(actions.updateCache({ entity, response }));
-      }
-    }
-
+    yield put(actions.read({ entity: 'users', uid: auth.uid }));
     yield put(actions.authorize(auth));
-    yield put(actions.updateCache({ entity: 'users', response: { [user.uid]: user } }));
   } catch (err) {
     console.log(err); // eslint-disable-line
     yield put(actions.notifyError(err));

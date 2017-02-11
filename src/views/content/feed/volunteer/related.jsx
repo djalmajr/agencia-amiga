@@ -21,7 +21,7 @@ Related.propTypes = {
 
 const mapStateToProps = state => ({
   user: selectors.getUser(state),
-  skills: selectors.getEntities(state, 'skills'),
+  skills: selectors.getEntities('skills')(state),
 });
 
 export default connect(mapStateToProps)(Related);

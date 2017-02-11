@@ -4,13 +4,35 @@ import selectors from '../selectors';
 import * as actions from '../actions';
 import * as api from '../apis';
 
+const attrs = {
+  users: ['skills', 'services', 'campaigns'],
+};
+
 export function* read(action) {
-  const { entity } = action.payload || {};
+  const { uid, entity } = action.payload || {};
 
   try {
-    const response = yield api.read(entity);
+    const snapshot = yield api.once(uid ? `${entity}/${uid}` : entity);
+    const val = snapshot.val();
 
-    yield put(actions.updateCache({ entity, response }));
+    if (attrs[entity]) {
+      for (let i = 0, attr; (attr = attrs[entity][i]); i++) {
+        if (snapshot.hasChild(attr)) {
+          const res = {};
+          const snap = yield api.once(attr);
+
+          _.forEach(val[attr], (id) => {
+            if (snap.hasChild(id)) {
+              res[id] = snap.child(id).val();
+            }
+          });
+
+          yield put(actions.updateCache({ entity: attr, response: res }));
+        }
+      }
+    }
+
+    yield put(actions.updateCache({ entity, response: uid ? { [uid]: val } : val }));
   } catch (err) {
     const error = JSON.parse(JSON.stringify(err));
     const message = error.code === 'PERMISSION_DENIED' ?

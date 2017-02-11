@@ -11,6 +11,7 @@
     "node": true
   },
   "rules": {
+    "global-require": 0,
     "no-cond-assign": 0,
     "no-plusplus": 0,
     "one-var": 0,

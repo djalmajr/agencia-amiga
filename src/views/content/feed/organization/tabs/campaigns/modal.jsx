@@ -138,10 +138,10 @@ class ModalCampaign extends React.Component {
 
 const mapStateToProps = (state, { uid }) => ({
   user: selectors.getUser(state),
-  campaign: selectors.getEntities(state, 'campaigns', uid),
+  campaign: selectors.getEntity('campaigns', uid)(state),
   isSaving: (
-    selectors.isFetching(state, 'campaigns') ||
-    selectors.isFetching(state, 'users')
+    selectors.isFetching('campaigns')(state) ||
+    selectors.isFetching('users')(state)
   ),
 });
 

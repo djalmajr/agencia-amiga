@@ -56,8 +56,8 @@ class Details extends React.Component {
 
 const mapStateToProps = (state, { params: { id } }) => ({
   isLogged: selectors.isAuthenticated(state),
-  user: selectors.getEntities(state, 'users', id),
-  skills: selectors.getEntities(state, 'skills'),
+  user: selectors.getEntity('users', id)(state),
+  skills: selectors.getEntities('skills')(state),
 });
 
 const mapDispatchToProps = dispatch => ({

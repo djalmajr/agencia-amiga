@@ -218,7 +218,7 @@ class Settings extends React.PureComponent {
 
 const mapStateToProps = state => ({
   isUpdating: selectors.isUpdatingProfile(state),
-  skills: selectors.getEntities(state, 'skills'),
+  skills: selectors.getEntities('skills')(state),
 });
 
 const mapDispatchToProps = dispatch => ({

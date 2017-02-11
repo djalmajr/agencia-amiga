@@ -1,6 +1,7 @@
 import { handleActions } from 'redux-actions';
-import emptyObject from 'fbjs/lib/emptyObject';
 import * as actions from '../actions';
+
+const emptyObject = {};
 
 export const isAuthenticating = handleActions({
   [actions.login]: () => true,

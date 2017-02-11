@@ -1,12 +1,8 @@
 import { fb } from '~/constants';
 import genUID from '~/helpers/gen-uid';
 
-export const read = ref =>
-  new Promise((resolve, reject) => {
-    fb.database().ref(ref).once('value')
-      .then(res => resolve(res.val()))
-      .catch(reject);
-  });
+export const once = ref => fb.database().ref(ref).once('value');
+export const set = (ref, data) => fb.database().ref(ref).set(data);
 
 export const save = (ref, data) => {
   if (!data.uid) {
@@ -20,8 +16,9 @@ export const save = (ref, data) => {
   data.updatedAt = fb.database.ServerValue.TIMESTAMP;
 
   return new Promise((resolve, reject) => {
-    fb.database().ref(`${ref}/${data.uid}`).set(data)
-      .then(() => read(`${ref}/${data.uid}`).then(resolve))
+    set(`${ref}/${data.uid}`, data)
+      .then(once(`${ref}/${data.uid}`))
+      .then(res => resolve(res.val()))
       .catch(reject);
   });
 };

@@ -128,8 +128,8 @@ class Services extends React.Component {
 const mapStateToProps = state => ({
   user: selectors.getUser(state),
   isLogged: selectors.isAuthenticated(state),
-  isFetching: selectors.isFetching(state, 'services'),
-  hasServices: !_.isEmpty(selectors.getEntities(state, 'services')),
+  isFetching: selectors.isFetching('services')(state),
+  hasServices: !_.isEmpty(selectors.getEntities('services')(state)),
 });
 
 const mapDispatchToProps = dispatch => ({

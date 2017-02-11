@@ -119,7 +119,7 @@ class Filters extends React.Component {
 const mapStateToProps = state => ({
   appliedFilter: selectors.getAppliedFilter(state),
   isFiltering: selectors.isFiltering(state),
-  skills: selectors.getEntities(state, 'skills'),
+  skills: selectors.getEntities('skills')(state),
 });
 
 const mapDispatchToProps = dispatch => ({
