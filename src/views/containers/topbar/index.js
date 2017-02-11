@@ -22,14 +22,14 @@ const styles = {
 
 const TopBar = () => (
   <FlexElement style={styles.topBar}>
-    <FlexElement column align="center" style={{ fontSize: '1.2em' }}>
+    <FlexElement align="center">
       <Icon name="travel" style={styles.logo} />
       <Link to="/" style={{ color: 'white' }}>Agência Amiga</Link>
     </FlexElement>
     <FlexElement full column align="center">
       <Search />
     </FlexElement>
-    <FlexElement column align="center">
+    <FlexElement column align="center" justify="center">
       <User />
     </FlexElement>
   </FlexElement>

@@ -17,7 +17,7 @@ export const save = (ref, data) => {
 
   return new Promise((resolve, reject) => {
     set(`${ref}/${data.uid}`, data)
-      .then(once(`${ref}/${data.uid}`))
+      .then(() => once(`${ref}/${data.uid}`))
       .then(res => resolve(res.val()))
       .catch(reject);
   });
