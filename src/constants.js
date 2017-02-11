@@ -14,4 +14,13 @@ export const Cache = {
   KEY: 'AGENCIA_AMIGA_STATE',
 };
 
+export const Filter = {
+  OPTIONS: [
+    { text: 'Voluntários', value: 'users', icon: 'user' },
+    { text: 'Organizações', value: 'organizations', icon: 'university' },
+    { text: 'Serviços', value: 'services', icon: 'wrench' },
+    { text: 'Campanhas', value: 'campaigns', icon: 'bullhorn' },
+  ],
+};
+
 window.fb = fb;

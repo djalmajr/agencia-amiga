@@ -22,21 +22,35 @@ import styles from './main.scss';
 class Main extends React.PureComponent {
   static propTypes = {
     actions: React.PropTypes.object,
+    auth: React.PropTypes.object,
     hasSkills: React.PropTypes.bool,
     isLogged: React.PropTypes.bool,
     isLoadingState: React.PropTypes.bool,
+    isFetchingSkills: React.PropTypes.bool,
+    isFetchingUsers: React.PropTypes.bool,
+    user: React.PropTypes.object,
   };
 
-  componentWillReceiveProps({ hasSkills, isLogged }) {
-    if (!hasSkills && isLogged) {
-      this.props.actions.read({ entity: 'skills' });
+  componentWillReceiveProps({
+    actions, auth, hasSkills, isFetchingSkills, isFetchingUsers, isLogged, user,
+  }) {
+    if (!isLogged) {
+      return;
+    }
+
+    if (!hasSkills && !isFetchingSkills) {
+      actions.read({ entity: 'skills' });
+    }
+
+    if (!user.uid && !isFetchingUsers) {
+      actions.read({ entity: 'users', uid: auth.uid });
     }
   }
 
   render() {
-    const { isLogged, isLoadingState } = this.props;
+    const { isLogged, isLoadingState, user } = this.props;
 
-    if (isLoadingState) {
+    if (isLoadingState || !user.uid) {
       return (
         <FlexElement column full align="center" justify="center" className={styles.wrapper}>
           <Loader active>
@@ -51,14 +65,10 @@ class Main extends React.PureComponent {
     return (
       <FlexElement column className={styles.wrapper}>
         <Notification />
-        {isLogged && (
-          <FlexElement>
-            <TopBar />
-          </FlexElement>
-        )}
+        {isLogged && <TopBar />}
         <FlexElement full className={styles.content}>
-          <Match pattern="/login" component={Login} />
           <Match pattern="/" exactly component={requireAuth(Feed)} />
+          <Match pattern="/login" component={Login} />
           <Match pattern="/buscar" component={requireAuth(Buscar)} />
           <Match pattern="/campanhas/:id" component={requireAuth(Campanha)} />
           <Match pattern="/organizacoes/:id" component={requireAuth(Organizacao)} />
@@ -71,9 +81,13 @@ class Main extends React.PureComponent {
 }
 
 const mapStateToProps = state => ({
-  hasSkills: !isEmpty(selectors.getEntities(state, 'skills')),
+  hasSkills: !isEmpty(selectors.getEntities('skills')(state)),
   isLogged: selectors.isAuthenticated(state),
   isLoadingState: selectors.isLoadingState(state),
+  isFetchingSkills: selectors.isFetching('skills')(state),
+  isFetchingUsers: selectors.isFetching('users')(state),
+  auth: selectors.getAuth(state),
+  user: selectors.getUser(state),
 });
 
 const mapDispatchToProps = dispatch => ({

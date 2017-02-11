@@ -12,6 +12,7 @@
   </head>
   <body>
     <div id="wrapper"></div>
-    <script src="//localhost:3000/js/app.js"></script>
+    <script src="/js/vendor.js"></script>
+    <script src="http://localhost:4000/js/app.js"></script>
   </body>
 </html>

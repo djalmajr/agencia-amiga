@@ -126,10 +126,10 @@ class Campaigns extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  user: selectors.getUserData(state),
+  user: selectors.getUser(state),
   isLogged: selectors.isAuthenticated(state),
-  isFetching: selectors.isFetching(state, 'campaigns'),
-  hasCampaigns: !_.isEmpty(selectors.getEntities(state, 'campaigns')),
+  isFetching: selectors.isFetching('campaigns')(state),
+  hasCampaigns: !_.isEmpty(selectors.getEntities('campaigns')(state)),
 });
 
 const mapDispatchToProps = dispatch => ({

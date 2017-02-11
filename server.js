@@ -1,4 +1,3 @@
-// const path = require('path');
 const webpack = require('webpack');
 const express = require('express');
 const devMiddleware = require('webpack-dev-middleware');
@@ -14,12 +13,12 @@ app.use(hotMiddleware(compiler));
 //   res.sendFile(path.join(__dirname, 'dist/index.html'));
 // });
 
-app.listen(3000, (err) => {
+app.listen(4000, (err) => {
   if (err) {
     console.error(err); // eslint-disable-line
 
     return;
   }
 
-  console.log('Listening at http://localhost:3000/'); // eslint-disable-line
+  console.log('Listening at http://localhost:4000/'); // eslint-disable-line
 });

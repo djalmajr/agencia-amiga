@@ -69,8 +69,8 @@ const Details = () => (
 );
 
 const mapStateToProps = (state, { params: { id } }) => ({
-  user: selectors.getEntities(state, 'users', id),
-  skills: selectors.getEntities(state, 'skills'),
+  user: selectors.getEntity('users', id)(state),
+  skills: selectors.getEntities('skills')(state),
 });
 
 const mapDispatchToProps = dispatch => ({

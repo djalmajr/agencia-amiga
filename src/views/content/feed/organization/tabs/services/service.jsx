@@ -93,8 +93,8 @@ class Service extends React.Component {
 }
 
 const mapStateToProps = (state, { uid }) => ({
-  service: selectors.getEntities(state, 'services', uid),
-  isRemoving: selectors.isRemoving(state, 'services', uid),
+  service: selectors.getEntity('services', uid)(state),
+  isRemoving: selectors.isRemoving('services', uid)(state),
 });
 
 export default connect(mapStateToProps)(Service);

@@ -3,11 +3,14 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-  devtool: 'eval',
+  cache: true,
+  devtool: 'inline-source-map',
   entry: {
     app: [
       'react-hot-loader/patch',
-      'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr',
+      'webpack-hot-middleware/client?path=http://localhost:4000/__webpack_hmr',
+      // 'webpack-dev-server/client?http://localhost:4000',
+      // 'webpack/hot/only-dev-server',
       './src/overrides.scss',
       './src/index.jsx',
     ],
@@ -17,7 +20,7 @@ module.exports = {
     library: ['AgenciaAmiga'],
     libraryTarget: 'umd',
     path: path.join(__dirname, 'public/js'),
-    publicPath: 'http://localhost:3000/js/',
+    publicPath: 'http://localhost:4000/js/',
   },
   module: {
     noParse: /localforage.js$/,
@@ -32,6 +35,7 @@ module.exports = {
       { test: /\.(jpe?g|png|gif)$/i, exclude: /node_modules/, loader: 'file?name=[name].[ext]' },
       { test: /\.ico$/, exclude: /node_modules/, loader: 'file?name=[name].[ext]' },
       { test: /\.json$/, exclude: /node_modules/, loader: 'json' },
+      { test: /\.jsx?$/, include: /src/, loader: 'babel' },
       {
         test: /\.(css|scss)$/,
         exclude: /node_modules/,
@@ -41,11 +45,6 @@ module.exports = {
           'postcss',
           'sass?sourceMap',
         ],
-      },
-      {
-        test: /\.jsx?$/,
-        include: /src/,
-        loader: 'babel',
       },
     ],
   },
@@ -58,6 +57,8 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('development') } }),
+    // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
+    new webpack.DllReferencePlugin({ context: __dirname, manifest: require('./vendor.manifest.json') }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
     new webpack.NoErrorsPlugin(),
@@ -67,9 +68,10 @@ module.exports = {
     }),
   ],
   devServer: {
-    noInfo: true,
-    publicPath: '/js/',
+    // noInfo: true,
+    publicPath: 'http://localhost:4000/js/',
     historyApiFallback: true,
+    hot: true,
     stats: {
       chunks: false,
       colors: true,

@@ -29,8 +29,8 @@ Panel.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  user: selectors.getUserData(state),
-  skills: selectors.getEntities(state, 'skills'),
+  user: selectors.getUser(state),
+  skills: selectors.getEntities('skills')(state),
 });
 
 export default connect(mapStateToProps)(Panel);

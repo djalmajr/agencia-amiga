@@ -11,6 +11,7 @@
     "node": true
   },
   "rules": {
+    "global-require": 0,
     "no-cond-assign": 0,
     "no-plusplus": 0,
     "one-var": 0,
@@ -20,23 +21,9 @@
     "react/no-danger": 0,
     "react/forbid-prop-types": 0,
     "import/prefer-default-export": 0,
-    "import/no-unresolved": [
-      1,
-      {
-        "ignore": [
-          "^[~]"
-        ]
-      }
-    ],
-    "react/jsx-filename-extension": [
-      1,
-      {
-        "extensions": [
-          ".js",
-          ".jsx"
-        ]
-      }
-    ]
+    "import/no-extraneous-dependencies": 0,
+    "import/no-unresolved": [ 1, { "ignore": [ "^[~]" ] } ],
+    "react/jsx-filename-extension": [ 1, { "extensions": [ ".js", ".jsx" ] } ]
   },
   "settings": {
     "import/resolver": {

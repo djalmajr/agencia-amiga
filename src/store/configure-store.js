@@ -30,10 +30,18 @@ const configureStore = () => {
 
   store.runSaga = sagaMiddleware.run;
 
-  store.subscribe(throttle(() => {
-    const { auth: { authData, userData } } = store.getState();
+  if (module.hot) {
+    module.hot.accept('./reducers', () => {
+      const nextReducer = require('./reducers').default;
 
-    saveState({ auth: { authData, userData } });
+      store.replaceReducer(outerReducer(nextReducer));
+    });
+  }
+
+  store.subscribe(throttle(() => {
+    const { auth: { authData } } = store.getState();
+
+    saveState({ auth: { authData } });
   }, 2000));
 
   store.runSaga(rootSaga);

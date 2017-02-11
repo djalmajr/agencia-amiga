@@ -5,6 +5,7 @@ import { find, values } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Button, Divider, Dropdown, Form, Header, Icon, Segment } from 'semantic-ui-react';
+import { Filter } from '~/constants';
 import * as actionCreators from '~/store/actions';
 import selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
@@ -13,8 +14,7 @@ import styles from './filters.scss';
 class Filters extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
-    filterOptions: React.PropTypes.array,
-    isSearching: React.PropTypes.bool,
+    isFiltering: React.PropTypes.bool,
     appliedFilter: React.PropTypes.object,
     skills: React.PropTypes.object,
   };
@@ -38,8 +38,8 @@ class Filters extends React.Component {
 
   handleFilterClick = (value) => {
     const { transitionTo } = this.context.router;
-    const { actions, filterOptions } = this.props;
-    const { text } = find(filterOptions, { value });
+    const { actions } = this.props;
+    const { text } = find(Filter.OPTIONS, { value });
     const slug = latinize(text).toLowerCase();
 
     transitionTo({
@@ -51,24 +51,18 @@ class Filters extends React.Component {
     this.applySearch(value);
   };
 
-  applySearch(value) {
-    const { read, readAll } = this.props.actions;
-
-    if (value === 'all') {
-      readAll();
-    } else {
-      read({ entity: value });
-    }
+  applySearch(entity) {
+    this.props.actions.read({ entity });
   }
 
   render() {
-    const { isSearching, appliedFilter, filterOptions, skills } = this.props;
+    const { isFiltering, appliedFilter, skills } = this.props;
 
     return (
       <FlexElement column className={styles.wrapper}>
         <Segment>
           <FlexElement column className={styles.menu}>
-            {filterOptions.map(option =>
+            {Filter.OPTIONS.map(option =>
               <FlexElement
                 align="center"
                 key={option.value}
@@ -91,7 +85,7 @@ class Filters extends React.Component {
                 search
                 multiple
                 selection
-                disabled={isSearching}
+                disabled={isFiltering}
                 ref={el => (this.dropdown = el)}
                 noResultsMessage="Nenhum registro encontrado"
                 options={values(skills).map(({ name, uid }) => ({ text: name, value: uid }))}
@@ -106,12 +100,12 @@ class Filters extends React.Component {
                 primary
                 size="small"
                 type="submit"
-                disabled={isSearching}
+                disabled={isFiltering}
                 onClick={this.handleSearch}
               >
                 Buscar
               </Button>
-              <Button size="small" disabled={isSearching} onClick={this.handleClear}>
+              <Button size="small" disabled={isFiltering} onClick={this.handleClear}>
                 Limpar
               </Button>
             </FlexElement>
@@ -124,9 +118,8 @@ class Filters extends React.Component {
 
 const mapStateToProps = state => ({
   appliedFilter: selectors.getAppliedFilter(state),
-  filterOptions: selectors.getFilterOptions(state),
-  isSearching: selectors.getSearchStatus(state),
-  skills: selectors.getEntities(state, 'skills'),
+  isFiltering: selectors.isFiltering(state),
+  skills: selectors.getEntities('skills')(state),
 });
 
 const mapDispatchToProps = dispatch => ({
