@@ -25,13 +25,13 @@ class Filters extends React.Component {
 
   handleClear = () => {
     this.dropdown.setValue('');
-    this.props.actions.updateFilter({ skills: null });
+    this.props.actions.updateFilter({ name: 'skills', value: [] });
   };
 
   handleSearch = () => {
     const skills = this.dropdown.state.value;
 
-    this.props.actions.updateFilter({ skills });
+    this.props.actions.updateFilter({ name: 'skills', value: skills });
 
     this.applySearch(this.props.appliedFilter.filter);
   };
@@ -40,14 +40,14 @@ class Filters extends React.Component {
     const { transitionTo } = this.context.router;
     const { actions } = this.props;
     const { text } = find(Filter.OPTIONS, { value });
-    const slug = latinize(text).toLowerCase();
+    const tipo = latinize(text).toLowerCase();
 
     transitionTo({
       pathname: '/buscar',
-      query: value === 'all' ? null : { filtro: slug },
+      query: { tipo },
     });
 
-    actions.updateFilter({ filter: value });
+    actions.updateFilter({ name: 'entity', value });
     this.applySearch(value);
   };
 

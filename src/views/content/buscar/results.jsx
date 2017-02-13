@@ -29,10 +29,10 @@ class Results extends React.Component {
 
   componentWillMount() {
     const { actions } = this.props;
-    const filter = this.getFilter();
+    const entity = this.getFilter();
 
-    if (filter) {
-      actions.updateFilter({ filter });
+    if (entity) {
+      actions.updateFilter({ name: 'entity', value: entity });
     }
   }
 
@@ -48,10 +48,10 @@ class Results extends React.Component {
   }
 
   getFilter() {
-    const { filtro } = this.props.location.query || {};
+    const { tipo } = this.props.location.query || {};
 
-    if (filtro) {
-      const comparator = option => filtro === latinize(option.text).toLowerCase();
+    if (tipo) {
+      const comparator = option => tipo === latinize(option.text).toLowerCase();
       const { value } = find(Filter.OPTIONS, comparator) || {};
 
       return value;

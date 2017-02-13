@@ -24,13 +24,13 @@ class TopBarSearch extends React.Component {
   handleFilterClick = (evt, { value }) => {
     evt.preventDefault();
 
-    this.props.onUpdateFilter({ filter: value });
+    this.props.onUpdateFilter({ name: 'entity', value });
   };
 
   handleSearch = (evt, { query }) => {
     const { entity, onFilter } = this.props;
     const { text } = find(Filter.OPTIONS, { value: entity });
-    const slug = latinize(text).toLowerCase();
+    const tipo = latinize(text).toLowerCase();
 
     evt.preventDefault();
 
@@ -38,7 +38,7 @@ class TopBarSearch extends React.Component {
 
     this.context.router.transitionTo({
       pathname: '/buscar',
-      query: { filtro: slug },
+      query: { tipo },
     });
   };
 

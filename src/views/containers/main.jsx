@@ -50,7 +50,7 @@ class Main extends React.PureComponent {
   render() {
     const { isLogged, isLoadingState, user } = this.props;
 
-    if (isLoadingState || !user.uid) {
+    if (isLoadingState || (!user.uid && isLogged)) {
       return (
         <FlexElement column full align="center" justify="center" className={styles.wrapper}>
           <Loader active>
