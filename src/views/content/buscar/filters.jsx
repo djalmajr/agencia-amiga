@@ -15,7 +15,8 @@ class Filters extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
     isFiltering: React.PropTypes.bool,
-    appliedFilter: React.PropTypes.object,
+    entityFilter: React.PropTypes.string,
+    // skillsFilter: React.PropTypes.array,
     skills: React.PropTypes.object,
   };
 
@@ -33,7 +34,7 @@ class Filters extends React.Component {
 
     this.props.actions.updateFilter({ name: 'skills', value: skills });
 
-    this.applySearch(this.props.appliedFilter.filter);
+    this.applySearch(this.props.entityFilter);
   };
 
   handleFilterClick = (value) => {
@@ -56,7 +57,7 @@ class Filters extends React.Component {
   }
 
   render() {
-    const { isFiltering, appliedFilter, skills } = this.props;
+    const { isFiltering, entityFilter, skills } = this.props;
 
     return (
       <FlexElement column className={styles.wrapper}>
@@ -67,7 +68,7 @@ class Filters extends React.Component {
                 align="center"
                 key={option.value}
                 className={cn(styles.menuItem, {
-                  [styles.selected]: option.value === appliedFilter.filter,
+                  [styles.selected]: option.value === entityFilter,
                 })}
                 onClick={() => this.handleFilterClick(option.value)}
               >
@@ -87,8 +88,8 @@ class Filters extends React.Component {
                 selection
                 disabled={isFiltering}
                 ref={el => (this.dropdown = el)}
-                noResultsMessage="Nenhum registro encontrado"
                 options={values(skills).map(({ name, uid }) => ({ text: name, value: uid }))}
+                noResultsMessage="Nenhum registro encontrado"
                 placeholder="Habilidades..."
               />
               {/*
@@ -117,7 +118,8 @@ class Filters extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  appliedFilter: selectors.getAppliedFilter(state),
+  entityFilter: selectors.getEntityFilter(state),
+  skillsFilter: selectors.getSkillsFilter(state),
   isFiltering: selectors.isFiltering(state),
   skills: selectors.getEntities('skills')(state),
 });

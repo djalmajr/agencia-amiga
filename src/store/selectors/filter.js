@@ -3,16 +3,17 @@ import latinize from 'latinize';
 import { createSelector } from 'reselect';
 // import { Filter } from '~/constants';
 import createGetData from '~/helpers/create-get-data';
-import { getEntities } from './entities';
 
 const _getData = createGetData('filter');
 
 const format = data => ({
+  uid: data.uid,
   title: data.name,
   meta: data.email,
   image: data.image,
   description: data.resume || data.description || '',
-  created_at: data.created_at,
+  createdAt: data.createdAt,
+  udpateAt: data.udpateAt,
 });
 
 export const isFiltering = _getData('isFiltering');
@@ -24,20 +25,22 @@ export const getResults = createSelector(
   getQueryFilter,
   getEntityFilter,
   getSkillsFilter,
-  state => _.curry(getEntities)(_, state),
-  (query, entity, skills, entityNames, fnGetEntities) => {
+  state => entity => state.entities.byId[entity],
+  (query, entity, skills, fnGetEntities) => {
     const results = {};
 
     _.forEach(fnGetEntities(entity), (item) => {
+      const record = format(item);
       const match = (
-        latinize(item.title).toLowerCase().search(query) !== -1 &&
-        (!skills.length || _.intersection(_.values(item.skills), skills).length)
+        latinize(record.title).toLowerCase().search(query) !== -1 &&
+        (!skills.length || _.intersection(_.values(record.skills), skills).length)
       );
 
       if (match) {
-        results[item.uid] = format(item);
+        results[record.uid] = record;
       }
     });
+    console.log(results);
 
     return results;
   },

@@ -11,16 +11,16 @@ import selectors from '~/store/selectors';
 import FlexElement from '~/views/components/flex-element';
 import styles from './results.scss';
 
-// const timeoutID = null;
+let timeoutID = null;
 
 class Results extends React.Component {
   static propTypes = {
     actions: React.PropTypes.object,
+    entityFilter: React.PropTypes.string,
     isFiltering: React.PropTypes.bool,
-    // isLogged: React.PropTypes.bool,
+    isLogged: React.PropTypes.bool,
     location: React.PropTypes.object,
-    records: React.PropTypes.array,
-    // appliedFilter: React.PropTypes.object,
+    records: React.PropTypes.object,
   };
 
   static contextTypes = {
@@ -37,21 +37,20 @@ class Results extends React.Component {
   }
 
   componentDidMount() {
-    // const { actions, appliedFilter, records, isFiltering, isLogged } = this.props;
-    // const filter = this.getFilter() || appliedFilter.filter;
+    const { actions, entityFilter, records, isFiltering, isLogged } = this.props;
 
-    // if (isEmpty(records) && !isFiltering && !timeoutID && isLogged) {
-    //   actions.read({ entity: filter });
+    if (isEmpty(records) && !isFiltering && !timeoutID && isLogged) {
+      actions.read({ entity: this.getFilter() || entityFilter });
 
-    //   timeoutID = setTimeout(() => (timeoutID = null), 10000);
-    // }
+      timeoutID = setTimeout(() => (timeoutID = null), 10000);
+    }
   }
 
   getFilter() {
     const { tipo } = this.props.location.query || {};
 
     if (tipo) {
-      const comparator = option => tipo === latinize(option.text).toLowerCase();
+      const comparator = option => tipo === (latinize(option.text) || '').toLowerCase();
       const { value } = find(Filter.OPTIONS, comparator) || {};
 
       return value;
@@ -69,7 +68,7 @@ class Results extends React.Component {
   }
 
   render() {
-    const { records, isFiltering } = this.props;
+    const { entityFilter, records, isFiltering } = this.props;
 
     if (isFiltering) {
       return (
@@ -101,15 +100,15 @@ class Results extends React.Component {
         </FlexElement>
         */}
         <Card.Group itemsPerRow={4} className={styles.cards}>
-          {map(records, (record, key) => {
+          {map(records, (record) => {
             const date = moment(record.created_at);
-            const { icon } = find(Filter.OPTIONS, { value: record.entity });
+            const { icon } = find(Filter.OPTIONS, { value: entityFilter });
 
             return (
               <Card
-                key={key}
+                key={record.ui}
                 className={styles.card}
-                onClick={() => this.navigateTo(record.entity, record.id)}
+                onClick={() => this.navigateTo(entityFilter, record.uid)}
               >
                 <Card.Content>
                   {record.image ?
@@ -151,10 +150,10 @@ class Results extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  entityFilter: selectors.getEntityFilter(state),
   isLogged: selectors.isAuthenticated(state),
   isFiltering: selectors.isFiltering(state),
-  appliedFilter: selectors.getAppliedFilter(state),
-  records: selectors.getSearchResults(state),
+  records: selectors.getResults(state),
 });
 
 const mapDispatchToProps = dispatch => ({
