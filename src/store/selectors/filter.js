@@ -16,7 +16,7 @@ const format = data => ({
   title: data.name,
   meta: data.email,
   image: data.image,
-  description: data.resume || data.description || '',
+  description: data.resume || data.details || data.description || '',
   createdAt: data.createdAt,
   udpateAt: data.udpateAt,
 });

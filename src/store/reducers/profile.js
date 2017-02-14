@@ -3,8 +3,8 @@ import * as actions from '../actions';
 
 export const isUpdatingProfile = handleActions({
   [actions.unauthorize]: () => false,
+  [actions.updateCache]: () => false,
   [actions.updateProfile]: () => true,
-  [actions.updateCache]: (state, { payload }) => payload.entity !== 'users',
 }, false);
 
 export const currentTabFeed = handleActions({
