@@ -106,7 +106,7 @@ class Results extends React.Component {
 
             return (
               <Card
-                key={record.ui}
+                key={record.uid}
                 className={styles.card}
                 onClick={() => this.navigateTo(entityFilter, record.uid)}
               >

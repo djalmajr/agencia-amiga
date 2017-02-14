@@ -10,13 +10,14 @@ const attrs = {
 
 export function* read(action) {
   const { uid, entity } = action.payload || {};
+  const type = entity === 'organizations' ? 'users' : entity;
 
   try {
-    const snapshot = yield api.once(uid ? `${entity}/${uid}` : entity);
+    const snapshot = yield api.once(uid ? `${type}/${uid}` : type);
     const val = snapshot.val();
 
-    if (attrs[entity]) {
-      for (let i = 0, attr; (attr = attrs[entity][i]); i++) {
+    if (attrs[type]) {
+      for (let i = 0, attr; (attr = attrs[type][i]); i++) {
         if (snapshot.hasChild(attr)) {
           const res = {};
           const snap = yield api.once(attr);
@@ -32,7 +33,7 @@ export function* read(action) {
       }
     }
 
-    yield put(actions.updateCache({ entity, response: uid ? { [uid]: val } : val }));
+    yield put(actions.updateCache({ entity: type, response: uid ? { [uid]: val } : val }));
   } catch (err) {
     const error = JSON.parse(JSON.stringify(err));
     const message = error.code === 'PERMISSION_DENIED' ?

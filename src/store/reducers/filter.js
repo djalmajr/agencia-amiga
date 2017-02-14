@@ -13,7 +13,7 @@ export const query = createFilterReducer('query', '');
 export const skills = createFilterReducer('skills', []);
 export const entity = createFilterReducer('entity', 'users');
 export const isFiltering = handleActions({
-  [actions.unauthorize]: () => false,
   [actions.filter]: () => true,
-  [actions.searchDone]: () => false,
+  [actions.unauthorize]: () => false,
+  [actions.updateCache]: () => false,
 }, false);

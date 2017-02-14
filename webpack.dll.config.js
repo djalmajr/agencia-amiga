@@ -45,7 +45,7 @@ module.exports = webpackMerge.smart(config, {
   },
   output: {
     library: LIBRARY_NAME,
-    path: path.join(__dirname, 'public/js'),
+    path: path.join(__dirname, 'dist'),
   },
   plugins: [
     new webpack.DllPlugin({

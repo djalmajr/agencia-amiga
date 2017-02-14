@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <title>Audora</title>
+    <link href="https://cdn.audora.com.br/libs/vendor/semantic-ui/2.2.6/semantic.min.css" rel="stylesheet" />
+    <style media="screen">
+      html,
+      body {
+        background-color: #F2F2F4;
+        font: 14px "Open Sans", sans-serif;
+        overflow: hidden;
+      }
+    </style>
+    <script>
+      var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(" OPR/") >= 0,
+        isIE = /*@cc_on!@*/false || !!document.documentMode,
+        isChrome = !!window.chrome && !!window.chrome.webstore;
+
+      window.__BrowserDetection = {
+        // Opera 8.0+
+        isOpera: isOpera,
+        // Firefox 1.0+
+        isFirefox: typeof InstallTrigger !== "undefined",
+        // At least Safari 3+: "[object HTMLElementConstructor]"
+        isSafari: Object.prototype.toString.call(window.HTMLElement).indexOf("Constructor") > 0,
+        // Internet Explorer 6-11
+        isIE: isIE,
+        // Edge 20+
+        isEdge: !isIE && !!window.StyleMedia,
+        // Chrome 1+
+        isChrome: isChrome,
+        // Blink engine detection
+        isBlink: (isChrome || isOpera) && !!window.CSS,
+      };
+    </script>
+  </head>
+  <body>
+    <div id="__wrapper__"></div>
+    <script src="http://localhost:3000/vendor.js"></script>
+  <script type="text/javascript" src="http://localhost:4000/js/app.js"></script></body>
+</html>

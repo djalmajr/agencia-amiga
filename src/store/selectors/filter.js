@@ -6,6 +6,11 @@ import createGetData from '~/helpers/create-get-data';
 
 const _getData = createGetData('filter');
 
+const types = {
+  users: 'volunteer',
+  organizations: 'organization',
+};
+
 const format = data => ({
   uid: data.uid,
   title: data.name,
@@ -28,8 +33,11 @@ export const getResults = createSelector(
   state => entity => state.entities.byId[entity],
   (query, entity, skills, fnGetEntities) => {
     const results = {};
+    const entities = ['organizations', 'users'].indexOf(entity) !== -1 ?
+      _.filter(fnGetEntities('users'), { type: types[entity] }) :
+      fnGetEntities(entity);
 
-    _.forEach(fnGetEntities(entity), (item) => {
+    _.forEach(entities, (item) => {
       const record = format(item);
       const match = (
         latinize(record.title).toLowerCase().search(query) !== -1 &&
@@ -40,7 +48,6 @@ export const getResults = createSelector(
         results[record.uid] = record;
       }
     });
-    console.log(results);
 
     return results;
   },

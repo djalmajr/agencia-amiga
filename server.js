@@ -1,24 +1,51 @@
-const webpack = require('webpack');
+/* eslint-disable no-console */
+
+const last = require('lodash').last;
+const open = require('open');
+const path = require('path');
 const express = require('express');
-const devMiddleware = require('webpack-dev-middleware');
-const hotMiddleware = require('webpack-hot-middleware');
+const webpack = require('webpack');
+const morgan = require('morgan');
+const proxy = require('proxy-middleware');
+const WebpackDevServer = require('webpack-dev-server');
 const config = require('./webpack.config');
 
 const app = express();
-const compiler = webpack(config);
+const server = new WebpackDevServer(webpack(config), config.devServer);
 
-app.use(devMiddleware(compiler, config.devServer));
-app.use(hotMiddleware(compiler));
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'dist/index.html'));
-// });
-
-app.listen(4000, (err) => {
+server.listen(4000, 'localhost', (err) => {
   if (err) {
-    console.error(err); // eslint-disable-line
-
-    return;
+    console.log(err);
+  } else {
+    console.log(`
+      =====================================================
+       WebpackDevServer listen at http://localhost:${4000}
+      =====================================================
+    `);
   }
+});
 
-  console.log('Listening at http://localhost:4000/'); // eslint-disable-line
+app.use(morgan('dev'));
+app.use('/js', proxy('http://localhost:4000/js'));
+app.use((req, res) => {
+  const options = { root: path.join(__dirname, 'dist') };
+  const isJS = !!req.originalUrl.match(/\.js$/);
+  const filename = isJS ? last(req.originalUrl.split('/')) : 'index.html';
+
+  return res.sendFile(filename, options, (err) => {
+    if (err) {
+      res.status(404).send({
+        code: 404,
+        msg: 'All is not right in the world :(',
+      });
+    }
+  });
+});
+
+app.listen(3000, (err) => {
+  if (err) {
+    console.error(err);
+  } else {
+    open(`http://localhost:${3000}`);
+  }
 });

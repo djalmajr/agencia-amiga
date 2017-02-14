@@ -1,6 +1,7 @@
-const autoprefixer = require('autoprefixer');
-const webpack = require('webpack');
 const path = require('path');
+const webpack = require('webpack');
+const autoprefixer = require('autoprefixer');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   cache: true,
@@ -8,9 +9,8 @@ module.exports = {
   entry: {
     app: [
       'react-hot-loader/patch',
-      'webpack-hot-middleware/client?path=http://localhost:4000/__webpack_hmr',
-      // 'webpack-dev-server/client?http://localhost:4000',
-      // 'webpack/hot/only-dev-server',
+      'webpack-dev-server/client?http://localhost:4000',
+      'webpack/hot/only-dev-server',
       './src/overrides.scss',
       './src/index.jsx',
     ],
@@ -19,7 +19,7 @@ module.exports = {
     filename: '[name].js',
     library: ['AgenciaAmiga'],
     libraryTarget: 'umd',
-    path: path.join(__dirname, 'public/js'),
+    path: path.join(__dirname, 'dist/js'),
     publicPath: 'http://localhost:4000/js/',
   },
   module: {
@@ -57,11 +57,15 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('development') } }),
-    // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
     new webpack.DllReferencePlugin({ context: __dirname, manifest: require('./vendor.manifest.json') }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
     new webpack.NoErrorsPlugin(),
+    new HtmlWebpackPlugin({
+      inject: 'body',
+      filename: '../index.html',
+      template: path.resolve(__dirname, './src/www/index.html'),
+    }),
     new webpack.ProvidePlugin({
       Promise: 'es6-promise', // https://gist.github.com/Couto/b29676dd1ab8714a818f#gistcomment-1584602
       fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch',

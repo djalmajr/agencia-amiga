@@ -7,7 +7,7 @@ import Application from './application';
 
 moment.locale('pt-br');
 
-const rootEl = document.querySelector('#wrapper');
+const rootEl = document.querySelector('#__wrapper__');
 const store = configureStore();
 
 ReactDOM.render(
