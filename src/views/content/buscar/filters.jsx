@@ -18,7 +18,7 @@ class Filters extends React.Component {
     isFiltering: React.PropTypes.bool,
     entityFilter: React.PropTypes.string,
     // skillsFilter: React.PropTypes.array,
-    replace: React.PropTypes.func,
+    push: React.PropTypes.func,
     skills: React.PropTypes.object,
   };
 
@@ -40,11 +40,11 @@ class Filters extends React.Component {
   };
 
   handleFilterClick = (value) => {
-    const { actions, replace } = this.props;
+    const { actions, push } = this.props;
     const { text } = find(Filter.OPTIONS, { value });
     const tipo = latinize(text).toLowerCase();
 
-    replace({ pathname: '/buscar', query: { tipo } });
+    push({ pathname: '/buscar', query: { tipo } });
 
     actions.updateFilter({ name: 'entity', value });
     this.applySearch(value);

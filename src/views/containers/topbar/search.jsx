@@ -14,7 +14,7 @@ class TopBarSearch extends React.Component {
     entity: React.PropTypes.string,
     isFiltering: React.PropTypes.bool,
     query: React.PropTypes.string,
-    replace: React.PropTypes.func,
+    push: React.PropTypes.func,
     onFilter: React.PropTypes.func,
     onUpdateFilter: React.PropTypes.func,
   };
@@ -30,14 +30,14 @@ class TopBarSearch extends React.Component {
   };
 
   handleSearch = (evt, { query }) => {
-    const { entity, replace, onFilter } = this.props;
+    const { entity, push, onFilter } = this.props;
     const { text } = find(Filter.OPTIONS, { value: entity });
     const tipo = latinize(text).toLowerCase();
 
     evt.preventDefault();
 
     onFilter({ query });
-    replace({ pathname: '/buscar', query: { tipo } });
+    push({ pathname: '/buscar', query: { tipo } });
   };
 
   render() {

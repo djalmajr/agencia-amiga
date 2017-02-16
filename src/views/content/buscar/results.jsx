@@ -22,7 +22,7 @@ class Results extends React.Component {
     isLogged: React.PropTypes.bool,
     location: React.PropTypes.object,
     records: React.PropTypes.object,
-    replace: React.PropTypes.func,
+    push: React.PropTypes.func,
   };
 
   static contextTypes = {
@@ -62,11 +62,11 @@ class Results extends React.Component {
   }
 
   navigateTo(entity, id) {
-    const { replace } = this.props;
+    const { push } = this.props;
     const { text } = find(Filter.OPTIONS, { value: entity });
     const slug = latinize(text).toLowerCase();
 
-    replace(`/${slug}/${id}`);
+    push(`/${slug}/${id}`);
   }
 
   render() {
