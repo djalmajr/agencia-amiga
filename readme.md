@@ -13,6 +13,18 @@ Projeto para dispensa de disciplina (FPIN).
  - CRUD de serviços e campanhas (para organizações)
  - Listagem dos resultados
 
+### Tecnologias
+
+ - [Babel](https://babeljs.io/)
+ - [React](https://facebook.github.io/react/)
+ - [React Router](https://reacttraining.com/react-router/)
+ - [Redux](http://redux.js.org/)
+ - [Redux Saga](https://redux-saga.github.io/redux-saga/)
+ - [Semantic UI](http://react.semantic-ui.com/introduction)
+ - [Webpack](https://webpack.js.org/)
+ - [Firebase](https://firebase.google.com/)
+ - [Express](http://expressjs.com/)
+
 ### Instruções
 
 Executar no terminal:
