@@ -1,12 +1,12 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter, Match } from 'react-router';
+import { BrowserRouter, Route } from 'react-router-dom';
 import Main from './views/containers/main';
 
 const Application = ({ store }) => (
   <Provider store={store}>
     <BrowserRouter>
-      <Match pattern="/" component={Main} />
+      <Route pattern="/" component={Main} />
     </BrowserRouter>
   </Provider>
 );

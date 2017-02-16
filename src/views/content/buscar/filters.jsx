@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import React from 'react';
 import latinize from 'latinize';
+import { withRouter } from 'react-router';
 import { find, values } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,6 +18,7 @@ class Filters extends React.Component {
     isFiltering: React.PropTypes.bool,
     entityFilter: React.PropTypes.string,
     // skillsFilter: React.PropTypes.array,
+    replace: React.PropTypes.func,
     skills: React.PropTypes.object,
   };
 
@@ -38,15 +40,11 @@ class Filters extends React.Component {
   };
 
   handleFilterClick = (value) => {
-    const { transitionTo } = this.context.router;
-    const { actions } = this.props;
+    const { actions, replace } = this.props;
     const { text } = find(Filter.OPTIONS, { value });
     const tipo = latinize(text).toLowerCase();
 
-    transitionTo({
-      pathname: '/buscar',
-      query: { tipo },
-    });
+    replace({ pathname: '/buscar', query: { tipo } });
 
     actions.updateFilter({ name: 'entity', value });
     this.applySearch(value);
@@ -128,4 +126,4 @@ const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(actionCreators, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Filters);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Filters));

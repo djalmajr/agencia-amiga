@@ -1,6 +1,7 @@
 import React from 'react';
 import latinize from 'latinize';
 import moment from 'moment';
+import { withRouter } from 'react-router';
 import { isEmpty, map, find } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -21,6 +22,7 @@ class Results extends React.Component {
     isLogged: React.PropTypes.bool,
     location: React.PropTypes.object,
     records: React.PropTypes.object,
+    replace: React.PropTypes.func,
   };
 
   static contextTypes = {
@@ -60,11 +62,11 @@ class Results extends React.Component {
   }
 
   navigateTo(entity, id) {
-    const { transitionTo } = this.context.router;
+    const { replace } = this.props;
     const { text } = find(Filter.OPTIONS, { value: entity });
     const slug = latinize(text).toLowerCase();
 
-    transitionTo(`/${slug}/${id}`);
+    replace(`/${slug}/${id}`);
   }
 
   render() {
@@ -160,4 +162,4 @@ const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(actionCreators, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Results);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Results));

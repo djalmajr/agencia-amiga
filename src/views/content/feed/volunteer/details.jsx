@@ -1,10 +1,12 @@
 import React from 'react';
 import faker from 'faker';
+import { withRouter } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Card, Container, Feed, Image } from 'semantic-ui-react';
+import { Card, Container, Image, Segment } from 'semantic-ui-react';
 import * as actionCreators from '~/store/actions';
 import selectors from '~/store/selectors';
+import Timeline from './timeline';
 
 const srcImg = 'http://xpenology.org/wp-content/themes/qaengine/img/default-thumbnail.jpg';
 
@@ -25,51 +27,13 @@ const Details = () => (
         </Card.Meta>
       </Card.Content>
     </Card>
-    <Card fluid>
-      <Card.Content>
-        <Card.Header style={{ fontSize: '1em' }}>
-          FEED DE NOTÍCIAS
-        </Card.Header>
-      </Card.Content>
-      <Card.Content>
-        <Feed>
-          <Feed.Event>
-            <Feed.Label image="http://semantic-ui.com/images/avatar/small/jenny.jpg" />
-            <Feed.Content>
-              <Feed.Date content="1 day ago" />
-              <Feed.Summary>
-                You added <a>Jenny Hess</a> to your <a>coworker</a> group.
-              </Feed.Summary>
-            </Feed.Content>
-          </Feed.Event>
-
-          <Feed.Event>
-            <Feed.Label image="http://semantic-ui.com/images/avatar2/small/molly.png" />
-            <Feed.Content>
-              <Feed.Date content="3 days ago" />
-              <Feed.Summary>
-                You added <a>Molly Malone</a> as a friend.
-              </Feed.Summary>
-            </Feed.Content>
-          </Feed.Event>
-
-          <Feed.Event>
-            <Feed.Label image="http://semantic-ui.com/images/avatar/small/elliot.jpg" />
-            <Feed.Content>
-              <Feed.Date content="4 days ago" />
-              <Feed.Summary>
-                You added <a>Elliot Baker</a> to your <a>musicians</a> group.
-              </Feed.Summary>
-            </Feed.Content>
-          </Feed.Event>
-        </Feed>
-      </Card.Content>
-    </Card>
+    <Segment attached="bottom">
+      <Timeline />
+    </Segment>
   </Container>
 );
 
-const mapStateToProps = (state, { params: { id } }) => ({
-  user: selectors.getEntity('users', id)(state),
+const mapStateToProps = state => ({
   skills: selectors.getEntities('skills')(state),
 });
 
@@ -77,5 +41,5 @@ const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(actionCreators, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Details);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Details));
 

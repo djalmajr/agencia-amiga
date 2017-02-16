@@ -30,6 +30,7 @@ module.exports = webpackMerge.smart(config, {
       'react-prop-types',
       'react-redux',
       'react-router',
+      'react-router-dom',
       'redux',
       'redux-actions',
       'redux-async-initial-state',

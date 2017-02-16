@@ -1,7 +1,7 @@
 .vscode/
-vendor/
+dist/
 node_modules/
-Homestead.yaml
-Homestead.json
-.env
+vendor/
+
 *.log
+vendor.manifest.json

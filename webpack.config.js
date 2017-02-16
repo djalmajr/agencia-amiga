@@ -1,19 +1,68 @@
+const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const DEV = process.env.NODE_ENV !== 'production';
+
+const GLOBALS = {
+  'process.env': {
+    NODE_ENV: JSON.stringify(DEV ? 'development' : 'production'),
+  },
+  __DEV__: JSON.stringify(DEV),
+};
+
+const devPlugins = [
+  new webpack.HotModuleReplacementPlugin(),
+  new webpack.NamedModulesPlugin(),
+  new webpack.NoErrorsPlugin(),
+];
+
+const prodPlugins = [
+  new webpack.optimize.UglifyJsPlugin({
+    sourceMap: true,
+    compress: {
+      screw_ie8: true,
+      warnings: false,
+    },
+    mangle: {
+      screw_ie8: true,
+    },
+    output: {
+      comments: false,
+      screw_ie8: true,
+    },
+  }),
+];
+
+const plugins = [
+  new webpack.DefinePlugin(GLOBALS),
+  new webpack.ProvidePlugin({
+    Promise: 'es6-promise', // https://gist.github.com/Couto/b29676dd1ab8714a818f#gistcomment-1584602
+    fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch',
+  }),
+  new HtmlWebpackPlugin({
+    inject: 'body',
+    filename: '../index.html',
+    template: path.resolve(__dirname, './src/www/index.html'),
+  }),
+].concat(DEV ? devPlugins : prodPlugins);
+
+if (fs.existsSync('./vendor.manifest.json')) {
+  plugins.push(new webpack.DllReferencePlugin({ context: __dirname, manifest: require('./vendor.manifest.json') }));
+}
+
 module.exports = {
+  plugins,
   cache: true,
-  devtool: 'inline-source-map',
+  devtool: DEV ? 'inline-source-map' : 'cheap-source-map',
   entry: {
-    app: [
+    app: (DEV ? [
       'react-hot-loader/patch',
       'webpack-dev-server/client?http://localhost:4000',
       'webpack/hot/only-dev-server',
-      './src/overrides.scss',
-      './src/index.jsx',
-    ],
+    ] : []).concat(['./src/overrides.scss', './src/index.jsx']),
   },
   output: {
     filename: '[name].js',
@@ -55,22 +104,6 @@ module.exports = {
     extensions: ['', '.js', '.jsx'],
     modulesDirectories: ['node_modules', './src'],
   },
-  plugins: [
-    new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('development') } }),
-    new webpack.DllReferencePlugin({ context: __dirname, manifest: require('./vendor.manifest.json') }),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(),
-    new webpack.NoErrorsPlugin(),
-    new HtmlWebpackPlugin({
-      inject: 'body',
-      filename: '../index.html',
-      template: path.resolve(__dirname, './src/www/index.html'),
-    }),
-    new webpack.ProvidePlugin({
-      Promise: 'es6-promise', // https://gist.github.com/Couto/b29676dd1ab8714a818f#gistcomment-1584602
-      fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch',
-    }),
-  ],
   devServer: {
     // noInfo: true,
     publicPath: 'http://localhost:4000/js/',

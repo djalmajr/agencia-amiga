@@ -2,7 +2,7 @@ import React from 'react';
 import { isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Match } from 'react-router';
+import { Route } from 'react-router-dom';
 import { Loader } from 'semantic-ui-react';
 import requireAuth from '~/helpers/require-auth';
 import * as actionCreators from '~/store/actions';
@@ -67,13 +67,13 @@ class Main extends React.PureComponent {
         <Notification />
         {isLogged && <TopBar />}
         <FlexElement full className={styles.content}>
-          <Match pattern="/" exactly component={requireAuth(Feed)} />
-          <Match pattern="/login" component={Login} />
-          <Match pattern="/buscar" component={requireAuth(Buscar)} />
-          <Match pattern="/campanhas/:id" component={requireAuth(Campanha)} />
-          <Match pattern="/organizacoes/:id" component={requireAuth(Organizacao)} />
-          <Match pattern="/voluntarios/:id" component={requireAuth(Usuario)} />
-          <Match pattern="/servicos/:id" component={requireAuth(Servico)} />
+          <Route path="/" component={requireAuth(Feed)} exact />
+          <Route path="/login" component={Login} />
+          <Route path="/buscar" component={requireAuth(Buscar)} />
+          <Route path="/campanhas/:id" component={requireAuth(Campanha)} />
+          <Route path="/organizacoes/:id" component={requireAuth(Organizacao)} />
+          <Route path="/voluntarios/:id" component={requireAuth(Usuario)} />
+          <Route path="/servicos/:id" component={requireAuth(Servico)} />
         </FlexElement>
       </FlexElement>
     );

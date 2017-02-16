@@ -1,7 +1,7 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import { Button, Divider, Form, Icon, Segment } from 'semantic-ui-react';
 import FlexElement from '~/views/components/flex-element';
 import selectors from '~/store/selectors';

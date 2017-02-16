@@ -2,6 +2,7 @@ import React from 'react';
 import latinize from 'latinize';
 import { find } from 'lodash';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { Button, Form, Icon, Input, Dropdown } from 'semantic-ui-react';
 import { Filter } from '~/constants';
 import * as actionCreators from '~/store/actions';
@@ -13,6 +14,7 @@ class TopBarSearch extends React.Component {
     entity: React.PropTypes.string,
     isFiltering: React.PropTypes.bool,
     query: React.PropTypes.string,
+    replace: React.PropTypes.func,
     onFilter: React.PropTypes.func,
     onUpdateFilter: React.PropTypes.func,
   };
@@ -28,18 +30,14 @@ class TopBarSearch extends React.Component {
   };
 
   handleSearch = (evt, { query }) => {
-    const { entity, onFilter } = this.props;
+    const { entity, replace, onFilter } = this.props;
     const { text } = find(Filter.OPTIONS, { value: entity });
     const tipo = latinize(text).toLowerCase();
 
     evt.preventDefault();
 
     onFilter({ query });
-
-    this.context.router.transitionTo({
-      pathname: '/buscar',
-      query: { tipo },
-    });
+    replace({ pathname: '/buscar', query: { tipo } });
   };
 
   render() {
@@ -85,4 +83,4 @@ const mapDispatchToProps = dispatch => ({
   onUpdateFilter: updates => dispatch(actionCreators.updateFilter(updates)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(TopBarSearch);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(TopBarSearch));

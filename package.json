@@ -21,6 +21,7 @@
     "lint": "eslint ./src",
     "lint:fix": "npm run lint -- --fix",
     "server": "cross-env NODE_ENV=development node server.js",
+    "postinstall": "npm run build:dll && npm run build:dev",
     "start": "npm run server"
   },
   "dependencies": {
@@ -41,7 +42,7 @@
     "react-notification-system": "^0.2.11",
     "react-prop-types": "^0.4.0",
     "react-redux": "^4.4.6",
-    "react-router": "^4.0.0-alpha.6",
+    "react-router-dom": "^4.0.0-beta.6",
     "redux": "^3.6.0",
     "redux-actions": "^0.13.0",
     "redux-async-initial-state": "^0.2.0",
